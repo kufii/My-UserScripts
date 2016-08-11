@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Google - Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.4
+// @version      1.0.5
 // @description  Opens search results in new tab when you middle click
 // @author       Adrien Pyke
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/?$/
@@ -13,7 +13,7 @@
 (function() {
 	'use strict';
 
-	var updateQueryString = function(key, value, url) {
+	var setQueryParameter = function(key, value, url) {
 		if (!url) url = window.location.href;
 		var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
 			hash;
@@ -45,7 +45,7 @@
 
 	var getUrl = function(value) {
 		if (window.location.href.match(/^https?:\/\/www\.google\.[a-zA-Z]+\/search\/?\?.*$/)) {
-			return updateQueryString('q', encodeURIComponent(value));
+			return setQueryParameter('q', encodeURIComponent(value));
 		} else {
 			return location.protocol + '//' + location.host + '/search?q=' + encodeURIComponent(value);
 		}

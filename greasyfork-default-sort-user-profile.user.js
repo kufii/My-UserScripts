@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Greasy Fork - Change Default Script Sort on User Profiles
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Change default script sort on user profiles
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/en/users/*
@@ -24,7 +24,7 @@
 			return decodeURIComponent(results[2].replace(/\+/g, " "));
 		},
 
-		updateQueryString: function(key, value, url) {
+		setQueryParameter: function(key, value, url) {
 			if (!url) url = window.location.href;
 			var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
 				hash;
@@ -140,12 +140,12 @@
 
 	var dailyInstalls = document.querySelector('#script-list-sort > ul > li:nth-child(1) > a');
 	if (dailyInstalls) {
-		dailyInstalls.href = Util.updateQueryString('sort', 'daily-installs', dailyInstalls.href);
+		dailyInstalls.href = Util.setQueryParameter('sort', 'daily-installs', dailyInstalls.href);
 	}
 
 	var sort = Util.getQueryParameter('sort');
 	if (!sort) {
 		var cfg = Config.load();
-		window.location.href = Util.updateQueryString('sort', cfg.sort);
+		window.location.href = Util.setQueryParameter('sort', cfg.sort);
 	}
 })();
