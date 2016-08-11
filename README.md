@@ -9,3 +9,4 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Hummingbird 10 Point Ratings](https://greasyfork.org/en/scripts/707-hummingbird-10-point-ratings)
 * [Hummingbird User Compare](https://greasyfork.org/en/scripts/5680-hummingbird-user-compare)
 * [Imgur Mirror](https://greasyfork.org/en/scripts/18806-imgur-mirror)
+* [Newspaper Paywall Bypasser](https://greasyfork.org/en/scripts/18585-newspaper-paywall-bypasser)
