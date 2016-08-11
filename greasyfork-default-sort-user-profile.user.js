@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Greasy Fork - Change Default Script Sort on User Profiles
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.2
+// @version      1.0.3
 // @description  Change default script sort on user profiles
 // @author       Adrien Pyke
-// @match        *://greasyfork.org/en/users/*
+// @match        *://greasyfork.org/*/users/*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
