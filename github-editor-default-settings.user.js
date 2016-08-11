@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Editor - Change Default Settings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.2
+// @version      1.0.3
 // @description  change default settings for the github editor
 // @author       Adrien Pyke
 // @match        *://github.com/*/new/*
@@ -88,10 +88,11 @@
 			div.appendChild(document.createElement('br'));
 
 			div.appendChild(createButton('Save', function(e) {
-				var settings = {};
-				settings.indentMode = indentMode.value;
-				settings.indentWidth = indentWidth.value;
-				settings.wrapMode = wrapMode.value;
+				var settings = {
+					indentMode: indentMode.value,
+					indentWidth: indentWidth.value,
+					wrapMode: wrapMode.value
+				};
 				saveConfig(settings);
 				div.remove();
 			}));
