@@ -8,3 +8,4 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Greasy Fork - Change Default Script Sort on User Profiles](https://greasyfork.org/en/scripts/22202-greasy-fork-change-default-script-sort-on-user-profiles)
 * [Hummingbird 10 Point Ratings](https://greasyfork.org/en/scripts/707-hummingbird-10-point-ratings)
 * [Hummingbird User Compare](https://greasyfork.org/en/scripts/5680-hummingbird-user-compare)
+* [Imgur Mirror](https://greasyfork.org/en/scripts/18806-imgur-mirror)
