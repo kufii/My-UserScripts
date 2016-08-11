@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird 10 Point Ratings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.1
+// @version      1.4.2
 // @description  Converts Hummingbird ratings to a 10 point scale
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -69,7 +69,7 @@
 			highestRating.innerHTML += 10;
 		}
 	};
-	waitForUrl(/^https?:\/\/hummingbird\.me\/(anime|manga)\/[^/]+\/?(\?*)?$/, convertAnimePage);
+	waitForUrl(/^https?:\/\/hummingbird\.me\/(anime|manga)\/[^\/]+\/?(\?*)?$/, convertAnimePage);
 
 	var convertReviewPage = function() {
 		waitForElems('.review-breakdown', function(review) {
@@ -87,5 +87,5 @@
 			});
 		}, true);
 	};
-	waitForUrl(/^https?:\/\/hummingbird\.me\/(anime|manga)\/[^/]+\/reviews\/[^/]+\/?(\?*)?$/, convertReviewPage);
+	waitForUrl(/^https?:\/\/hummingbird\.me\/(anime|manga)\/[^\/]+\/reviews\/[^\/]+\/?(\?*)?$/, convertReviewPage);
 })();

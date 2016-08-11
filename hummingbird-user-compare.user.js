@@ -1,13 +1,11 @@
 // ==UserScript==
 // @name         Hummingbird User Compare
 // @namespace    https://greasyfork.org/users/649
-// @version      3.0.14
+// @version      3.0.15
 // @description  Adds a button that compares the anime list of a hummingbird user against yours
 // @author       kufii, fuzetsu
-// @match        http://hummingbird.me/*
-// @match        http://forums.hummingbird.me/*
-// @match        https://hummingbird.me/*
-// @match        https://forums.hummingbird.me/*
+// @match        *://hummingbird.me/*
+// @match        *://forums.hummingbird.me/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
 // @grant        none
 // @noframes
