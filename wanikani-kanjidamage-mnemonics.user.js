@@ -1,15 +1,15 @@
 // ==UserScript==
-// @name        WaniKani Kanjidamage Mnemonics
-// @namespace   https://greasyfork.org/users/649
-// @version     1.0.4
-// @description Includes Kanjidamage Mnemonics in WaniKani
-// @author      Adrien Pyke
-// @match       *://www.wanikani.com/kanji/*
-// @match       *://www.wanikani.com/level/*/kanji/*
-// @match       *://www.wanikani.com/review/session
-// @match       *://www.wanikani.com/lesson/session
-// @require     https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
-// @grant       GM_xmlhttpRequest
+// @name         WaniKani Kanjidamage Mnemonics
+// @namespace    https://greasyfork.org/users/649
+// @version      1.0.5
+// @description  Includes Kanjidamage Mnemonics in WaniKani
+// @author       Adrien Pyke
+// @match        *://www.wanikani.com/kanji/*
+// @match        *://www.wanikani.com/level/*/kanji/*
+// @match        *://www.wanikani.com/review/session
+// @match        *://www.wanikani.com/lesson/session
+// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
+// @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
 (function() {

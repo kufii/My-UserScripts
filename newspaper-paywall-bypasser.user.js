@@ -1,14 +1,14 @@
 // ==UserScript==
-// @name        Newspaper Paywall Bypasser
-// @namespace   https://greasyfork.org/users/649
-// @description Bypass the paywall on online newspapers
-// @version     1.2.4
-// @author      Adrien Pyke
-// @match       *://www.thenation.com/*
-// @match       *://www.wsj.com/*
-// @match       *://www.bostonglobe.com/*
-// @grant       GM_xmlhttpRequest
-// @grant       unsafeWindow
+// @name         Newspaper Paywall Bypasser
+// @namespace    https://greasyfork.org/users/649
+// @version      1.2.5
+// @description  Bypass the paywall on online newspapers
+// @author       Adrien Pyke
+// @match        *://www.thenation.com/*
+// @match        *://www.wsj.com/*
+// @match        *://www.bostonglobe.com/*
+// @grant        GM_xmlhttpRequest
+// @grant        unsafeWindow
 // @noframes
 // ==/UserScript==
 
