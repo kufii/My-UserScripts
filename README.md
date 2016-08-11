@@ -4,3 +4,4 @@ A collection of user scripts that I made to make my experience on the web a litt
 ## List of UserScripts
 * [GitHub Editor - Change Default Settings](https://greasyfork.org/en/scripts/21964-github-editor-change-default-settings)
 * [Google Music Confirm Close](https://greasyfork.org/en/scripts/6032-google-music-confirm-close)
+* [Google - Middle Click Search](https://greasyfork.org/en/scripts/22183-google-middle-click-search)
