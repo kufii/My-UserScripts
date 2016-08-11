@@ -4,8 +4,10 @@
 // @version      3.0.15
 // @description  Adds a button that compares the anime list of a hummingbird user against yours
 // @author       kufii, fuzetsu
-// @match        *://hummingbird.me/*
-// @match        *://forums.hummingbird.me/*
+// @match        http://hummingbird.me/*
+// @match        http://forums.hummingbird.me/*
+// @match        https://hummingbird.me/*
+// @match        https://forums.hummingbird.me/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
 // @grant        none
 // @noframes
@@ -200,6 +202,8 @@
 				return;
 			}
 
+			var container = btnFollow.parentNode;
+
 			// try getting forum button and fix it if we find it
 			var forumButton = Util.q('.account-info .inline-list a');
 			if(forumButton) {
@@ -209,12 +213,28 @@
 			}
 			btn = forumButton || btn;
 
+			var forumButtonStyle = 'bottom: 38px; width: 350px;';
+
+			var addLoadingTable = function() {
+				var styleOverride = '';
+				if(forumButton) {
+					styleOverride = forumButtonStyle;
+				}
+				container.innerHTML += hb.makeCompatTable([
+					{ type: 'Anime', phrase: 'Loading...' }, 
+					{ type: 'Manga', phrase: 'Loading...' }
+				], styleOverride);
+			};
+
 			var compatibilityCallback = function(anime, manga) {
 				var styleOverride = '';
 				if(forumButton) {
-					styleOverride = 'bottom: 38px; width: 350px;';
+					styleOverride = forumButtonStyle;
 				}
-				btnFollow.parentNode.innerHTML += hb.makeCompatTable([anime, manga], styleOverride);
+				var compatTable = Util.q('#' + COMPAT_ID);
+				if (compatTable) compatTable.remove();
+				console.log(btnFollow, container);
+				container.innerHTML += hb.makeCompatTable([anime, manga], styleOverride);
 			};
 
 			Util.log('Found button area, loading button and compat rating...');
@@ -238,8 +258,9 @@
 						compare = hb.getCompareUrl();
 						btn.href = compare.url;
 						if(!forumButton) {
-							btnFollow.parentNode.appendChild(btn);
+							container.appendChild(btn);
 						}
+						addLoadingTable();
 						hb.getCompatibility(compatibilityCallback);
 					};
 					Util.q(USERNAME_SELECTOR).addEventListener('DOMSubtreeModified', handler);
@@ -250,8 +271,9 @@
 				}
 				btn.href = compare.url;
 				if(!forumButton) {
-					btnFollow.parentNode.appendChild(btn);
+					container.appendChild(btn);
 				}
+				addLoadingTable();
 				hb.getCompatibility(compatibilityCallback);
 			}
 			lastUser = compare.them;
