@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Flair Linkifier
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.1
+// @version      1.1.2
 // @description  Turns the text in various subreddits' flair into links
 // @author       Adrien Pyke
 // @match        *://www.reddit.com/*
