@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Greasy Fork - Auto Enable Syntax-Highlighting Source Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Auto enables greasy fork's syntax-highlighting source editor
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/*/script_versions/new*
