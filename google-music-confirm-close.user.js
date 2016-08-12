@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Google Music Confirm Close
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.8
+// @version      1.0.9
 // @description  Confirms close when playing music on google music
 // @author       Adrien Pyke
 // @match        *://play.google.com/music/listen*
