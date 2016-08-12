@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.5
+// @version      1.2.6
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/*
@@ -14,7 +14,7 @@
 
 (function() {
 	'use strict';
-	
+
 	// short reference to unsafeWindow (or window if unsafeWindow is unavailable e.g. bookmarklet)
 	var W = (typeof unsafeWindow === 'undefined') ? window : unsafeWindow;
 	var SCRIPT_NAME = 'Newspaper Paywall Bypasser';
@@ -22,9 +22,9 @@
 	/**
 	* Sample Implementation:
 	{
-		name: 'something', // name of the implementation 
+		name: 'something', // name of the implementation
 		match: "^https?://domain.com/.*", // the url to react to
-		remove: '#element', // css selector to get element to remove 
+		remove: '#element', // css selector to get element to remove
 		wait: 3000, // how many ms to wait before running (to wait for elements to load), or a css selector to keep trying until it returns an elem
 		referer: 'something', // load content in with an xhr using this referrer
 		replace: '#element', // css selector to get element to replace with xhr
@@ -76,7 +76,7 @@
 
 	var App = {
 		currentImpName: null,
-		
+
 		appendStyle: function(css) {
 			var out = '';
 			for (var selector in css) {
@@ -86,7 +86,7 @@
 				}
 				out += '}';
 			}
-			
+
 			var style = document.createElement('style');
 			style.type = 'text/css';
 			style.appendChild(document.createTextNode(out));
@@ -118,10 +118,10 @@
 						Util.log('successfully loaded xhr with referer: ' + theReferer);
 						if (imp.replace) {
 							var replaceSelector = typeof imp.replace === 'function' ? imp.replace() : imp.replace;
-							
+
 							var tempDiv = document.createElement('div');
 							tempDiv.innerHTML = response.responseText;
-							
+
 							Util.q(replaceSelector).innerHTML = Util.q(replaceSelector, tempDiv).innerHTML;
 						} else {
 							document.body.innerHTML = response.responseText;

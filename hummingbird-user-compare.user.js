@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird User Compare
 // @namespace    https://greasyfork.org/users/649
-// @version      3.0.15
+// @version      3.0.16
 // @description  Adds a button that compares the anime list of a hummingbird user against yours
 // @author       kufii, fuzetsu
 // @match        http://hummingbird.me/*
@@ -12,6 +12,7 @@
 // @grant        none
 // @noframes
 // ==/UserScript==
+
 (function() {
 	'use strict';
 
@@ -125,7 +126,7 @@
 
 			var process = function(data) {
 				buffer.push(data);
-				if(buffer.length === 2) { 
+				if(buffer.length === 2) {
 					var anime, manga;
 					if (buffer[0].type === 'anime') {
 						anime = buffer[0];
@@ -221,7 +222,7 @@
 					styleOverride = forumButtonStyle;
 				}
 				container.innerHTML += hb.makeCompatTable([
-					{ type: 'Anime', phrase: 'Loading...' }, 
+					{ type: 'Anime', phrase: 'Loading...' },
 					{ type: 'Manga', phrase: 'Loading...' }
 				], styleOverride);
 			};

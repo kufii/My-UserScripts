@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.5
+// @version      1.0.6
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
@@ -42,7 +42,7 @@
 				callback(cachedKanji[kanji]);
 			} else {
 				Util.log('Loading Kanjidamage information for ' + kanji);
-				
+
 				GM_xmlhttpRequest({
 					method: 'GET',
 					url: 'http://www.kanjidamage.com/kanji/search?q=' + kanji,
