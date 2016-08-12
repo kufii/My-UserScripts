@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Default Japanese Cast
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.1
+// @version      1.2.2
 // @description  Cast on anime pages defaults to Japanese
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
