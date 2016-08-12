@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.6
+// @version      1.2.7
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/*
@@ -160,7 +160,7 @@
 			Util.log('starting...');
 			var success = imps.some(function(imp) {
 				if (imp.match && (new RegExp(imp.match, 'i')).test(W.location.href)) {
-					currentImpName = imp.name;
+					App.currentImpName = imp.name;
 					App.waitAndBypass(imp);
 					return true;
 				}
