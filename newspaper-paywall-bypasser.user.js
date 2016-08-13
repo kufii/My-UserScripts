@@ -23,6 +23,50 @@
 	var W = (typeof unsafeWindow === 'undefined') ? window : unsafeWindow;
 	var SCRIPT_NAME = 'Newspaper Paywall Bypasser';
 
+	var Util = {
+		log: function () {
+			var args = [].slice.call(arguments);
+			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
+			console.log.apply(console, args);
+		},
+		q: function(query, context) {
+			return (context || document).querySelector(query);
+		},
+		qq: function(query, context) {
+			return [].slice.call((context || document).querySelectorAll(query));
+		},
+		xhr: function(url, cb, onerror) {
+			var xhr = new XMLHttpRequest();
+			xhr.onload = function(e) {
+				cb(xhr.responseText);
+			};
+			if (onerror) {
+				xhr.onerror = onerror;
+			} else {
+				xhr.onerror = function(e) {
+					Util.log('Error ' + e.target.status + ' loading xhr for url: ' + url);
+				};
+			}
+			xhr.open('GET', url);
+			xhr.send();
+		},
+		getQueryParameter: function(name, url) {
+			if (!url) url = W.location.href;
+			name = name.replace(/[\[\]]/g, "\\$&");
+			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+				results = regex.exec(url);
+			if (!results) return null;
+			if (!results[2]) return '';
+			return decodeURIComponent(results[2].replace(/\+/g, " "));
+		},
+		clearAllIntervals: function() {
+			var interval_id = window.setInterval(null, 9999);
+			for (var i = 1; i <= interval_id; i++) {
+				window.clearInterval(i);
+			}
+		}
+	};
+
 	/**
 	* Sample Implementation:
 	{
@@ -126,9 +170,7 @@
 				'line-height': '1.4em'
 			}
 		},
-		replaceUsing: function() {
-			return Util.getQueryParameter('LOAD_ARTICLE');
-		},
+		replaceUsing: Util.getQueryParameter('LOAD_ARTICLE'),
 		replace: function() {
 			if (this.repalceUsing) {
 				return '.sect';
@@ -144,51 +186,6 @@
 	}];
 
 	// END OF IMPLEMENTATIONS
-
-	var Util = {
-		log: function () {
-			var args = [].slice.call(arguments);
-			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
-			console.log.apply(console, args);
-		},
-		q: function(query, context) {
-			return (context || document).querySelector(query);
-		},
-		qq: function(query, context) {
-			return [].slice.call((context || document).querySelectorAll(query));
-		},
-		xhr: function(url, cb, onerror) {
-			var xhr = new XMLHttpRequest();
-			xhr.onload = function(e) {
-				cb(xhr.responseText);
-			};
-			if (onerror) {
-				xhr.onerror = onerror;
-			} else {
-				xhr.onerror = function(e) {
-					Util.log('Error ' + e.target.status + ' loading xhr for url: ' + url);
-				};
-			}
-			xhr.open('GET', url);
-			xhr.send();
-		},
-		getQueryParameter: function(name, url) {
-			if (!url) url = W.location.href;
-			name = name.replace(/[\[\]]/g, "\\$&");
-			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-				results = regex.exec(url);
-			if (!results) return null;
-			if (!results[2]) return '';
-			return decodeURIComponent(results[2].replace(/\+/g, " "));
-		},
-		clearAllIntervals: function() {
-			var interval_id = window.setInterval(null, 9999);
-			for (var i = 1; i <= interval_id; i++) {
-				window.clearInterval(i);
-			}
-		}
-	};
-
 	var App = {
 		currentImpName: null,
 
