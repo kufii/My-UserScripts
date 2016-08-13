@@ -1,14 +1,16 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.7
+// @version      1.3
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
-// @match        *://www.thenation.com/*
-// @match        *://www.wsj.com/*
+// @match        *://www.thenation.com/article/*
+// @match        *://www.wsj.com/articles/*
 // @match        *://www.bostonglobe.com/*
+// @match        *://www.nytimes.com/*
 // @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
+// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
 // @noframes
 // ==/UserScript==
 
@@ -23,31 +25,32 @@
 	* Sample Implementation:
 	{
 		name: 'something', // name of the implementation
-		match: "^https?://domain.com/.*", // the url to react to
-		remove: '#element', // css selector to get element to remove
+		match: '^https?://domain.com/.*', // the url to react to
+		remove: '#element', // css selector to get elements to remove
 		wait: 3000, // how many ms to wait before running (to wait for elements to load), or a css selector to keep trying until it returns an elem
 		referer: 'something', // load content in with an xhr using this referrer
 		replace: '#element', // css selector to get element to replace with xhr
 		css: {}, // object, keyed by css selector of css rules
-		bmmode: function() { } // function to call before doing anything else if in BM_MODE
+		bmmode: function() { }, // function to call before doing anything else if in BM_MODE
+		fn: function() { } // a function to run before doing anything else for more complicated logic
 	}
 	* Any of the CSS selectors can be functions instead that return the desired value.
 	*/
 
 	var implementations = [{
 		name: 'The Nation',
-		match: "^https?://www.thenation.com/.*",
+		match: '^https?://www.thenation.com/article/.*',
 		remove: '#paywall',
 		wait: '#paywall',
 		bmmode: function() { Paywall.hide(); }
 	}, {
 		name: 'Wall Street Journal',
-		match: "^https?://www.wsj.com/.*",
+		match: '^https?://www.wsj.com/articles/.*',
 		referer: 'http://www.google.com',
 		replace: '#article_sector > article > div:nth-of-type(1)'
 	}, {
 		name: 'Boston Globe',
-		match: "^https?://www.bostonglobe.com/.*",
+		match: '^https?://www.bostonglobe.com/.*',
 		css: {
 			'html, body, #contain': {
 				overflow: 'visible'
@@ -55,6 +58,34 @@
 			'.mfp-wrap, .mfp-ready': {
 				display: 'none'
 			}
+		}
+	}, {
+		name: 'NY Times',
+		match: '^https?://www.nytimes.com/.*',
+		css: {
+			'html, body, #contain': {
+				overflow: 'visible'
+			},
+			'#gatewayCreative, #overlay': {
+				display: 'none'
+			}
+		},
+		fn: function() {
+			// clear intervals once the paywall comes up to prevent changes afterward
+			waitForElems('#gatewayCreative', function() {
+				var interval_id = window.setInterval(null, 9999);
+				for (var i = 1; i < interval_id; i++) {
+					window.clearInterval(i);
+				}
+			}, true);
+
+			// prevent payywall from finding the elements to remove
+			var story = Util.q('.story-body-supplemental');
+			var lede = Util.q('.lede', story);
+			lede.outerHTML = lede.outerHTML.replace(/<figure/, '<div');
+			Util.qq('.story-content', story).forEach(function(paragraph) {
+				paragraph.className = '';
+			});
 		}
 	}];
 
@@ -95,27 +126,42 @@
 
 		bypass: function(imp) {
 			if (W.BM_MODE && imp.bmmode) {
+				Util.log('Running bookmarkelet specific function');
 				imp.bmmode();
 			}
+			if (imp.fn) {
+				Util.log('Running site specific function');
+				imp.fn();
+			}
 			if (imp.css) {
+				Util.log('Adding style');
 				var cssObj = typeof imp.css === 'function' ? imp.css() : imp.css;
 				App.appendStyle(cssObj);
 			}
 			if (imp.remove) {
-				var elemToRemove = typeof imp.remove === 'function' ? imp.remove() : Util.q(imp.remove);
-				elemToRemove.remove();
+				Util.log('Removing elements');
+				var elemsToRemove = typeof imp.remove === 'function' ? imp.remove() : Util.qq(imp.remove);
+				elemsToRemove.forEach(function(elem) {
+					elem.remove();
+				});
 			}
+
 			if (imp.referer) {
+				Util.log('Loading xhr with referer: ' + theReferer);
 				var theReferer = typeof imp.referer === 'function' ? imp.referer() : imp.referer;
 				GM_xmlhttpRequest ({
 					method: 'GET',
 					url: W.location.href,
 					headers: {
-						referer: theReferer
+						referer: theReferer,
+						origin: theReferer,
+						'User-agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11',
+						'Cookie': ''
 					},
 					anonymous: true,
 					onload: function(response) {
 						Util.log('successfully loaded xhr with referer: ' + theReferer);
+						console.log(response.responseText);
 						if (imp.replace) {
 							var replaceSelector = typeof imp.replace === 'function' ? imp.replace() : imp.replace;
 
@@ -132,6 +178,7 @@
 					}
 				});
 			}
+			Util.log('Paywall Bypassed.');
 		},
 
 		waitAndBypass: function(imp) {
@@ -140,16 +187,11 @@
 				if(waitType === 'number') {
 					setTimeout(App.bypass(imp), imp.wait || 0);
 				} else {
-					var isReady = waitType === 'function' ? imp.wait : function() {
-						return Util.q(imp.wait);
-					};
-					var intervalId = setInterval(function() {
-						if(isReady()) {
-							Util.log('Condition fulfilled, bypassing');
-							clearInterval(intervalId);
-							App.bypass(imp);
-						}
-					}, 200);
+					var wait = waitType === 'function' ? imp.wait() : imp.wait;
+					waitForElems(wait, function() {
+						Util.log('Condition fulfilled, bypassing');
+						App.bypass(imp);
+					}, true);
 				}
 			} else {
 				App.bypass(imp);
