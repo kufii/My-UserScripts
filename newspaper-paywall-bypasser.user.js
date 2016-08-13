@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.10
+// @version      1.4
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -32,6 +32,8 @@
 		wait: 3000, // how many ms to wait before running (to wait for elements to load), or a css selector to keep trying until it returns an elem
 		referer: 'something', // load content in with an xhr using this referrer
 		replace: '#element', // css selector to get element to replace with xhr
+		replaceUsing: 'url', // url to use for the replace xhr. If null, it'll use the curren url.
+		replaceWith: '#element', // css selector to get element to replace the element with. if null, it will use the same seletor as replace.
 		css: {}, // object, keyed by css selector of css rules
 		bmmode: function() { }, // function to call before doing anything else if in BM_MODE
 		fn: function() { } // a function to run before doing anything else for more complicated logic
@@ -124,15 +126,20 @@
 				'line-height': '1.4em'
 			}
 		},
-		fn: function() {
-			var article = Util.getQueryParameter('LOAD_ARTICLE');
-			if (article) {
-				Util.xhr(article, function(response) {
-					var tempDiv = document.createElement('div');
-					tempDiv.innerHTML = response;
-					Util.q('.sect').outerHTML = Util.q('article', tempDiv).outerHTML;
-				});
+		replaceUsing: function() {
+			return Util.getQueryParameter('LOAD_ARTICLE');
+		},
+		replace: function() {
+			if (this.repalceUsing) {
+				return '.sect';
 			}
+			return null;
+		},
+		replaceWith: function() {
+			if (this.repalceUsing) {
+				return 'article';
+			}
+			return null;
 		}
 	}];
 
@@ -223,33 +230,46 @@
 				});
 			}
 
-			if (imp.referer) {
-				Util.log('Loading xhr with referer: ' + theReferer);
-				var theReferer = typeof imp.referer === 'function' ? imp.referer() : imp.referer;
-				GM_xmlhttpRequest ({
-					method: 'GET',
-					url: W.location.href,
-					headers: {
-						referer: theReferer
-					},
-					anonymous: true,
-					onload: function(response) {
-						Util.log('successfully loaded xhr with referer: ' + theReferer);
-						if (imp.replace) {
-							var replaceSelector = typeof imp.replace === 'function' ? imp.replace() : imp.replace;
+			var replaceSelector = typeof imp.replace === 'function' ? imp.replace() : imp.replace;
+			var replaceUsing = typeof imp.replaceUsing === 'function' ? imp.replaceUsing() : imp.replaceUsing;
+			var theReferer = typeof imp.referer === 'function' ? imp.referer() : imp.referer;
+			if (replaceSelector || replaceUsing || theReferer) {
+				replaceUsing = replaceUsing || W.location.href;
 
-							var tempDiv = document.createElement('div');
-							tempDiv.innerHTML = response.responseText;
+				var replace = function(response) {
+					if (replaceSelector) {
+						var replaceWithSelector = typeof imp.replaceWith === 'function' ? imp.replaceWith() : imp.replaceWith;
+						replaceWithSelector = replaceWithSelector || replaceSelector;
 
-							Util.q(replaceSelector).innerHTML = Util.q(replaceSelector, tempDiv).innerHTML;
-						} else {
-							document.body.innerHTML = response.responseText;
-						}
-					},
-					onerror: function(error) {
-						Util.log('error occured when loading xhr with referer: ' + theReferer, 'error');
+						var tempDiv = document.createElement('div');
+						tempDiv.innerHTML = response;
+
+						Util.q(replaceSelector).innerHTML = Util.q(replaceWithSelector, tempDiv).innerHTML;
+					} else {
+						document.body.innerHTML = response;
 					}
-				});
+				};
+
+				if (theReferer) {
+					Util.log('Loading xhr for "' + replaceUsing + '" with referer: ' + theReferer);
+					GM_xmlhttpRequest ({
+						method: 'GET',
+						url: replaceUsing,
+						headers: {
+							referer: theReferer
+						},
+						anonymous: true,
+						onload: function(response) {
+							replace(response.responseText);
+						},
+						onerror: function(error) {
+							Util.log('error occured when loading xhr with referer: ' + theReferer, 'error');
+						}
+					});
+				}  else {
+					Util.log('Loading xhr for "' + replaceUsing + '"');
+					Util.xhr(replaceUsing, replace);
+				}
 			}
 			Util.log('Paywall Bypassed.');
 		},
