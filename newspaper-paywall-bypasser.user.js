@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.7
+// @version      1.3.8
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -61,7 +61,7 @@
 		}
 	}, {
 		name: 'NY Times',
-		match: '^https?://.*.nytimes.com/.*',
+		match: '^https?://www.nytimes.com/.*',
 		css: {
 			'html, body': {
 				overflow: 'visible'
