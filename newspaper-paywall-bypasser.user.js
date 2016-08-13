@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3
+// @version      1.3.1
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -153,10 +153,7 @@
 					method: 'GET',
 					url: W.location.href,
 					headers: {
-						referer: theReferer,
-						origin: theReferer,
-						'User-agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11',
-						'Cookie': ''
+						referer: theReferer
 					},
 					anonymous: true,
 					onload: function(response) {
