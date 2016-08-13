@@ -61,7 +61,7 @@
 		}
 	}, {
 		name: 'NY Times',
-		match: '^https?://www.nytimes.com/.*',
+		match: '^https?://.*.nytimes.com/.*',
 		css: {
 			'html, body': {
 				overflow: 'visible'
