@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.4
+// @version      1.3.5
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -47,7 +47,7 @@
 		name: 'Wall Street Journal',
 		match: '^https?://www.wsj.com/articles/.*',
 		referer: 'http://www.google.com',
-		replace: '#article_sector > article > div:nth-of-type(1)'
+		replace: 'article > div:nth-of-type(1)'
 	}, {
 		name: 'Boston Globe',
 		match: '^https?://www.bostonglobe.com/.*',
@@ -161,7 +161,6 @@
 					anonymous: true,
 					onload: function(response) {
 						Util.log('successfully loaded xhr with referer: ' + theReferer);
-						console.log(response.responseText);
 						if (imp.replace) {
 							var replaceSelector = typeof imp.replace === 'function' ? imp.replace() : imp.replace;
 
