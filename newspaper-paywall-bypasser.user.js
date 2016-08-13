@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.1
+// @version      1.3.2
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -63,7 +63,7 @@
 		name: 'NY Times',
 		match: '^https?://www.nytimes.com/.*',
 		css: {
-			'html, body, #contain': {
+			'html, body': {
 				overflow: 'visible'
 			},
 			'#gatewayCreative, #overlay': {
@@ -71,21 +71,23 @@
 			}
 		},
 		fn: function() {
-			// clear intervals once the paywall comes up to prevent changes afterward
-			waitForElems('#gatewayCreative', function() {
-				var interval_id = window.setInterval(null, 9999);
-				for (var i = 1; i < interval_id; i++) {
-					window.clearInterval(i);
-				}
-			}, true);
-
-			// prevent payywall from finding the elements to remove
 			var story = Util.q('.story-body-supplemental');
-			var lede = Util.q('.lede', story);
-			lede.outerHTML = lede.outerHTML.replace(/<figure/, '<div');
-			Util.qq('.story-content', story).forEach(function(paragraph) {
-				paragraph.className = '';
-			});
+			if (story) {
+				// clear intervals once the paywall comes up to prevent changes afterward
+				waitForElems('#gatewayCreative', function() {
+					var interval_id = window.setInterval(null, 9999);
+					for (var i = 1; i < interval_id; i++) {
+						window.clearInterval(i);
+					}
+				}, true);
+
+				// prevent payywall from finding the elements to remove
+				var lede = Util.q('.lede', story);
+				lede.outerHTML = lede.outerHTML.replace(/<figure/, '<div');
+				Util.qq('.story-content', story).forEach(function(paragraph) {
+					paragraph.className = '';
+				});
+			}
 		}
 	}];
 
