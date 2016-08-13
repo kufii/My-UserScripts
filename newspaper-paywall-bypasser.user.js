@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.5
+// @version      1.3.6
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -70,17 +70,8 @@
 				display: 'none'
 			}
 		},
-		fn: function() {
-			var story = Util.q('#story');
+		cleanupStory: function(story) {
 			if (story) {
-				// clear intervals once the paywall comes up to prevent changes afterward
-				waitForElems('#gatewayCreative', function() {
-					var interval_id = window.setInterval(null, 9999);
-					for (var i = 1; i <= interval_id; i++) {
-						window.clearInterval(i);
-					}
-				}, true);
-
 				// prevent payywall from finding the elements to remove
 				Util.qq('figure', story).forEach(function(figure) {
 					figure.outerHTML = figure.outerHTML.replace(/<figure/, '<div').replace(/<\/figure/, '</div');
@@ -89,6 +80,24 @@
 					paragraph.className = '';
 				});
 			}
+			return story;
+		},
+		bmmode: function() {
+			var self = this;
+			Util.clearAllIntervals();
+			Util.xhr(W.location.href, function(response) {
+				var tempDiv = document.createElement('div');
+				tempDiv.innerHTML = response;
+				var story = self.cleanupStory(Util.q('#story', tempDiv));
+				if (story) {
+					Util.q('#story').innerHTML = story.innerHTML;
+				}
+			});
+		},
+		fn: function() {
+			// clear intervals once the paywall comes up to prevent changes afterward
+			waitForElems('#gatewayCreative', Util.clearAllIntervals, true);
+			this.cleanupStory(Util.q('#story'));
 		}
 	}];
 
@@ -106,6 +115,20 @@
 		qq: function(query, context) {
 			return [].slice.call((context || document).querySelectorAll(query));
 		},
+		xhr: function(url, cb) {
+			var xhr = new XMLHttpRequest();
+			xhr.onload = function(e) {
+				cb(xhr.responseText);
+			};
+			xhr.open('GET', url);
+			xhr.send();
+		},
+		clearAllIntervals: function() {
+			var interval_id = window.setInterval(null, 9999);
+			for (var i = 1; i <= interval_id; i++) {
+				window.clearInterval(i);
+			}
+		}
 	};
 
 	var App = {
