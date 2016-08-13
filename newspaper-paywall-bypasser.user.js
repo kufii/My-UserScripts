@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.8
+// @version      1.3.9
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
 // @match        *://www.wsj.com/articles/*
 // @match        *://www.bostonglobe.com/*
 // @match        *://www.nytimes.com/*
+// @match        *://myaccount.nytimes.com/mobile/wall/smart/*
+// @match        *://mobile.nytimes.com/*
 // @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
@@ -99,6 +101,28 @@
 			waitForElems('#gatewayCreative', Util.clearAllIntervals, true);
 			this.cleanupStory(Util.q('#story'));
 		}
+	}, {
+		name: 'NY Times Mobile Redirect',
+		match: '^https?://myaccount.nytimes.com/mobile/wall/smart/.*',
+		fn: function() {
+			var article = Util.getQueryParameter('EXIT_URI');
+			if (article) {
+				W.location.replace('http://mobile.nytimes.com?LOAD_ARTICLE=' + encodeURIComponent(article));
+			}
+		}
+	}, {
+		name: 'NY Times Mobile Loader',
+		match: '^https?://mobile.nytimes.com',
+		fn: function() {
+			var article = Util.getQueryParameter('LOAD_ARTICLE');
+			if (article) {
+				Util.xhr(article, function(response) {
+					var tempDiv = document.createElement('div');
+					tempDiv.innerHTML = response;
+					Util.q('.sect').outerHTML = Util.q('article', tempDiv).outerHTML;
+				});
+			}
+		}
 	}];
 
 	// END OF IMPLEMENTATIONS
@@ -115,13 +139,29 @@
 		qq: function(query, context) {
 			return [].slice.call((context || document).querySelectorAll(query));
 		},
-		xhr: function(url, cb) {
+		xhr: function(url, cb, onerror) {
 			var xhr = new XMLHttpRequest();
 			xhr.onload = function(e) {
 				cb(xhr.responseText);
 			};
+			if (onerror) {
+				xhr.onerror = onerror;
+			} else {
+				xhr.onerror = function(e) {
+					Util.log('Error ' + e.target.status + ' loading xhr for url: ' + url);
+				};
+			}
 			xhr.open('GET', url);
 			xhr.send();
+		},
+		getQueryParameter: function(name, url) {
+			if (!url) url = W.location.href;
+			name = name.replace(/[\[\]]/g, "\\$&");
+			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+				results = regex.exec(url);
+			if (!results) return null;
+			if (!results[2]) return '';
+			return decodeURIComponent(results[2].replace(/\+/g, " "));
 		},
 		clearAllIntervals: function() {
 			var interval_id = window.setInterval(null, 9999);
