@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.9
+// @version      1.3.10
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -113,6 +113,17 @@
 	}, {
 		name: 'NY Times Mobile Loader',
 		match: '^https?://mobile.nytimes.com',
+		css: {
+			'.full-art': {
+				'font-family': 'Georgia,serif',
+				color: '#333'
+			},
+			'.full-art .article-body': {
+				'margin-bottom': '26px',
+				'font-size': '1.6em',
+				'line-height': '1.4em'
+			}
+		},
 		fn: function() {
 			var article = Util.getQueryParameter('LOAD_ARTICLE');
 			if (article) {
