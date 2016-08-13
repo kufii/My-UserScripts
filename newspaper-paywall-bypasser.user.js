@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.3
+// @version      1.3.4
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -76,7 +76,7 @@
 				// clear intervals once the paywall comes up to prevent changes afterward
 				waitForElems('#gatewayCreative', function() {
 					var interval_id = window.setInterval(null, 9999);
-					for (var i = 1; i < interval_id; i++) {
+					for (var i = 1; i <= interval_id; i++) {
 						window.clearInterval(i);
 					}
 				}, true);
