@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.2
+// @version      1.3.3
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -71,7 +71,7 @@
 			}
 		},
 		fn: function() {
-			var story = Util.q('.story-body-supplemental');
+			var story = Util.q('#story');
 			if (story) {
 				// clear intervals once the paywall comes up to prevent changes afterward
 				waitForElems('#gatewayCreative', function() {
@@ -82,8 +82,9 @@
 				}, true);
 
 				// prevent payywall from finding the elements to remove
-				var lede = Util.q('.lede', story);
-				lede.outerHTML = lede.outerHTML.replace(/<figure/, '<div');
+				Util.qq('figure', story).forEach(function(figure) {
+					figure.outerHTML = figure.outerHTML.replace(/<figure/, '<div').replace(/<\/figure/, '</div');
+				});
 				Util.qq('.story-content', story).forEach(function(paragraph) {
 					paragraph.className = '';
 				});
@@ -104,7 +105,7 @@
 		},
 		qq: function(query, context) {
 			return [].slice.call((context || document).querySelectorAll(query));
-		}
+		},
 	};
 
 	var App = {
