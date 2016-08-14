@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird 10 Point Ratings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.2
+// @version      1.5.3
 // @description  Converts Hummingbird ratings to a 10 point scale
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -78,9 +78,9 @@
 		};
 
 		widget.style.visibility = 'hidden';
-		widget.style.zIndex = 0;
-		select.style.marginTop = -widget.offsetHeight + 'px';
-		select.style.zIndex = 1;
+		widget.style.position = 'absolute';
+		widget.style.top = 0;
+		widget.style.left = 0;
 		widget.parentNode.appendChild(select);
 	};
 
@@ -112,41 +112,42 @@
 	waitForElems('#library-sections .list-item-score', convertRatingsList);
 
 	var convertAnimePage = function() {
-		var score = Util.q('.hb-score > h3 > .highlight');
-		score.style.display = 'none';
-		var newScore = Util.q('.tenpoint', score.parentNode);
-		if (!newScore) {
-			newScore = document.createElement('span');
-			newScore.classList = score.classList;
-			newScore.classList.add('tenpoint');
-			score.parentNode.appendChild(newScore);
-		}
-		newScore.textContent = (parseFloat(score.textContent) * 2).toFixed(2);
+		waitForElems('.hb-score > h3 > .highlight', function(score) {
+			score.style.display = 'none';
+			var newScore = Util.q('.tenpoint', score.parentNode);
+			if (!newScore) {
+				newScore = document.createElement('span');
+				newScore.classList = score.classList;
+				newScore.classList.add('tenpoint');
+				score.parentNode.appendChild(newScore);
+			}
+			newScore.textContent = (parseFloat(score.textContent) * 2).toFixed(2);
 
-		var columns = Util.qq('.community-rating-wrapper > li');
-		columns.forEach(function(column) {
-			var tooltipData = column.dataset.tooltip.split(' ');
-			tooltipData[tooltipData.length - 1] = parseInt(tooltipData[tooltipData.length - 1] * 2);
-			var tooltip = tooltipData.join(' ');
-			column.dataset.tooltip = tooltip;
-			column.setAttribute('title', tooltip);
-		});
-
-		var stars = Util.qq('.lowest-rating > .fa-star-half-o, .highest-rating > .fa-star');
-		if (stars.length > 0) {
-			stars.forEach(function(star) {
-				star.remove();
+			var columns = Util.qq('.community-rating-wrapper > li');
+			columns.forEach(function(column) {
+				var tooltipData = column.dataset.tooltip.split(' ');
+				tooltipData[tooltipData.length - 1] = parseInt(tooltipData[tooltipData.length - 1] * 2);
+				var tooltip = tooltipData.join(' ');
+				column.dataset.tooltip = tooltip;
+				column.setAttribute('title', tooltip);
 			});
-			var lowestRating = Util.q('.lowest-rating');
-			lowestRating.innerHTML = 0 + lowestRating.innerHTML;
-			var highestRating = Util.q('.highest-rating');
-			highestRating.innerHTML += 10;
-		}
 
-		var widget = Util.q('.awesome-rating-widget');
-		var oldSelect = Util.q('select.tenpoint', widget.parentNode);
-		if (oldSelect) oldSelect.remove();
-		convertWidget(widget);
+			var stars = Util.qq('.lowest-rating > .fa-star-half-o, .highest-rating > .fa-star');
+			if (stars.length > 0) {
+				stars.forEach(function(star) {
+					star.remove();
+				});
+				var lowestRating = Util.q('.lowest-rating');
+				lowestRating.innerHTML = 0 + lowestRating.innerHTML;
+				var highestRating = Util.q('.highest-rating');
+				highestRating.innerHTML += 10;
+			}
+
+			var widget = Util.q('.awesome-rating-widget');
+			var oldSelect = Util.q('select.tenpoint', widget.parentNode);
+			if (oldSelect) oldSelect.remove();
+			convertWidget(widget);
+		}, true);
 	};
 	waitForUrl(/^https?:\/\/hummingbird\.me\/(anime|manga)\/[^\/]+\/?(\?*)?$/, convertAnimePage);
 
