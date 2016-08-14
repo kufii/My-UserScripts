@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird 10 Point Ratings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5
+// @version      1.5.1
 // @description  Converts Hummingbird ratings to a 10 point scale
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -25,16 +25,6 @@
 		},
 		qq: function(query, context) {
 			return [].slice.call((context || document).querySelectorAll(query));
-		},
-		getOffset: function(el) {
-			var x = 0;
-			var y = 0;
-			while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
-				x += el.offsetLeft - el.scrollLeft;
-				y += el.offsetTop - el.scrollTop;
-				el = el.offsetParent;
-			}
-			return { top: y, left: x };
 		}
 	};
 
@@ -61,9 +51,10 @@
 
 		var clickWidget = function(num) {
 			var star = Util.q('span:nth-of-type(' + Math.ceil(num / 2) + ')', widget);
+			var bounds = star.getBoundingClientRect();
 			var offset = Util.getOffset(star);
-			var pageY = offset.top;
-			var pageX = offset.left + star.offsetWidth / 2;
+			var pageY = bounds.top;
+			var pageX = bounds.left + bounds.width / 2;
 			if (num % 2 === 0) {
 				pageX += 1;
 			} else {
