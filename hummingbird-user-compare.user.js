@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird User Compare
 // @namespace    https://greasyfork.org/users/649
-// @version      3.1
+// @version      3.1.1
 // @description  Adds a button that compares the anime list of a hummingbird user against yours
 // @author       kufii, fuzetsu
 // @match        *://hummingbird.me/*
@@ -16,6 +16,8 @@
 	var SCRIPT_NAME = 'Hummingbird User Compare';
 	var BTN_ID = 'huc-compare-button';
 	var COMPAT_ID = 'huc-compat-table';
+	var ANIME_ID = 'huc-anime';
+	var MANGA_ID = 'huc-manga';
 	var USERNAME_SELECTOR = 'h2.username';
 	var CACHE = {};
 
@@ -109,10 +111,10 @@
 
 			var types = [{
 				type: 'Anime:',
-				id: 'huc-anime'
+				id: ANIME_ID
 			}, {
 				type: 'Manga:',
-				id: 'huc-manga'
+				id: MANGA_ID
 			}];
 
 			types.forEach(function(type) {
@@ -133,6 +135,13 @@
 			});
 
 			return table;
+		},
+		getMessage: function(data) {
+			var msg = data.phrase;
+			if (data.value) {
+				msg += ' (' + data.percent + ')';
+			}
+			return msg;
 		}
 	};
 
@@ -169,40 +178,30 @@
 
 			var container = btnFollow.parentNode;
 
-			if (btn) {
-				btn.href = compare.url;
-			} else {
+			if (!btn) {
 				btn = document.createElement('a');
 				btn.className = btnFollow.className;
 				btn.id = BTN_ID;
 				btn.textContent = 'Compare';
 				btn.target = '_blank';
 				btn.setAttribute('style', 'right: ' + (btnFollow.clientWidth + 10) + 'px; background: rgb(236, 134, 97); color: white;');
-				btn.href = compare.url;
 				container.appendChild(btn);
 			}
+			btn.href = compare.url;
 
 			if (!compat) {
 				compat = hb.getTable();
 				container.appendChild(compat);
 			}
-			var animeNode = Util.q('#huc-anime', compat);
-			var mangaNode = Util.q('#huc-manga', compat);
+			var animeNode = Util.q('#' + ANIME_ID, compat);
+			var mangaNode = Util.q('#' + MANGA_ID, compat);
 
 			animeNode.textContent = mangaNode.textContent = 'Loading...';
 
 			Util.log('Getting compatibility...');
 			hb.getCompatibility(function(anime, manga) {
-				var animeMsg = anime.phrase;
-				if (anime.value) {
-					animeMsg += ' (' + anime.percent + ')';
-				}
-				var mangaMsg = manga.phrase;
-				if (manga.value) {
-					mangaMsg += ' (' + manga.percent + ')';
-				}
-				animeNode.textContent = animeMsg;
-				mangaNode.textContent = mangaMsg;
+				animeNode.textContent = hb.getMessage(anime);
+				mangaNode.textContent = hb.getMessage(manga);
 			});
 		}, true);
 	});
