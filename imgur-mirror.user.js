@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Imgur Mirror
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.13
+// @version      1.0.14
 // @description  Switches all imgur links to the mirror site http://kageurufu.net/imgur
 // @author       Adrien Pyke
 // @include      http*
@@ -12,7 +12,7 @@
 (function() {
 	'use strict';
 
-	var regex = /imgur\.com\/(?!a\/|gallery\/)([a-z0-9]+)(\.+[a-z0-9]+)?/i;
+	var regex = /imgur\.com\/(?!a\/|gallery\/)(?:r\/[a-z0-9_]+\/)?([a-z0-9]+)(\.+[a-z0-9]+)?/i;
 
 	var getNewLink = function(imgurLink, useGif) {
 		var match = imgurLink.match(regex);
