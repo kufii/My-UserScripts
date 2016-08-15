@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird 10 Point Ratings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.3
+// @version      1.5.4
 // @description  Converts Hummingbird ratings to a 10 point scale
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -13,6 +13,9 @@
 	'use strict';
 
 	var SCRIPT_NAME = 'Hummingbird 10 Point';
+	var ANIME_REGEX = /^https?:\/\/hummingbird\.me\/(anime|manga)\/[^\/]+\/?(\?*)?$/;
+	var REVIEW_REGEX = /^https?:\/\/hummingbird\.me\/(anime|manga)\/[^\/]+\/reviews\/[^\/]+\/?(\?*)?$/;
+	var SETTINGS_REGEX = /^https?:\/\/hummingbird\.me\/settings/;
 
 	var Util = {
 		log: function () {
@@ -149,11 +152,11 @@
 			convertWidget(widget);
 		}, true);
 	};
-	waitForUrl(/^https?:\/\/hummingbird\.me\/(anime|manga)\/[^\/]+\/?(\?*)?$/, convertAnimePage);
+	waitForUrl(ANIME_REGEX, convertAnimePage);
 
 	waitForElems('.awesome-rating-widget', function(widget) {
-		if (!location.href.match(/^https?:\/\/hummingbird\.me\/(anime|manga)\/[^\/]+\/?(\?*)?$/) &&
-			!location.href.match(/^https:?\/\/hummingbird\.me\/settings/)) {
+		if (!location.href.match(ANIME_REGEX) &&
+			!location.href.match(SETTINGS_REGEX)) {
 			convertWidget(widget);
 		}
 	});
@@ -174,5 +177,5 @@
 			});
 		}, true);
 	};
-	waitForUrl(/^https?:\/\/hummingbird\.me\/(anime|manga)\/[^\/]+\/reviews\/[^\/]+\/?(\?*)?$/, convertReviewPage);
+	waitForUrl(REVIEW_REGEX, convertReviewPage);
 })();
