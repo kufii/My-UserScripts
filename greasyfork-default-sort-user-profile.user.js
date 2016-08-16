@@ -1,10 +1,11 @@
 // ==UserScript==
-// @name         Greasy Fork - Change Default Script Sort on User Profiles
+// @name         Greasy Fork - Change Default Script Sort
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.4
-// @description  Change default script sort on user profiles
+// @version      1.1
+// @description  Change default script sort on GreasyFork
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/*/users/*
+// @match        *://greasyfork.org/*/scripts*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
@@ -59,13 +60,24 @@
 	var Config = {
 		load: function() {
 			var defaults = {
-				sort: 'daily-installs'
+				all: 'daily-installs',
+				search: 'relevance',
+				user: 'daily-installs'
 			};
 
 			var cfg = GM_getValue('cfg');
 			if (!cfg) return defaults;
 
-			return JSON.parse(cfg);
+			cfg = JSON.parse(cfg);
+			for (var property in defaults) {
+				if (defaults.hasOwnProperty(property)) {
+					if (!cfg[property]) {
+						cfg[property] = defaults[property];
+					}
+				}
+			}
+
+			return cfg;
 		},
 
 		save: function (cfg) {
@@ -73,6 +85,17 @@
 		},
 
 		setup: function() {
+			var createContainer = function() {
+				var div = document.createElement('div');
+				div.style.backgroundColor = 'white';
+				div.style.padding = '5px';
+				div.style.border = '1px solid black';
+				div.style.position = 'fixed';
+				div.style.top = '0';
+				div.style.right = '0';
+				return div;
+			};
+
 			var createSelect = function(label, options, value) {
 				var select = document.createElement('select');
 				select.style.margin = '2px';
@@ -99,29 +122,61 @@
 				return button;
 			};
 
-			var init = function(cfg) {
-				var div = document.createElement('div');
-				div.style.backgroundColor = 'white';
-				div.style.border = '1px solid black';
-				div.style.position = 'absolute';
-				div.style.top = '0';
-				div.style.right = '0';
+			var createLabel = function(label) {
+				var lbl = document.createElement('span');
+				lbl.textContent = label;
+				return lbl;
+			};
 
-				var sort = createSelect('Default Sort', [
+			var createLineBreak = function() {
+				return document.createElement('br');
+			};
+
+			var init = function(cfg) {
+				var div = createContainer();
+
+				var all = createSelect('All Scripts Sort', [
 					{ value: 'daily-installs', text: 'Daily installs' },
 					{ value: 'total_installs', text: 'Total installs' },
 					{ value: 'ratings', text: 'Ratings' },
-					{ value: 'created', text: 'Created' },
-					{ value: 'updated', text: 'Updated' },
+					{ value: 'created', text: 'Created date' },
+					{ value: 'updated', text: 'Updated date' },
 					{ value: 'name', text: 'Name' }
-				], cfg.sort);
-				div.appendChild(sort);
+				], cfg.all);
+				div.appendChild(createLabel('All Scripts Sort: '));
+				div.appendChild(all);
+				div.appendChild(createLineBreak());
 
-				div.appendChild(document.createElement('br'));
+				var search = createSelect('Search Sort', [
+					{ value: 'relevance', text: 'Relevance' },
+					{ value: 'daily-installs', text: 'Daily installs' },
+					{ value: 'total_installs', text: 'Total installs' },
+					{ value: 'ratings', text: 'Ratings' },
+					{ value: 'created', text: 'Created date' },
+					{ value: 'updated', text: 'Updated date' },
+					{ value: 'name', text: 'Name' }
+				], cfg.search);
+				div.appendChild(createLabel('Search Sort: '));
+				div.appendChild(search);
+				div.appendChild(createLineBreak());
+
+				var user = createSelect('User Profile Sort', [
+					{ value: 'daily-installs', text: 'Daily installs' },
+					{ value: 'total_installs', text: 'Total installs' },
+					{ value: 'ratings', text: 'Ratings' },
+					{ value: 'created', text: 'Created date' },
+					{ value: 'updated', text: 'Updated date' },
+					{ value: 'name', text: 'Name' }
+				], cfg.user);
+				div.appendChild(createLabel('User Profile Sort: '));
+				div.appendChild(user);
+				div.appendChild(createLineBreak());
 
 				div.appendChild(createButton('Save', function(e) {
 					var settings = {
-						sort: sort.value
+						all: all.value,
+						search: search.value,
+						user: user.value
 					};
 					Config.save(settings);
 					div.remove();
@@ -139,16 +194,34 @@
 
 	GM_registerMenuCommand('GreasyFork Sort Settings', Config.setup);
 
+	var onScripts = location.href.match(/^https?:\/\/greasyfork\.org\/[^\/]+\/scripts\/?(?:\?.*)?$/i);
+	var onSearch = location.href.match(/^https?:\/\/greasyfork\.org\/[^\/]+\/scripts\/search?(?:\?.*)?$/i);
+	var onProfile = location.href.match(/^https?:\/\/greasyfork\.org\/[^\/]+\/users\/[^\/]+?(?:\?.*)?$/i);
+
 	document.addEventListener('DOMContentLoaded', function(e) {
-		var dailyInstalls = document.querySelector('#script-list-sort > ul > li:nth-child(1) > a');
-		if (dailyInstalls) {
-			dailyInstalls.href = Util.setQueryParameter('sort', 'daily-installs', dailyInstalls.href);
+		var defaultSort = document.querySelector('#script-list-sort > ul > li:nth-child(1) > a');
+		if (defaultSort) {
+			if (onSearch) {
+				defaultSort.href = Util.setQueryParameter('sort', 'relevance', defaultSort.href);
+			} else {
+				defaultSort.href = Util.setQueryParameter('sort', 'daily-installs', defaultSort.href);
+			}
 		}
 	});
 
 	var sort = Util.getQueryParameter('sort');
 	if (!sort) {
 		var cfg = Config.load();
-		window.location.replace(Util.setQueryParameter('sort', cfg.sort));
+		var cfgSort;
+		if (onScripts) {
+			cfgSort = cfg.all;
+		} else if (onSearch) {
+			cfgSort = cfg.search;
+		} else if (onProfile) {
+			cfgSort = cfg.user;
+		}
+		if (cfgSort) {
+			window.location.replace(Util.setQueryParameter('sort', cfgSort));
+		}
 	}
 })();
