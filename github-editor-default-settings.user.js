@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Editor - Change Default Settings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.6
+// @version      1.0.7
 // @description  change default settings for the github editor
 // @author       Adrien Pyke
 // @match        *://github.com/*/new/*
@@ -40,6 +40,7 @@
 			div.style.position = 'fixed';
 			div.style.top = '0';
 			div.style.right = '0';
+			div.style.zIndex = 99999;
 			return div;
 		};
 
