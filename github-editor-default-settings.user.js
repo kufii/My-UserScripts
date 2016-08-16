@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Editor - Change Default Settings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.5
+// @version      1.0.6
 // @description  change default settings for the github editor
 // @author       Adrien Pyke
 // @match        *://github.com/*/new/*
@@ -32,6 +32,17 @@
 	};
 
 	var setup = function() {
+		var createContainer = function() {
+			var div = document.createElement('div');
+			div.style.backgroundColor = 'white';
+			div.style.padding = '5px';
+			div.style.border = '1px solid black';
+			div.style.position = 'fixed';
+			div.style.top = '0';
+			div.style.right = '0';
+			return div;
+		};
+
 		var createSelect = function(label, options, value) {
 			var select = document.createElement('select');
 			select.style.margin = '2px';
@@ -58,13 +69,12 @@
 			return button;
 		};
 
+		var createLineBreak = function() {
+			return document.createElement('br');
+		};
+
 		var init = function(cfg) {
-			var div = document.createElement('div');
-			div.style.backgroundColor = 'white';
-			div.style.border = '1px solid black';
-			div.style.position = 'absolute';
-			div.style.top = '0';
-			div.style.right = '0';
+			var div = createContainer();
 
 			var indentMode = createSelect('Indent mode', [
 				{ value: 'space', text: 'Spaces' },
@@ -85,7 +95,7 @@
 			], cfg.wrapMode);
 			div.appendChild(wrapMode);
 
-			div.appendChild(document.createElement('br'));
+			div.appendChild(createLineBreak());
 
 			div.appendChild(createButton('Save', function(e) {
 				var settings = {
