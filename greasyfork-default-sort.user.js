@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Greasy Fork - Change Default Script Sort
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1
+// @version      1.1.1
 // @description  Change default script sort on GreasyFork
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/*/users/*
@@ -93,6 +93,7 @@
 				div.style.position = 'fixed';
 				div.style.top = '0';
 				div.style.right = '0';
+				div.style.zIndex = 99999;
 				return div;
 			};
 
