@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird 10 Point Ratings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.4
+// @version      1.5.5
 // @description  Converts Hummingbird ratings to a 10 point scale
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -13,8 +13,8 @@
 	'use strict';
 
 	var SCRIPT_NAME = 'Hummingbird 10 Point';
-	var ANIME_REGEX = /^https?:\/\/hummingbird\.me\/(anime|manga)\/[^\/]+\/?(\?*)?$/;
-	var REVIEW_REGEX = /^https?:\/\/hummingbird\.me\/(anime|manga)\/[^\/]+\/reviews\/[^\/]+\/?(\?*)?$/;
+	var ANIME_REGEX = /^https?:\/\/hummingbird\.me\/(?:anime|manga)\/[^\/]+\/?(?:\?.*)?$/;
+	var REVIEW_REGEX = /^https?:\/\/hummingbird\.me\/(?:anime|manga)\/[^\/]+\/reviews\/[^\/]+\/?(?:\?.*)?$/;
 	var SETTINGS_REGEX = /^https?:\/\/hummingbird\.me\/settings/;
 
 	var Util = {
