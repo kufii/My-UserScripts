@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Editor - Change Default Settings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.7
+// @version      1.0.8
 // @description  change default settings for the github editor
 // @author       Adrien Pyke
 // @match        *://github.com/*/new/*
@@ -9,6 +9,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
+// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
 // ==/UserScript==
 
 (function() {
@@ -146,5 +147,8 @@
 
 	GM_registerMenuCommand('GitHub Editor Settings', setup);
 	var settings = loadConfig();
-	applySettings(settings);
+
+	waitForElems('.ace_content', function() {
+		applySettings(settings);
+	});
 })();
