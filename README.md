@@ -14,5 +14,6 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Newspaper Paywall Bypasser](https://greasyfork.org/en/scripts/18585-newspaper-paywall-bypasser)
 * [Reddit Flair Linkifier](https://greasyfork.org/en/scripts/706-reddit-flair-linkifier)
 * [userstyles.org - Auto Enable Source Editor](https://greasyfork.org/en/scripts/22361-userstyles-org-auto-enable-source-editor)
+* [userstyles.org - auto select keep me logged in](https://greasyfork.org/en/scripts/22419-userstyles-org-auto-select-keep-me-logged-in)
 * [WaniKani Kanjidamage Mnemonics](https://greasyfork.org/en/scripts/20106-wanikani-kanjidamage-mnemonics)
 * [Youtube Middle Click Search](https://greasyfork.org/en/scripts/6031-youtube-middle-click-search)
