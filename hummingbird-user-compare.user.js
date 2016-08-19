@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird User Compare
 // @namespace    https://greasyfork.org/users/649
-// @version      3.1.2
+// @version      3.1.3
 // @description  Adds a button that compares the anime list of a hummingbird user against yours
 // @author       kufii, fuzetsu
 // @match        *://hummingbird.me/*
@@ -147,7 +147,7 @@
 
 	Util.log('Started, waiting for user page...');
 
-	waitForUrl(/^https?:\/\/hummingbird\.me\/anime\/[^\/]+\/?(?:\?.*)?$/, function() {
+	waitForUrl(/^https?:\/\/hummingbird\.me\/users/, function() {
 		// not signed in
 		if(Util.q('.signup-cta')) {
 			Util.log('User not logged in.');
