@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Real Review Scores
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Show that actual review score instead of like/dislike in review quotes
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -128,17 +128,19 @@
 				cb(self.cache[id]);
 			} else {
 				GM_xmlhttpRequest({
-				method: 'GET',
-				url: url,
-				onload: function(response) {
-					var match = response.responseText.match(/window\.preloadData = (.*);\n/);
-					if (match) {
-						var data = JSON.parse(match[1])[2].reviews[0];
-						self.cache[id] = data.rating;
-						cb(data.rating);
+					method: 'GET',
+					url: url,
+					onload: function(response) {
+						var match = response.responseText.match(/window\.preloadData = (.*);\n/);
+						if (match) {
+							var data = JSON.parse(match[1])[2].reviews[0];
+							self.cache[id] = data.rating;
+							cb(data.rating);
+						} else {
+							cb(null);
+						}
 					}
-				}
-			});
+				});
 			}
 		}
 	};
