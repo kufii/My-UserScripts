@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird User Compare
 // @namespace    https://greasyfork.org/users/649
-// @version      3.1.3
+// @version      3.1.4
 // @description  Adds a button that compares the anime list of a hummingbird user against yours
 // @author       kufii, fuzetsu
 // @match        *://hummingbird.me/*
@@ -154,6 +154,8 @@
 			return;
 		}
 
+		var url = location.href;
+
 		Util.log('Found user page, waiting for button area...');
 		waitForElems('.user-cover-options .follow-button:not(#' + BTN_ID + ')', function(btnFollow) {
 			var compare = hb.getCompareUrl();
@@ -200,8 +202,11 @@
 
 			Util.log('Getting compatibility...');
 			hb.getCompatibility(function(anime, manga) {
-				animeNode.textContent = hb.getMessage(anime);
-				mangaNode.textContent = hb.getMessage(manga);
+				// don't output if the url has changed
+				if (location.href === url) {
+					animeNode.textContent = hb.getMessage(anime);
+					mangaNode.textContent = hb.getMessage(manga);
+				}
 			});
 		}, true);
 	});
