@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird 10 Point Ratings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.5
+// @version      1.5.6
 // @description  Converts Hummingbird ratings to a 10 point scale
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -164,7 +164,7 @@
 	var convertReviewPage = function() {
 		waitForElems('.review-breakdown', function(review) {
 			var verdict = review.querySelector('.score-block');
-			var rating = parseFloat(Util.q('.score', verdict).textContent + Util.q('.decimal-score', verdict).textContent);
+			var rating = parseFloat(Util.q('.score', verdict).textContent) + parseFloat(Util.q('.decimal-score', verdict).textContent);
 			verdict.innerHTML = '';
 			var newScore = document.createElement('h1');
 			newScore.classList.add('score');
