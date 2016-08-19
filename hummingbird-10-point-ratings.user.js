@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird 10 Point Ratings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.6
+// @version      1.5.7
 // @description  Converts Hummingbird ratings to a 10 point scale
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -178,4 +178,11 @@
 		}, true);
 	};
 	waitForUrl(REVIEW_REGEX, convertReviewPage);
+
+	var convertUserReviews = function(stars) {
+		var score = Util.qq('.fa-star', stars).length * 2 + Util.qq('.fa-star-half-o', stars).length;
+		stars.innerHTML = score;
+		stars.style.fontWeight = 'bold';
+	};
+	waitForElems('.user-review-listing .review-stars', convertUserReviews);
 })();
