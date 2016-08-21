@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Show MAL fansub info on Hummingbird anime pages
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -270,42 +270,50 @@
 				icon.classList.add('fa', 'fa-external-link');
 				malLink.appendChild(icon);
 
-				var hiddenSpan = document.createElement('span');
-				hiddenSpan.style.display = 'none';
-				var addViewMore = false;
+				if (response.fansubs.length > 0) {
+					var hiddenSpan = document.createElement('span');
+					hiddenSpan.style.display = 'none';
+					var addViewMore = false;
 
-				response.fansubs.forEach(function(fansub, i) {
-					var fansubDiv = App.getFansubOutput(fansub);
-					if (i < 4) {
-						div.appendChild(fansubDiv);
-					} else {
-						hiddenSpan.appendChild(fansubDiv);
-						addViewMore = true;
-					}
-				});
-
-				if (addViewMore) {
-					div.appendChild(hiddenSpan);
-					var viewMoreDiv = document.createElement('div');
-					viewMoreDiv.classList.add('view-more');
-
-					var viewMore = document.createElement('a');
-					viewMore.textContent = 'View More Fansubs';
-					viewMoreDiv.appendChild(viewMore);
-
-					viewMore.onclick = function(e) {
-						e.preventDefault();
-						if (hiddenSpan.style.display === 'none') {
-							hiddenSpan.style.display = 'inline';
-							viewMore.textContent = 'View Less Fansubs';
+					response.fansubs.forEach(function(fansub, i) {
+						var fansubDiv = App.getFansubOutput(fansub);
+						if (i < 4) {
+							div.appendChild(fansubDiv);
 						} else {
-							hiddenSpan.style.display = 'none';
-							viewMore.textContent = 'View More Fansubs';
+							hiddenSpan.appendChild(fansubDiv);
+							addViewMore = true;
 						}
-						return false;
-					};
+					});
 
-					div.appendChild(viewMoreDiv);
+					if (addViewMore) {
+						div.appendChild(hiddenSpan);
+						var viewMoreDiv = document.createElement('div');
+						viewMoreDiv.classList.add('view-more');
+
+						var viewMore = document.createElement('a');
+						viewMore.textContent = 'View More Fansubs';
+						viewMoreDiv.appendChild(viewMore);
+
+						viewMore.onclick = function(e) {
+							e.preventDefault();
+							if (hiddenSpan.style.display === 'none') {
+								hiddenSpan.style.display = 'inline';
+								viewMore.textContent = 'View Less Fansubs';
+							} else {
+								hiddenSpan.style.display = 'none';
+								viewMore.textContent = 'View More Fansubs';
+							}
+							return false;
+						};
+
+						div.appendChild(viewMoreDiv);
+					}
+				} else {
+					var p = document.createElement('p');
+					p.textContent = 'No fansubs found.';
+					p.style.textAlign = 'center';
+					p.style.marginTop = '5px';
+					div.appendChild(p);
 				}
 			}
 		});
