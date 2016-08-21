@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird 10 Point Ratings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.7
+// @version      1.5.8
 // @description  Converts Hummingbird ratings to a 10 point scale
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -147,9 +147,11 @@
 			}
 
 			var widget = Util.q('.awesome-rating-widget');
-			var oldSelect = Util.q('select.tenpoint', widget.parentNode);
-			if (oldSelect) oldSelect.remove();
-			convertWidget(widget);
+			if (widget) {
+				var oldSelect = Util.q('select.tenpoint', widget.parentNode);
+				if (oldSelect) oldSelect.remove();
+				convertWidget(widget);
+			}
 		}, true);
 	};
 	waitForUrl(ANIME_REGEX, convertAnimePage);
