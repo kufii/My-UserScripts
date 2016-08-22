@@ -1,13 +1,16 @@
 // ==UserScript==
 // @name         Hummingbird Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.3
+// @version      1.1
 // @description  Show MAL fansub info on Hummingbird anime pages
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
 // @grant        GM_xmlhttpRequest
 // @grant        GM_addStyle
+// @grant        GM_registerMenuCommand
+// @grant        GM_getValue
+// @grant        GM_setValue
 // ==/UserScript==
 
 (function() {
@@ -70,6 +73,98 @@
 			document.body.appendChild(div);
 		}
 	};
+
+	var Config = {
+		load: function() {
+			var defaults = {
+				lang: null
+			};
+
+			var cfg = GM_getValue('cfg');
+			if (!cfg) return defaults;
+
+			cfg = JSON.parse(cfg);
+			for (var property in defaults) {
+				if (defaults.hasOwnProperty(property)) {
+					if (!cfg[property]) {
+						cfg[property] = defaults[property];
+					}
+				}
+			}
+
+			return cfg;
+		},
+
+		save: function (cfg) {
+			GM_setValue('cfg', JSON.stringify(cfg));
+		},
+
+		setup: function() {
+			var createContainer = function() {
+				var div = document.createElement('div');
+				div.style.backgroundColor = 'white';
+				div.style.padding = '5px';
+				div.style.border = '1px solid black';
+				div.style.position = 'fixed';
+				div.style.top = '0';
+				div.style.right = '0';
+				div.style.zIndex = 99999;
+				return div;
+			};
+
+			var createButton = function(text, onclick) {
+				var button = document.createElement('button');
+				button.style.margin = '2px';
+				button.textContent = text;
+				button.onclick = onclick;
+				return button;
+			};
+
+			var createTextbox = function(value, placeholder) {
+				var input = document.createElement('input');
+				input.value = value;
+				if (placeholder) {
+					input.setAttribute('placeholder', placeholder);
+				}
+				return input;
+			};
+
+			var createLabel = function(label) {
+				var lbl = document.createElement('span');
+				lbl.textContent = label;
+				return lbl;
+			};
+
+			var createLineBreak = function() {
+				return document.createElement('br');
+			};
+
+			var init = function(cfg) {
+				var div = createContainer();
+
+				var lang = createTextbox(cfg.lang, 'Languages (Comma Seperated)');
+				div.appendChild(createLabel('Languages: '));
+				div.appendChild(lang);
+				div.appendChild(createLineBreak());
+
+				div.appendChild(createButton('Save', function(e) {
+					var settings = {
+						lang: lang.value
+					};
+					Config.save(settings);
+					div.remove();
+				}));
+
+				div.appendChild(createButton('Cancel', function(e) {
+					div.remove();
+				}));
+
+				document.body.appendChild(div);
+			};
+			init(Config.load());
+		}
+	};
+	GM_registerMenuCommand('Hummingbird Fansub Info Settings', Config.setup);
 
 	var App = {
 		cache: {},
@@ -247,9 +342,20 @@
 			}
 
 			return fansubDiv;
+		},
+		filterFansubs: function(fansubs, lang) {
+			var langs = lang.split(',').map(function(lang) {
+				return lang.trim().toLowerCase();
+			});
+			return fansubs.filter(function(fansub) {
+				var lang = fansub.lang || 'english';
+				lang = lang.trim().toLowerCase();
+				return langs.includes(lang);
+			});
 		}
 	};
 
+	var cfg = Config.load();
 	waitForUrl(REGEX, function() {
 		var container = Util.q('.community-column');
 
@@ -262,6 +368,10 @@
 		var url = location.href;
 		App.getFansubs(id, function(response) {
 			if (location.href === url) {
+				if (cfg.lang) {
+					response.fansubs = App.filterFansubs(response.fansubs, cfg.lang);
+				}
+
 				var btnGroup = Util.q('.panel-title > .btn-group', div);
 				var malLink = document.createElement('a');
 				malLink.href = response.url;
