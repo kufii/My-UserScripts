@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.1
+// @version      1.0.2
 // @description  Show MAL fansub info on Hummingbird anime pages
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -14,7 +14,7 @@
 	'use strict';
 
 	var SCRIPT_NAME = 'Hummingbird Fansub Info';
-	var API = 'http://hummingbird.me/api/v1';
+	var API = 'https://hummingbird.me/api/v1';
 	var REGEX = /^https?:\/\/hummingbird\.me\/anime\/([^\/]+)\/?(?:\?.*)?$/;
 	var DIV_ID = 'hbfs-fansubs';
 
@@ -78,8 +78,9 @@
 			GM_xmlhttpRequest({
 				method: 'GET',
 				url: API + '/anime/' + id,
-				onload: function(response) {//http://myanimelist.net/anime/5114/Fullmetal_Alchemist__Brotherhood
+				onload: function(response) {
 					Util.log('Loaded Hummingbird info.');
+					console.log(response.responseText);
 					cb(JSON.parse(response.responseText));
 				},
 				onerror: function(err) {
@@ -89,9 +90,10 @@
 		},
 		getMALFansubInfo: function(malid, cb) {
 			Util.log('Loading MAL info...');
+			var url = 'myanimelist.net/anime/' + malid;
 			GM_xmlhttpRequest({
 				method: 'GET',
-				url: 'http://myanimelist.net/anime/' + malid,
+				url: 'https://' + url,
 				onload: function(response) {
 					Util.log('Loaded MAL info.');
 					var tempDiv = document.createElement('div');
@@ -139,7 +141,7 @@
 							};
 						});
 						cb({
-							url: response.finalUrl + '#inlineContent',
+							url: 'http://' + url + '#inlineContent',
 							fansubs: fansubs
 						});
 					} else {
