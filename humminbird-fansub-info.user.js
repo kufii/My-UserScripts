@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.2
+// @version      1.0.3
 // @description  Show MAL fansub info on Hummingbird anime pages
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -80,7 +80,6 @@
 				url: API + '/anime/' + id,
 				onload: function(response) {
 					Util.log('Loaded Hummingbird info.');
-					console.log(response.responseText);
 					cb(JSON.parse(response.responseText));
 				},
 				onerror: function(err) {
