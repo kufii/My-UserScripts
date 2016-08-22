@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Default Japanese Cast
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.2
+// @version      1.2.3
 // @description  Cast on anime pages defaults to Japanese
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -12,7 +12,7 @@
 (function() {
 	'use strict';
 
-	waitForUrl(/^https?:\/\/hummingbird\.me\/anime\/[^\/]+\/?(\?*)?$/, function() {
+	waitForUrl(/^https?:\/\/hummingbird\.me\/anime\/[^\/]+\/?(?:\?.*)?$/, function() {
 		waitForElems('#dropdownMenu1', function(dropdown) {
 			if (dropdown.textContent.trim() !== 'Japanese') {
 				var japaneseButton = [].filter.call(document.querySelectorAll('.cast-language .dropdown-menu li a'), function(elem) {
