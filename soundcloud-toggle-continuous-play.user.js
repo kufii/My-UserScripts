@@ -125,11 +125,16 @@
 	var App = {
 		playButton: Util.q('.playControl'),
 		isPlaying: function(e) {
-			return this.playButton.classList.contains('playing');
+			return App.playButton.classList.contains('playing');
 		},
 		pause: function() {
-			if (this.isPlaying()) {
-				this.playButton.click();
+			if (App.isPlaying()) {
+				App.playButton.click();
+			}
+		},
+		play: function() {
+			if (!App.isPlaying()) {
+				App.playButton.click();
 			}
 		},
 		getPlaying: function() {
@@ -167,14 +172,17 @@
 	var obs = new MutationObserver(function() {
 		var next = App.getPlaying();
 		if (!autoplayControl.checked && current && next !== current) {
-			timeout = setTimeout(App.pause, 0);
+			timeout = setTimeout(function() {
+				Util.log('Pausing...');
+				App.pause();
+			}, 1);
 		}
 		current = next;
 	});
 	obs.observe(Util.q('.playControls__soundBadge'), { subtree: true, childList: true });
 
 	// override the click event for elements that shouldn't trigger a pause
-	waitForElems('.skipControl, .playButton, .waveform, .compactTrackList__item, .fullListenHero__foreground', function(elem) {
+	waitForElems('.skipControl, .playButton, .compactTrackList__item, .waveform__layer, .fullListenHero__foreground', function(elem) {
 		elem.addEventListener('click', function(e) {
 			if (timeout) {
 				clearTimeout(timeout);
@@ -182,6 +190,16 @@
 			}
 		});
 	});
+	// waveforms need to be handled differently
+	waitForElems('.sound__waveform', function(elem) {
+		elem.addEventListener('click', function(e) {
+			setTimeout(function() {
+				Util.log('Playing via Waveform');
+				App.play();
+			}, 0);
+		});
+	});
+
 
 	// fix for buttons constantly showing buffering
 	waitForElems('.sc-button-buffering', function(button) {
