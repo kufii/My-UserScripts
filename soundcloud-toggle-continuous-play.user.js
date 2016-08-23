@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SoundCloud Toggle Continuous Play and Autoplay
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.2
+// @version      1.0.3
 // @description  Adds options to toggle continuous play and autoplay in SoundCloud
 // @author       Adrien Pyke
 // @match        *://soundcloud.com/*
@@ -167,7 +167,7 @@
 	var obs = new MutationObserver(function() {
 		timeout = setTimeout(function() {
 			var next = App.getPlaying();
-			if (!autoplayControl.checked && next !== current) {
+			if (!autoplayControl.checked && current && next !== current) {
 				App.pause();
 			}
 			current = next;
@@ -176,7 +176,7 @@
 	obs.observe(Util.q('.playControls__soundBadge'), { subtree: true, childList: true });
 
 	// override the click event for elements that shouldn't trigger a pause
-	waitForElems('.skipControl, .playButton, .waveform__layer, .fullListenHero__foreground', function(elem) {
+	waitForElems('.skipControl, .playButton, .waveform, .compactTrackList__item, .fullListenHero__foreground', function(elem) {
 		elem.addEventListener('click', function(e) {
 			if (timeout) {
 				clearTimeout(timeout);
