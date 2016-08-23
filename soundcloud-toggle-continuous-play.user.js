@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SoundCloud Toggle Continuous Play and Autoplay
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Adds options to toggle continuous play and autoplay in SoundCloud
 // @author       Adrien Pyke
 // @match        *://soundcloud.com/*
@@ -125,10 +125,7 @@
 	var App = {
 		playButton: Util.q('.playControl'),
 		isPlaying: function(e) {
-			if (this.playButton && this.playButton.classList.contains('playing')) {
-				return true;
-			}
-			return false;
+			return this.playButton.classList.contains('playing');
 		},
 		pause: function() {
 			if (this.isPlaying()) {
