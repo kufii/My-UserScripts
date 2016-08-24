@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Loft Lounge Board Game Filters
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Adds Filters to the Loft Lounge board game page
 // @author       Adrien Pyke
 // @match        *://www.theloftlounge.ca/pages/board-games*
@@ -42,6 +42,12 @@
 			label.appendChild(document.createTextNode(lbl));
 			return label;
 		},
+		createButton: function(text, onclick) {
+			var button = document.createElement('button');
+			button.textContent = text;
+			button.onclick = onclick;
+			return button;
+		},
 		onlyUnique: function(value, index, self) {
 		    return self.indexOf(value) === index;
 		},
@@ -49,11 +55,17 @@
 			return str.replace(/\w\S*/g, function(txt){
 				return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 			});
+		},
+		addStyle: function(css) {
+			var style = document.createElement('style');
+			style.textContent = css;
+			document.head.appendChild(style);
 		}
 	};
 
 	var table = Util.q('#page-content > div > table > tbody');
 	Util.q('tr:nth-of-type(1)', table).classList.add('us-first');
+	Util.addStyle('tr.us-first { font-weight: bold; }');
 
 	var rows = Util.qq('tr:not(.us-first)', table);
 	var categories = rows.map(function(row) {
@@ -101,10 +113,19 @@
 
 	nameFilter.oninput = filter;
 
+	var categoryDiv = document.createElement('div');
+	categoryDiv.style.border = '1px solid black';
+	categoryDiv.style.backgroundColor = 'white';
+	categoryDiv.style.color = 'black';
+	categoryDiv.style.position = 'absolute';
+	categoryDiv.style.display = 'none';
+
+	var categorySpan = document.createElement('span');
+
 	categories.forEach(function(category) {
 		var label = Util.createCheckbox(category);
-		td2.appendChild(label);
-		td2.appendChild(document.createElement('br'));
+		categoryDiv.appendChild(label);
+		categoryDiv.appendChild(document.createElement('br'));
 		var check = Util.q('input', label);
 		check.onchange = function(e) {
 			var cat = category.trim().toLowerCase();
@@ -118,9 +139,31 @@
 					selectedCategories.splice(index, 1);
 				}
 			}
+			categorySpan.textContent = selectedCategories.map(function(category) {
+				return Util.toTitleCase(category);
+			}).join(', ');
 			filter();
 		};
 	});
+
+	var categoryButton = Util.createButton('Categories...', function(e) {
+		if (categoryDiv.style.display === 'none') {
+			categoryDiv.style.display = 'block';
+		} else {
+			categoryDiv.style.display = 'none';
+		}
+	});
+
+	document.body.addEventListener('click', function(e) {
+		if (e.target !== categoryButton && !categoryDiv.contains(e.target)) {
+			categoryDiv.style.display = 'none';
+		}
+	});
+
+	td2.appendChild(categoryButton);
+	td2.appendChild(document.createElement('br'));
+	td2.appendChild(categoryDiv);
+	td2.appendChild(categorySpan);
 
 	Util.prepend(table, tr);
 })();
