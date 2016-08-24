@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         The Works Burger Chooser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Choose a random burger on the works menu
 // @author       Adrien Pyke
 // @match        *://www.worksburger.com/Menu/Burger-Menu.aspx*
@@ -30,7 +30,7 @@
 		css: function(css) {
 			var out = '';
 			for (var rule in css) {
-				out += rule + ':' + css[rule] + ';';
+				out += rule + ':' + css[rule] + '!important;';
 			}
 			return out;
 		},
@@ -79,11 +79,18 @@
 		Util.log('Adding Button...');
 		var button = document.createElement('button');
 		button.textContent = 'Choose Random Burger';
+		button.setAttribute('style', Util.css({
+			'position': 'fixed',
+			'bottom': '20px',
+			'left': '20px',
+			'padding': '5px',
+			'z-index': 99999
+		}));
 		button.onclick = function(e) {
 			e.stopImmediatePropagation();
 			e.preventDefault();
 			selectBurger();
 		};
-		Util.prepend(Util.q('.back-contain'), button);
+		document.body.appendChild(button);
 	}
 })();
