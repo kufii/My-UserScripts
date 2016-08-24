@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         The Works Burger Chooser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.1
+// @version      1.0.2
 // @description  Choose a random burger on the works menu
 // @author       Adrien Pyke
 // @match        *://www.worksburger.com/Menu/Burger-Menu.aspx*
@@ -53,8 +53,6 @@
 		var burgers = Util.qq('.burger-block');
 		burgers.forEach(function(burger) {
 			burger.removeAttribute('style');
-			var img = Util.q('img', burger);
-			img.src = img.dataset.original;
 		});
 
 		var burger = burgers[Math.floor(Math.random() * burgers.length)];
