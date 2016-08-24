@@ -18,6 +18,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Prevent Wikia Ads](https://greasyfork.org/en/scripts/22420-prevent-wikia-ads)
 * [Reddit Flair Linkifier](https://greasyfork.org/en/scripts/706-reddit-flair-linkifier)
 * [SoundCloud Toggle Continuous Play and Autoplay](https://greasyfork.org/en/scripts/22549-soundcloud-toggle-continuous-play-and-autoplay)
+* [The Works Burger Chooser](https://greasyfork.org/en/scripts/22582-the-works-burger-chooser)
 * [userstyles.org - Auto Enable Source Editor](https://greasyfork.org/en/scripts/22361-userstyles-org-auto-enable-source-editor)
 * [userstyles.org - auto select keep me logged in](https://greasyfork.org/en/scripts/22419-userstyles-org-auto-select-keep-me-logged-in)
 * [WaniKani Kanjidamage Mnemonics](https://greasyfork.org/en/scripts/20106-wanikani-kanjidamage-mnemonics)
