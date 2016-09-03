@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Batoto Links
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.1
+// @version      1.0.2
 // @description  Adds Batoto links to Hummingbird Manga pages
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -90,7 +90,7 @@
 			}
 			var url = location.href;
 			App.getBatotoPage(Util.shallowTextContent(title), function(manga) {
-				if (location.href === url) {
+				if (location.href === url && manga) {
 					var link = document.createElement('a');
 					link.href = manga;
 					link.setAttribute('target', '_blank');
