@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Batoto Links
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.2
+// @version      1.1
 // @description  Adds Batoto links to Hummingbird Manga pages
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -39,7 +39,7 @@
 			}
 
 			return texts.join('');
-		}
+		},
 	};
 
 	var App = {
@@ -50,16 +50,17 @@
 				Util.log('Loading cached info');
 				cb(self.cache[title]);
 			} else {
-				Util.log('Searching Batoto');
+				var url = 'https://www.google.com/search?q=' + encodeURIComponent(title.trim() + ' site:bato.to/comic/_/comics');
+				Util.log('Searching google for batoto page: ', url);
 				GM_xmlhttpRequest({
 					method: 'GET',
-					url: 'https://bato.to/search?name=' + encodeURIComponent(title.trim()),
+					url: url,
 					onload: function(response) {
-						Util.log('Laoded batoto search');
+						Util.log('Loaded batoto google search');
 						var tempDiv = document.createElement('div');
 						tempDiv.innerHTML = response.responseText;
 
-						var manga = Util.q('#comic_search_results > table > tbody > tr:nth-child(2) > td:nth-child(1) > strong > a', tempDiv);
+						var manga = Util.q('#rso > div > div:nth-child(1) h3 > a', tempDiv);
 						if (manga) {
 							Util.log(manga.href);
 							self.cache[title] = manga.href;
@@ -71,7 +72,7 @@
 						}
 					},
 					onerror: function() {
-						Util.log('Error searching batoto');
+						Util.log('Error searching google');
 					}
 				});
 			}
