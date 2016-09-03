@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Batoto Links
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Adds Batoto links to Hummingbird Manga pages
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
