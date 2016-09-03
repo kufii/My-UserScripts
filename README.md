@@ -8,6 +8,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Greasy Fork - Auto Enable Syntax-Highlighting Source Editor](https://greasyfork.org/en/scripts/22223-greasy-fork-auto-enable-syntax-highlighting-source-editor)
 * [Greasy Fork - Change Default Script Sort on User Profiles](https://greasyfork.org/en/scripts/22202-greasy-fork-change-default-script-sort-on-user-profiles)
 * [Hummingbird 10 Point Ratings](https://greasyfork.org/en/scripts/707-hummingbird-10-point-ratings)
+* [Hummingbird Batoto Links](https://greasyfork.org/en/scripts/22888-hummingbird-batoto-links)
 * [Hummingbird Default Japanese Cast](https://greasyfork.org/en/scripts/6847-hummingbird-default-japanese-cast)
 * [Hummingbird Fansub Info](https://greasyfork.org/en/scripts/22500-hummingbird-fansub-info)
 * [Hummingbird Real Review Scores](https://greasyfork.org/en/scripts/22439-hummingbird-real-review-scores)
