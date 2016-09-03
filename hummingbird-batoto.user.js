@@ -38,7 +38,7 @@
 				child = child.nextSibling;
 			}
 
-			var text = texts.join('');
+			return texts.join('');
 		}
 	};
 
@@ -46,11 +46,33 @@
 		cache: {},
 		getBatotoPage: function(title, cb) {
 			var self = this;
-			if (self.cache[title]) {
-				return cb(self.cache(title));
+			if (self.cache.hasOwnProperty(title)) {
+				Util.log('Loading cached info');
+				cb(self.cache[title]);
 			} else {
+				Util.log('Searching Batoto');
 				GM_xmlhttpRequest({
+					method: 'GET',
+					url: 'https://bato.to/search?name=' + encodeURIComponent(title.trim()),
+					onload: function(response) {
+						Util.log('Laoded batoto search');
+						var tempDiv = document.createElement('div');
+						tempDiv.innerHTML = response.responseText;
 
+						var manga = Util.q('#comic_search_results > table > tbody > tr:nth-child(2) > td:nth-child(1) > strong > a', tempDiv);
+						if (manga) {
+							Util.log(manga.href);
+							self.cache[title] = manga.href;
+							cb(manga.href);
+						} else {
+							Util.log('No results');
+							self.cache[title] = null;
+							cb(null);
+						}
+					},
+					onerror: function() {
+						Util.log('Error searching batoto');
+					}
 				});
 			}
 		}
@@ -64,7 +86,20 @@
 			} else {
 				btnGroup = document.createElement('div');
 				btnGroup.classList.add('btn-group');
+				title.appendChild(btnGroup);
 			}
+			var url = location.href;
+			App.getBatotoPage(Util.shallowTextContent(title), function(manga) {
+				if (location.href === url) {
+					var link = document.createElement('a');
+					link.href = manga;
+					link.setAttribute('target', '_blank');
+					var icon = document.createElement('i');
+					icon.classList.add('fa', 'fa-book');
+					link.appendChild(icon);
+					btnGroup.appendChild(link);
+				}
+			});
 		}, true);
 	});
 })();
