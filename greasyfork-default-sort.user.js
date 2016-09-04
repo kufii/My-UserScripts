@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Greasy Fork - Change Default Script Sort
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.1
+// @version      1.1.2
 // @description  Change default script sort on GreasyFork
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/*/users/*
@@ -150,7 +150,7 @@
 
 				var search = createSelect('Search Sort', [
 					{ value: 'relevance', text: 'Relevance' },
-					{ value: 'daily-installs', text: 'Daily installs' },
+					{ value: 'daily_installs', text: 'Daily installs' },
 					{ value: 'total_installs', text: 'Total installs' },
 					{ value: 'ratings', text: 'Ratings' },
 					{ value: 'created', text: 'Created date' },
