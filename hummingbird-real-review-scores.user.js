@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Real Review Scores
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.1
+// @version      1.0.2
 // @description  Show that actual review score instead of like/dislike in review quotes
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -36,7 +36,7 @@
 			return cfg;
 		},
 
-		save: function (cfg) {
+		save: function(cfg) {
 			GM_setValue('cfg', JSON.stringify(cfg));
 		},
 

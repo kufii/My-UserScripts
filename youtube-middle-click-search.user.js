@@ -52,7 +52,7 @@
 
 	var processResults = function() {
 		var elements = document.querySelectorAll('.gssb_e .gsq_a');
-		[].forEach.call(elements, function (element) {
+		[].forEach.call(elements, function(element) {
 			if (element) {
 				element.onmousedown =  function(e) {
 					if (e.button === 1) {

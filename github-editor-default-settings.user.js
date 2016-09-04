@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Editor - Change Default Settings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.8
+// @version      1.0.9
 // @description  change default settings for the github editor
 // @author       Adrien Pyke
 // @match        *://github.com/*/new/*
@@ -28,7 +28,7 @@
 		return JSON.parse(cfg);
 	};
 
-	var saveConfig = function (cfg) {
+	var saveConfig = function(cfg) {
 		GM_setValue('cfg', JSON.stringify(cfg));
 	};
 

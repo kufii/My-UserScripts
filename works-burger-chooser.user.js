@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         The Works Burger Chooser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.2
+// @version      1.0.3
 // @description  Choose a random burger on the works menu
 // @author       Adrien Pyke
 // @match        *://www.worksburger.com/Menu/Burger-Menu.aspx*
@@ -16,7 +16,7 @@
 	var SCRIPT_NAME = 'The Works Burger Chooser';
 
 	var Util = {
-		log: function () {
+		log: function() {
 			var args = [].slice.call(arguments);
 			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
 			console.log.apply(console, args);

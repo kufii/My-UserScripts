@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Loft Lounge Board Game Filters
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.3
+// @version      1.0.4
 // @description  Adds Filters to the Loft Lounge board game page
 // @author       Adrien Pyke
 // @match        *://www.theloftlounge.ca/pages/board-games*
@@ -15,7 +15,7 @@
 	var SCRIPT_NAME = 'Loft Lounge Board Game Filters';
 
 	var Util = {
-		log: function () {
+		log: function() {
 			var args = [].slice.call(arguments);
 			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
 			console.log.apply(console, args);

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.6
+// @version      1.0.7
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
@@ -19,7 +19,7 @@
 	var cachedKanji = [];
 
 	var Util = {
-		log: function () {
+		log: function() {
 			var args = [].slice.call(arguments);
 			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
 			console.log.apply(console, args);

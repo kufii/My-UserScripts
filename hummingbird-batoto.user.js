@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Batoto Links
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1
+// @version      1.1.1
 // @description  Adds Batoto links to Hummingbird Manga pages
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -16,7 +16,7 @@
 	var MANGA_REGEX = /^https?:\/\/hummingbird\.me\/manga\/[^\/]+\/?(?:\?.*)?$/;
 
 	var Util = {
-		log: function () {
+		log: function() {
 			var args = [].slice.call(arguments);
 			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
 			console.log.apply(console, args);

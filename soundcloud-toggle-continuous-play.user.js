@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SoundCloud Toggle Continuous Play and Autoplay
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.6
+// @version      1.0.7
 // @description  Adds options to toggle continuous play and autoplay in SoundCloud
 // @author       Adrien Pyke
 // @match        *://soundcloud.com/*
@@ -17,7 +17,7 @@
 	var SCRIPT_NAME = 'SoundCloud Toggle Continuous Play and Autoplay';
 
 	var Util = {
-		log: function () {
+		log: function() {
 			var args = [].slice.call(arguments);
 			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
 			console.log.apply(console, args);
@@ -60,7 +60,7 @@
 			return cfg;
 		},
 
-		save: function (cfg) {
+		save: function(cfg) {
 			GM_setValue('cfg', JSON.stringify(cfg));
 		},
 

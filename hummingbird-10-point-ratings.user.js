@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird 10 Point Ratings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.10
+// @version      1.5.11
 // @description  Converts Hummingbird ratings to a 10 point scale
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -18,7 +18,7 @@
 	var SETTINGS_REGEX = /^https?:\/\/hummingbird\.me\/settings/;
 
 	var Util = {
-		log: function () {
+		log: function() {
 			var args = [].slice.call(arguments);
 			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
 			console.log.apply(console, args);

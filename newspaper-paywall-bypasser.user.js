@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4
+// @version      1.4.1
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -24,7 +24,7 @@
 	var SCRIPT_NAME = 'Newspaper Paywall Bypasser';
 
 	var Util = {
-		log: function () {
+		log: function() {
 			var args = [].slice.call(arguments);
 			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
 			console.log.apply(console, args);

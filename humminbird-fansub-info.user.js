@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1
+// @version      1.1.1
 // @description  Show MAL fansub info on Hummingbird anime pages
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -24,7 +24,7 @@
 	GM_addStyle('.trending-review-empty { margin-bottom: 20px; }');
 
 	var Util = {
-		log: function () {
+		log: function() {
 			var args = [].slice.call(arguments);
 			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
 			console.log.apply(console, args);
@@ -95,7 +95,7 @@
 			return cfg;
 		},
 
-		save: function (cfg) {
+		save: function(cfg) {
 			GM_setValue('cfg', JSON.stringify(cfg));
 		},
 

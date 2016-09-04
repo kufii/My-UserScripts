@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Greasy Fork - Change Default Script Sort
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.2
+// @version      1.1.3
 // @description  Change default script sort on GreasyFork
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/*/users/*
@@ -80,7 +80,7 @@
 			return cfg;
 		},
 
-		save: function (cfg) {
+		save: function(cfg) {
 			GM_setValue('cfg', JSON.stringify(cfg));
 		},
 
