@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Loft Lounge Board Game Filters
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.2
+// @version      1.0.3
 // @description  Adds Filters to the Loft Lounge board game page
 // @author       Adrien Pyke
 // @match        *://www.theloftlounge.ca/pages/board-games*
@@ -61,7 +61,17 @@
 	var table = Util.q('#page-content > div > table > tbody');
 	var rows = Util.qq('tr', table);
 	var categories = rows.map(function(row) {
-		return Util.toTitleCase(Util.q('td:nth-of-type(2)', row).textContent.trim());
+		var typos = {
+			'Basment': 'Basement',
+			'Basment Game': 'Basement',
+			'2-player Small': 'Two Player Small'
+		};
+		var td = Util.q('td:nth-of-type(2)', row);
+		var category = Util.toTitleCase(td.textContent.trim());
+		if (typos[category]) {
+			td.textContent = category = typos[category];
+		}
+		return category;
 	}).filter(Util.onlyUnique).sort();
 
 	var tr = document.createElement('tr');
