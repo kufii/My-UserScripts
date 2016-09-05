@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.7
+// @version      1.4.8
 // @description  Middle clicking the search on youtube opens the results in a new tab
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -54,7 +54,7 @@
 		var elements = document.querySelectorAll('.gssb_e .gsq_a');
 		[].forEach.call(elements, function(element) {
 			if (element) {
-				element.onmousedown =  function(e) {
+				element.onmousedown = function(e) {
 					if (e.button === 1) {
 						e.preventDefault();
 					}
