@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.1
+// @version      1.4.2
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -58,6 +58,21 @@
 			if (!results) return null;
 			if (!results[2]) return '';
 			return decodeURIComponent(results[2].replace(/\+/g, " "));
+		},
+		appendStyle: function(css) {
+			var out = '';
+			for (var selector in css) {
+				out += selector + '{';
+				for (var rule in css[selector]) {
+					out += rule + ':' + css[selector][rule] + '!important;';
+				}
+				out += '}';
+			}
+
+			var style = document.createElement('style');
+			style.type = 'text/css';
+			style.appendChild(document.createTextNode(out));
+			document.head.appendChild(style);
 		},
 		clearAllIntervals: function() {
 			var interval_id = window.setInterval(null, 9999);
@@ -184,26 +199,10 @@
 			return null;
 		}
 	}];
-
 	// END OF IMPLEMENTATIONS
+
 	var App = {
 		currentImpName: null,
-
-		appendStyle: function(css) {
-			var out = '';
-			for (var selector in css) {
-				out += selector + '{';
-				for (var rule in css[selector]) {
-					out += rule + ':' + css[selector][rule] + '!important;';
-				}
-				out += '}';
-			}
-
-			var style = document.createElement('style');
-			style.type = 'text/css';
-			style.appendChild(document.createTextNode(out));
-			document.head.appendChild(style);
-		},
 
 		bypass: function(imp) {
 			if (W.BM_MODE && imp.bmmode) {
@@ -217,7 +216,7 @@
 			if (imp.css) {
 				Util.log('Adding style');
 				var cssObj = typeof imp.css === 'function' ? imp.css() : imp.css;
-				App.appendStyle(cssObj);
+				Util.appendStyle(cssObj);
 			}
 			if (imp.remove) {
 				Util.log('Removing elements');
