@@ -15,6 +15,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Hummingbird User Compare](https://greasyfork.org/en/scripts/5680-hummingbird-user-compare)
 * [Imgur Mirror](https://greasyfork.org/en/scripts/18806-imgur-mirror)
 * [Loft Lounge Board Game Filters](https://greasyfork.org/en/scripts/22579-loft-lounge-board-game-filters)
+* [MyAnimeList, External Hummingbird Links](https://greasyfork.org/en/scripts/23163-myanimelist-external-hummingbird-links)
 * [Newspaper Paywall Bypasser](https://greasyfork.org/en/scripts/18585-newspaper-paywall-bypasser)
 * [Prevent Wikia Ads](https://greasyfork.org/en/scripts/22420-prevent-wikia-ads)
 * [Reddit Flair Linkifier](https://greasyfork.org/en/scripts/706-reddit-flair-linkifier)
