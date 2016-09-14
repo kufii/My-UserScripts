@@ -58,7 +58,7 @@
 			}
 		},
 		removeQueryParameter: function(key, url) {
-			setQueryParameter(key, null, url);
+			return setQueryParameter(key, null, url);
 		},
 		changeUrl: function(url) {
 			window.history.replaceState({ path: url }, '', url);
