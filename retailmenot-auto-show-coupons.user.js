@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RetailMeNot Auto Show Coupons
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.2
+// @version      1.1
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
@@ -10,6 +10,8 @@
 // @grant        GM_openInTab
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
+
+/*jshint scripturl:true*/
 
 (function() {
 	'use strict';
@@ -91,26 +93,20 @@
 
 	// Disable Pop Unders
 	Util.qq('.offer').forEach(function(offer) {
-		var path = '/coupons/' + offer.dataset.storedomain;
-		var href = window.location.protocol + "//" + window.location.host + path + '?c=' + offer.dataset.offerid;
+		var href = window.location.protocol + "//" + window.location.host + '' + window.location.pathname + '?c=' + offer.dataset.offerid;
 		var clickHandler = function(e) {
 			e.preventDefault();
 			e.stopImmediatePropagation();
 			if (e.button === 1) {
 				GM_openInTab(href, true);
 			} else {
-				if (window.location.pathname === path) {
-					window.location.replace(href);
-				} else {
-					window.location = href;
-				}
+				window.location.replace(href);
 			}
 			return false;
 		};
 
-		console.log(path);
-		waitForElems('#' + offer.id + ' a.offer-title', function(title) {
-			console.log(title, path);
+		var id = offer.id.charAt(0).match(/[0-9]/) ? '\\' + offer.id : offer.id;
+		waitForElems('#' + id + ' a.offer-title', function(title) {
 			title.href = href;
 			title.onclick = clickHandler;
 		}, true);
@@ -121,14 +117,23 @@
 		}
 	});
 
-	var regex = /^https?:\/\/www.retailmenot.(?:com|ca)\/out\//;
+	var regex = /^https?:\/\/www.retailmenot.(?:com|ca)\/out\//i;
 	Util.qq('a').filter(function(link) {
 		return link.href.match(regex) && !link.classList.contains('offer-title');
 	}).forEach(function(link) {
-		link.href = '#';
-		App.getOutUrl(link.href, function(href) {
+		var url = link.href;
+		link.href = 'javascript:void(0)';
+		App.getOutUrl(url, function(href) {
 			link.href = href;
 		});
+	});
+
+	// disable pop unders on the exclusive tags
+	Util.qq('.exclusive_icon').forEach(function(tag) {
+		tag.onclick = function(e) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+		};
 	});
 
 	// remove coupon query param so reloads work properly
