@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RetailMeNot Auto Show Coupons
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
@@ -58,7 +58,7 @@
 			}
 		},
 		removeQueryParameter: function(key, url) {
-			return setQueryParameter(key, null, url);
+			return Util.setQueryParameter(key, null, url);
 		},
 		changeUrl: function(url) {
 			window.history.replaceState({ path: url }, '', url);
