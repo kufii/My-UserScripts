@@ -57,6 +57,9 @@
 					return url;
 			}
 		},
+		removeQueryParameter: function(key, url) {
+			setQueryParameter(key, null, url);
+		},
 		changeUrl: function(url) {
 			window.history.replaceState({ path: url }, '', url);
 		}
@@ -127,5 +130,5 @@
 	});
 
 	// remove coupon query param so reloads work properly
-	Util.changeUrl(Util.setQueryParameter('c', null));
+	Util.changeUrl(Util.removeQueryParameter('c'));
 })();
