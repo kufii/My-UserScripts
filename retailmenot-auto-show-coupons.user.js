@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RetailMeNot Auto Show Coupons
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.1
+// @version      1.0.2
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
@@ -108,7 +108,9 @@
 			return false;
 		};
 
-		waitForElems('a.offer-title', function(title) {
+		console.log(path);
+		waitForElems('#' + offer.id + ' a.offer-title', function(title) {
+			console.log(title, path);
 			title.href = href;
 			title.onclick = clickHandler;
 		}, true);
@@ -121,7 +123,7 @@
 
 	var regex = /^https?:\/\/www.retailmenot.(?:com|ca)\/out\//;
 	Util.qq('a').filter(function(link) {
-		return link.href.match(regex);
+		return link.href.match(regex) && !link.classList.contains('offer-title');
 	}).forEach(function(link) {
 		link.href = '#';
 		App.getOutUrl(link.href, function(href) {
