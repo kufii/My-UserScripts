@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         RetailMeNot Auto Show Coupons
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1
+// @version      2.0
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
 // @match        *://www.retailmenot.ca/*
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
+// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // @grant        GM_openInTab
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
@@ -29,6 +29,15 @@
 		},
 		qq: function(query, context) {
 			return [].slice.call((context || document).querySelectorAll(query));
+		},
+		getQueryParameter: function(name, url) {
+			if (!url) url = window.location.href;
+			name = name.replace(/[\[\]]/g, "\\$&");
+			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+				results = regex.exec(url);
+			if (!results) return null;
+			if (!results[2]) return '';
+			return decodeURIComponent(results[2].replace(/\+/g, " "));
 		},
 		setQueryParameter: function(key, value, url) {
 			if (!url) url = window.location.href;
@@ -86,54 +95,106 @@
 		}
 	};
 
-	// Show Coupons
-	Util.qq('.crux > .cover').forEach(function(cover) {
-		cover.remove();
-	});
-
-	// Disable Pop Unders
-	Util.qq('.offer').forEach(function(offer) {
-		var href = window.location.protocol + "//" + window.location.host + '' + window.location.pathname + '?c=' + offer.dataset.offerid;
-		var clickHandler = function(e) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			if (e.button === 1) {
-				GM_openInTab(href, true);
-			} else {
-				window.location.replace(href);
-			}
-			return false;
-		};
-
-		var id = offer.id.charAt(0).match(/[0-9]/) ? '\\' + offer.id : offer.id;
-		waitForElems('#' + id + ' a.offer-title', function(title) {
-			title.href = href;
-			title.onclick = clickHandler;
-		}, true);
-
-		var button = Util.q('.action-button', offer);
-		if (button) {
-			button.onclick = clickHandler;
-		}
-	});
-
-	var regex = /^https?:\/\/www.retailmenot.(?:com|ca)\/out\//i;
-	Util.qq('a').filter(function(link) {
-		return link.href.match(regex) && !link.classList.contains('offer-title');
-	}).forEach(function(link) {
-		var url = link.href;
-		link.href = 'javascript:void(0)';
-		App.getOutUrl(url, function(href) {
-			link.href = href;
+	if (window.location.href.match(/^https?:\/\/www.retailmenot\.ca/i)) { // CANADA
+		// Show Coupons
+		Util.qq('.crux > .cover').forEach(function(cover) {
+			cover.remove();
 		});
-	});
 
-	// disable pop unders on the exclusive tags
-	Util.qq('.exclusive_icon').forEach(function(tag) {
-		tag.onclick = function(e) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-		};
+		// Disable Pop Unders
+		Util.qq('.offer').forEach(function(offer) {
+			var href = window.location.protocol + "//" + window.location.host + window.location.pathname + '?c=' + offer.dataset.offerid;
+			var clickHandler = function(e) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				if (e.button === 1) {
+					GM_openInTab(href, true);
+				} else {
+					window.location.replace(href);
+				}
+				return false;
+			};
+
+			waitForElems({
+				context: offer,
+				sel: 'a.offer-title',
+				stop: true,
+				onmatch: function(title) {
+					title.href = href;
+					title.onclick = clickHandler;
+				}
+			});
+
+			var button = Util.q('.action-button', offer);
+			if (button) {
+				button.onclick = clickHandler;
+			}
+		});
+
+		// disable pop unders on the exclusive tags
+		Util.qq('.exclusive_icon').forEach(function(tag) {
+			tag.onclick = function(e) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
+			};
+		});
+	} else { // US
+		// Show Coupons
+		document.body.classList.add('ctc');
+
+		// Disable pop unders
+		waitForElems({
+			sel: '.js-outclick, .js-title > a, .js-triggers-outclick, .js-coupon-square, .offer-item-in-list',
+			onmatch: function(button) {
+				var path = button.dataset.newTab && !button.dataset.newTab.match(/^\/out/i) ? button.dataset.newTab : button.dataset.mainTab;
+				var href = window.location.protocol + "//" + window.location.host + path;
+				if (path) {
+					var handler = function(e) {
+						e.preventDefault();
+						e.stopImmediatePropagation();
+						if (e.button === 1) {
+							GM_openInTab(href, true);
+						} else {
+							if (window.location.pathname === path) {
+								window.location.replace(href);
+							} else {
+								window.location.href = href;
+							}
+						}
+						return false;
+					};
+					if (button.classList.contains('offer-item-in-list')) {
+						var offerButton = Util.q('.offer-button', button);
+						if (offerButton) {
+							offerButton.onclick = handler;
+						}
+						var offerTitle = Util.q('.offer-title', button);
+						if (offerTitle) {
+							offerTitle.href = href;
+							offerTitle.onclick = handler;
+						}
+					} else {
+						if (button.tagname === 'A') {
+							button.href = href;
+						}
+						button.onclick = handler;
+						Util.qq('*', button).forEach(function(elem) {
+							elem.onclick = handler;
+						});
+					}
+				}
+			}
+		});
+	}
+	// human checks
+	var regex = /^https?:\/\/www\.retailmenot\.(?:com|ca)\/humanCheck\.php/i;
+	Util.qq('a').filter(function(link) {
+		return link.href.match(regex);
+	}).forEach(function(link) {
+		var url = Util.getQueryParameter('url', link.href);
+		if (url) {
+			link.href = window.location.protocol + "//" + window.location.host + url;
+		}
 	});
 
 	// remove coupon query param so reloads work properly
