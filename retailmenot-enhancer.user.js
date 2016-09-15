@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RetailMeNot Enhancer
 // @namespace    https://greasyfork.org/users/649
-// @version      3.0
+// @version      3.0.1
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
@@ -203,18 +203,23 @@
 		waitForElems({
 			sel: '.coupon',
 			onmatch: function(coupon) {
+				var id = coupon.dataset.suffix;
+				var href = window.location.protocol + "//" + window.location.host + window.location.pathname + '?r=1#' + id;
 				var clickHandler = function(e) {
 					e.preventDefault();
 					e.stopImmediatePropagation();
-					Util.createCookie('click_' + coupon.dataset.suffix, true);
+					Util.createCookie('click_' + id, true);
 					if (e.button === 1) {
-						GM_openInTab(window.location.protocol + "//" + window.location.host + window.location.pathname + '#' + coupon.dataset.suffix, true);
+						GM_openInTab(href, true);
 					} else {
-						window.location.replace(window.location.protocol + "//" + window.location.host + window.location.pathname + '?r=1#' + coupon.dataset.suffix);
+						window.location.replace(href);
 					}
 					return false;
 				};
 				Util.qq('.outclickable', coupon).forEach(function(elem) {
+					if (elem.tagName === 'A') {
+						elem.href = href;
+					}
 					elem.onclick = clickHandler;
 				});
 			}
