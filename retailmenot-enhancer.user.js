@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RetailMeNot Enhancer
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.3
+// @version      2.0.4
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
@@ -82,32 +82,36 @@
 		});
 
 		// Disable Pop Unders
-		Util.qq('.offer').forEach(function(offer) {
-			var href = window.location.protocol + "//" + window.location.host + window.location.pathname + '?c=' + offer.dataset.offerid;
-			var clickHandler = function(e) {
-				e.preventDefault();
-				e.stopImmediatePropagation();
-				if (e.button === 1) {
-					GM_openInTab(href, true);
-				} else {
-					window.location.replace(href);
-				}
-				return false;
-			};
+		waitForElems({
+			sel: '.offer, .stage .coupon',
+			onmatch: function(offer) {
+				var clickHandler = function(e) {
+					e.preventDefault();
+					e.stopImmediatePropagation();
+					var href = window.location.protocol + "//" + window.location.host + window.location.pathname + '?c=' + offer.dataset.offerid;
+					if (e.button === 1) {
+						GM_openInTab(href, true);
+					} else {
+						window.location.replace(href);
+					}
+					return false;
+				};
 
-			waitForElems({
-				context: offer,
-				sel: 'a.offer-title',
-				stop: true,
-				onmatch: function(title) {
-					title.href = href;
-					title.onclick = clickHandler;
+				if (!offer.parentNode.classList.contains('stage')) {
+					waitForElems({
+						context: offer,
+						sel: 'a.offer-title',
+						stop: true,
+						onmatch: function(title) {
+							title.href = href;
+							title.onclick = clickHandler;
+						}
+					});
 				}
-			});
 
-			var button = Util.q('.action-button, .crux', offer);
-			if (button) {
-				button.onclick = clickHandler;
+				Util.qq('.action-button, .crux, .caterpillar-title, .caterpillar-code', offer).forEach(function(elem){
+					elem.onclick = clickHandler;
+				});
 			}
 		});
 
