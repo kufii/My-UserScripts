@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.2
+// @version      1.4.3
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -35,21 +35,6 @@
 		qq: function(query, context) {
 			return [].slice.call((context || document).querySelectorAll(query));
 		},
-		xhr: function(url, cb, onerror) {
-			var xhr = new XMLHttpRequest();
-			xhr.onload = function(e) {
-				cb(xhr.responseText);
-			};
-			if (onerror) {
-				xhr.onerror = onerror;
-			} else {
-				xhr.onerror = function(e) {
-					Util.log('Error ' + e.target.status + ' loading xhr for url: ' + url);
-				};
-			}
-			xhr.open('GET', url);
-			xhr.send();
-		},
 		getQueryParameter: function(name, url) {
 			if (!url) url = W.location.href;
 			name = name.replace(/[\[\]]/g, "\\$&");
@@ -81,6 +66,34 @@
 			}
 		}
 	};
+
+	// GM_xmlhttpRequest polyfill
+	if (typeof GM_xmlhttpRequest === 'undefined') {
+		Util.log('Adding GM_xmlhttpRequest polyfill');
+		W.GM_xmlhttpRequest = function(config) {
+			var xhr = new XMLHttpRequest();
+			if (config.headers) {
+				for (var header in config.headers) {
+					xhr.setRequestHeader(header, config.headers[header]);
+				}
+			}
+			if (config.anonymous) {
+				xhr.setRequestHeader('Authorization', '');
+			}
+			xhr.open(config.method || 'GET', config.url);
+			if (config.onload) {
+				xhr.onload = function() {
+					config.onload(xhr);
+				};
+			}
+			if (config.onerror) {
+				xhr.onerror = function() {
+					config.onerror(xhr.status);
+				};
+			}
+			xhr.send();
+		};
+	}
 
 	/**
 	* Sample Implementation:
@@ -148,12 +161,16 @@
 		bmmode: function() {
 			var self = this;
 			Util.clearAllIntervals();
-			Util.xhr(W.location.href, function(response) {
-				var tempDiv = document.createElement('div');
-				tempDiv.innerHTML = response;
-				var story = self.cleanupStory(Util.q('#story', tempDiv));
-				if (story) {
-					Util.q('#story').innerHTML = story.innerHTML;
+			GM_xmlhttpRequest({
+				url: W.location.href,
+				method: 'GET',
+				onload: function(response) {
+					var tempDiv = document.createElement('div');
+					tempDiv.innerHTML = response.responseText;
+					var story = self.cleanupStory(Util.q('#story', tempDiv));
+					if (story) {
+						Util.q('#story').innerHTML = story.innerHTML;
+					}
 				}
 			});
 		},
@@ -232,40 +249,31 @@
 			if (replaceSelector || replaceUsing || theReferer) {
 				replaceUsing = replaceUsing || W.location.href;
 
-				var replace = function(response) {
-					if (replaceSelector) {
-						var replaceWithSelector = typeof imp.replaceWith === 'function' ? imp.replaceWith() : imp.replaceWith;
-						replaceWithSelector = replaceWithSelector || replaceSelector;
+				Util.log('Loading xhr for "' + replaceUsing + '" with referer: ' + theReferer);
+				GM_xmlhttpRequest ({
+					method: 'GET',
+					url: replaceUsing,
+					headers: {
+						referer: theReferer
+					},
+					anonymous: true,
+					onload: function(response) {
+						if (replaceSelector) {
+							var replaceWithSelector = typeof imp.replaceWith === 'function' ? imp.replaceWith() : imp.replaceWith;
+							replaceWithSelector = replaceWithSelector || replaceSelector;
 
-						var tempDiv = document.createElement('div');
-						tempDiv.innerHTML = response;
+							var tempDiv = document.createElement('div');
+							tempDiv.innerHTML = response.responseText;
 
-						Util.q(replaceSelector).innerHTML = Util.q(replaceWithSelector, tempDiv).innerHTML;
-					} else {
-						document.body.innerHTML = response;
-					}
-				};
-
-				if (theReferer) {
-					Util.log('Loading xhr for "' + replaceUsing + '" with referer: ' + theReferer);
-					GM_xmlhttpRequest ({
-						method: 'GET',
-						url: replaceUsing,
-						headers: {
-							referer: theReferer
-						},
-						anonymous: true,
-						onload: function(response) {
-							replace(response.responseText);
-						},
-						onerror: function(error) {
-							Util.log('error occured when loading xhr with referer: ' + theReferer, 'error');
+							Util.q(replaceSelector).innerHTML = Util.q(replaceWithSelector, tempDiv).innerHTML;
+						} else {
+							document.body.innerHTML = response.responseText;
 						}
-					});
-				}  else {
-					Util.log('Loading xhr for "' + replaceUsing + '"');
-					Util.xhr(replaceUsing, replace);
-				}
+					},
+					onerror: function(error) {
+						Util.log('error occured when loading xhr');
+					}
+				});
 			}
 			Util.log('Paywall Bypassed.');
 		},
