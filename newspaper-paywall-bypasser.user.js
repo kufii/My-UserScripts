@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.3
+// @version      1.4.4
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -72,6 +72,7 @@
 		Util.log('Adding GM_xmlhttpRequest polyfill');
 		W.GM_xmlhttpRequest = function(config) {
 			var xhr = new XMLHttpRequest();
+			xhr.open(config.method || 'GET', config.url);
 			if (config.headers) {
 				for (var header in config.headers) {
 					xhr.setRequestHeader(header, config.headers[header]);
@@ -80,7 +81,6 @@
 			if (config.anonymous) {
 				xhr.setRequestHeader('Authorization', '');
 			}
-			xhr.open(config.method || 'GET', config.url);
 			if (config.onload) {
 				xhr.onload = function() {
 					config.onload(xhr);
