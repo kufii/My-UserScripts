@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Loft Lounge Board Game Filters
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.4
+// @version      1.0.5
 // @description  Adds Filters to the Loft Lounge board game page
 // @author       Adrien Pyke
 // @match        *://www.theloftlounge.ca/pages/board-games*
@@ -55,8 +55,34 @@
 			return str.replace(/\w\S*/g, function(txt){
 				return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 			});
+		},
+		appendStyle: function(str) {
+			var style = document.createElement('style');
+			style.textContent = str;
+			document.head.appendChild(style);
 		}
 	};
+
+	Util.appendStyle(
+		'#sidebar-holder, #content-holder {' +
+		'	position: static!important;' +
+		'	height: auto!important;' +
+		'}' +
+		'#content {' +
+		'	position: static!important;' +
+		'	margin-left: 290px;' +
+		'	width: auto;' +
+		'}' +
+		'#content-holder {' +
+		'	width: 100%!important;' +
+		'	float: right;' +
+		'}' +
+		'@media (max-width: 900px), (max-device-width: 1024px) {' +
+		'	#content {' +
+		'		margin-left: 0px;' +
+		'	}' +
+		'}'
+	);
 
 	var table = Util.q('#page-content > div > table > tbody');
 	var rows = Util.qq('tr', table);
@@ -121,6 +147,7 @@
 	categoryDiv.style.color = 'black';
 	categoryDiv.style.position = 'absolute';
 	categoryDiv.style.display = 'none';
+	categoryDiv.style.zIndex = 9999;
 
 	var categorySpan = document.createElement('span');
 
