@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Editor - Change Default Settings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.9
+// @version      1.0.10
 // @description  change default settings for the github editor
 // @author       Adrien Pyke
 // @match        *://github.com/*/new/*
@@ -148,7 +148,7 @@
 	GM_registerMenuCommand('GitHub Editor Settings', setup);
 	var settings = loadConfig();
 
-	waitForElems('.ace_content', function() {
+	waitForElems('.CodeMirror-code', function() {
 		applySettings(settings);
 	});
 })();
