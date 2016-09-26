@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Disable No Participation
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Disables No Participation on Reddit
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
@@ -13,9 +13,9 @@
 (function() {
 	'use strict';
 
-	var MATCH = /^https?:\/\/np\.reddit\.com/;
+	var MATCH = /^https?:\/\/np\.reddit\.com/i;
 	var REPLACE = {
-		regex: /^(https?:\/\/)np(.+)/,
+		regex: /^(https?:\/\/)np(.+)/i,
 		replaceWith: '$1www$2'
 	};
 
