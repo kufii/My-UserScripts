@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Reddit Flair Linkifier
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.2
+// @version      1.1.3
 // @description  Turns the text in various subreddits' flair into links
 // @author       Adrien Pyke
-// @match        *://www.reddit.com/*
+// @match        *://*.reddit.com/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
 // @grant        none
 // ==/UserScript==
