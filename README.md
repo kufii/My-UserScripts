@@ -18,6 +18,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [MyAnimeList, External Hummingbird Links](https://greasyfork.org/en/scripts/23163-myanimelist-external-hummingbird-links)
 * [Newspaper Paywall Bypasser](https://greasyfork.org/en/scripts/18585-newspaper-paywall-bypasser)
 * [Prevent Wikia Ads](https://greasyfork.org/en/scripts/22420-prevent-wikia-ads)
+* [Reddit Disable No Participation](https://greasyfork.org/en/scripts/23529-reddit-disable-no-participation)
 * [Reddit Flair Linkifier](https://greasyfork.org/en/scripts/706-reddit-flair-linkifier)
 * [RetailMeNot Enhancer](https://greasyfork.org/en/scripts/23203-retailmenot-enhancer)
 * [SoundCloud Toggle Continuous Play and Autoplay](https://greasyfork.org/en/scripts/22549-soundcloud-toggle-continuous-play-and-autoplay)
