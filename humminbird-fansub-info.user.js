@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.1
+// @version      1.2
 // @description  Show MAL fansub info on Hummingbird anime pages
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -34,6 +34,15 @@
 		},
 		qq: function(query, context) {
 			return [].slice.call((context || document).querySelectorAll(query));
+		},
+		setNewTab: function(node) {
+			node.setAttribute('target', '_blank');
+			node.setAttribute('rel', 'noopener noreferrer');
+		},
+		icon: function(name) {
+			var icon = document.createElement('i');
+			icon.classList.add('fa', 'fa-' + name);
+			return icon;
 		},
 		createModal: function(title, bodyDiv) {
 			var div = document.createElement('div');
@@ -167,7 +176,8 @@
 	GM_registerMenuCommand('Hummingbird Fansub Info Settings', Config.setup);
 
 	var App = {
-		cache: {},
+		fansubCache: {},
+		websiteCache: {},
 		getHummingbirdInfo: function(id, cb) {
 			Util.log('Loading Hummingbird info...');
 			GM_xmlhttpRequest({
@@ -249,15 +259,37 @@
 		},
 		getFansubs: function(id, cb) {
 			var self = this;
-			if (self.cache[id]) {
-				cb(self.cache[id]);
+			if (self.fansubCache[id]) {
+				cb(self.fansubCache[id]);
 				return;
 			}
 			self.getHummingbirdInfo(id, function(anime) {
 				self.getMALFansubInfo(anime.mal_id, function(fansubs) {
-					self.cache[id] = fansubs;
+					self.fansubCache[id] = fansubs;
 					cb(fansubs);
 				});
+			});
+		},
+		getWebsite: function(id, cb) {
+			Util.log('Getting website for ' + id);
+			var self = this;
+			if (self.websiteCache[id]) {
+				cb(self.websiteCache[id]);
+				return;
+			}
+			GM_xmlhttpRequest({
+				method: 'GET',
+				url: 'https://myanimelist.net/fansub-groups.php?id=' + id,
+				onload: function(response) {
+					var tempDiv = document.createElement('div');
+					tempDiv.innerHTML = response.responseText;
+					var link = Util.q('td.borderClass > a:first-of-type', tempDiv);
+					if (link && link.getAttribute('href')) {
+						Util.log('Found website for id');
+						self.websiteCache[id] = link.href;
+						cb(link.href);
+					}
+				}
 			});
 		},
 		getFansubDiv: function() {
@@ -289,7 +321,7 @@
 			var nameLink = document.createElement('a');
 			nameLink.textContent = fansub.name;
 			nameLink.href = fansub.url;
-			nameLink.setAttribute('target', '_blank');
+			Util.setNewTab(nameLink);
 			name.appendChild(nameLink);
 
 			if (fansub.lang) {
@@ -297,6 +329,15 @@
 				lang.textContent = ' ' + fansub.lang;
 				name.appendChild(lang);
 			}
+
+			App.getWebsite(fansub.id, function(href) {
+				var webLink = document.createElement('a');
+				webLink.href = href;
+				Util.setNewTab(webLink);
+				webLink.classList.add('pull-right');
+				webLink.appendChild(Util.icon('link'));
+				name.appendChild(webLink);
+			});
 
 			var approvals = document.createElement('div');
 			approvals.classList.add('review-likes');
@@ -318,14 +359,7 @@
 						var smileContainer = document.createElement('div');
 						smileContainer.classList.add('quick-rating');
 						div.appendChild(smileContainer);
-						var smile = document.createElement('i');
-						smile.classList.add('fa');
-						if (comment.approves) {
-							smile.classList.add('fa-smile-o');
-						} else {
-							smile.classList.add('fa-frown-o');
-						}
-						smileContainer.appendChild(smile);
+						smileContainer.appendChild(comment.approves ? Util.icon('smile-o') : Util.icon('frown-o'));
 
 						var commentContainer = document.createElement('div');
 						commentContainer.classList.add('media-body');
@@ -375,11 +409,9 @@
 				var btnGroup = Util.q('.panel-title > .btn-group', div);
 				var malLink = document.createElement('a');
 				malLink.href = response.url;
-				malLink.setAttribute('target', '_blank');
+				Util.setNewTab(malLink);
 				btnGroup.appendChild(malLink);
-				var icon = document.createElement('i');
-				icon.classList.add('fa', 'fa-external-link');
-				malLink.appendChild(icon);
+				malLink.appendChild(Util.icon('external-link'));
 
 				if (response.fansubs.length > 0) {
 					var hiddenSpan = document.createElement('span');
