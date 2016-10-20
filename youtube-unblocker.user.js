@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Youtube Unblocker
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
-// @description  Auto redirects to the mirror site each video
+// @version      1.0.1
+// @description  Auto redirects blocked videos to the mirror site eachvideo.com
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/watch*
 // @match        *://eachvideo.com/watch*
