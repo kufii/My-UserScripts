@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.1
+// @version      1.3.2
 // @description  Show MAL fansub info on Hummingbird anime pages
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -316,7 +316,7 @@
 					return;
 				}
 				self.getHummingbirdInfo(id, function(anime) {
-					if (anime.malid) {
+					if (anime.mal_id) {
 						self.getMALFansubInfo(anime.mal_id, function(fansubs) {
 							self.fansubCache[id] = fansubs;
 							cb(fansubs);
