@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hummingbird Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3
+// @version      1.3.1
 // @description  Show MAL fansub info on Hummingbird anime pages
 // @author       Adrien Pyke
 // @match        *://hummingbird.me/*
@@ -316,10 +316,12 @@
 					return;
 				}
 				self.getHummingbirdInfo(id, function(anime) {
-					self.getMALFansubInfo(anime.mal_id, function(fansubs) {
-						self.fansubCache[id] = fansubs;
-						cb(fansubs);
-					});
+					if (anime.malid) {
+						self.getMALFansubInfo(anime.mal_id, function(fansubs) {
+							self.fansubCache[id] = fansubs;
+							cb(fansubs);
+						});
+					}
 				});
 			},
 			getWebsite: function(id, cb) {
