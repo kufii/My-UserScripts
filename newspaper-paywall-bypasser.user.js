@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.4
+// @version      1.4.5
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -64,6 +64,12 @@
 			for (var i = 1; i <= interval_id; i++) {
 				window.clearInterval(i);
 			}
+		},
+		addScript: function(src) {
+			var s = document.createElement('script');
+			s.onload = onload;
+			s.src = src;
+			document.body.appendChild(s);
 		}
 	};
 
@@ -109,6 +115,7 @@
 		css: {}, // object, keyed by css selector of css rules
 		bmmode: function() { }, // function to call before doing anything else if in BM_MODE
 		fn: function() { } // a function to run before doing anything else for more complicated logic
+		afterReplace() { } // a function that runs after the replace is done
 	}
 	* Any of the CSS selectors can be functions instead that return the desired value.
 	*/
@@ -122,8 +129,18 @@
 	}, {
 		name: 'Wall Street Journal',
 		match: '^https?://www.wsj.com/articles/.*',
+		wait: '.wsj-snippet-login',
 		referer: 'http://www.google.com',
-		replace: 'article > div:nth-of-type(1)'
+		afterReplace: function() {
+			var scripts = Util.qq('script');
+			var add = function(regex) {
+				Util.addScript(scripts.filter(function(script) {
+					return script.src.match(regex);
+				})[0].src);
+			};
+			add(/\/common\.js$/);
+			add(/\/article\.js$/);
+		}
 	}, {
 		name: 'Boston Globe',
 		match: '^https?://www.bostonglobe.com/.*',
@@ -268,6 +285,10 @@
 							Util.q(replaceSelector).innerHTML = Util.q(replaceWithSelector, tempDiv).innerHTML;
 						} else {
 							document.body.innerHTML = response.responseText;
+						}
+						if (imp.afterReplace) {
+							Util.log('Performing after replace logic');
+							imp.afterReplace();
 						}
 					},
 					onerror: function(error) {
