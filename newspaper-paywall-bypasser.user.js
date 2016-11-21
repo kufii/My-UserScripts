@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.6
+// @version      1.4.7
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -114,8 +114,8 @@
 		replaceWith: '#element', // css selector to get element to replace the element with. if null, it will use the same seletor as replace.
 		css: {}, // object, keyed by css selector of css rules
 		bmmode: function() { }, // function to call before doing anything else if in BM_MODE
-		fn: function() { } // a function to run before doing anything else for more complicated logic
-		afterReplace() { } // a function that runs after the replace is done
+		fn: function() { }, // a function to run before doing anything else for more complicated logic
+		afterReplace: function() { } // a function that runs after the replace is done
 	}
 	* Any of the CSS selectors can be functions instead that return the desired value.
 	*/
