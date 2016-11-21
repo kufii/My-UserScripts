@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.5
+// @version      1.4.6
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -65,7 +65,7 @@
 				window.clearInterval(i);
 			}
 		},
-		addScript: function(src) {
+		addScript: function(src, onload) {
 			var s = document.createElement('script');
 			s.onload = onload;
 			s.src = src;
@@ -133,13 +133,14 @@
 		referer: 'http://www.google.com',
 		afterReplace: function() {
 			var scripts = Util.qq('script');
-			var add = function(regex) {
+			var add = function(regex, onload) {
 				Util.addScript(scripts.filter(function(script) {
 					return script.src.match(regex);
-				})[0].src);
+				})[0].src, onload);
 			};
-			add(/\/common\.js$/);
-			add(/\/article\.js$/);
+			add(/\/common\.js$/, function() {
+				add(/\/article\.js$/);
+			});
 		}
 	}, {
 		name: 'Boston Globe',
