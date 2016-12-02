@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5
+// @version      1.5.1
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -391,19 +391,23 @@
 			Util.log('starting...');
 			var success = imps.some(function(imp) {
 				if (imp.match && (new RegExp(imp.match, 'i')).test(W.location.href)) {
-					var menuCommandText;
-					if (!Config.load().blacklist[imp.name]) {
-						menuCommandText = 'Disable ' + SCRIPT_NAME + ' for ' + imp.name;
-						App.currentImpName = imp.name;
+					App.currentImpName = imp.name;
+					if (W.BM_MODE) {
 						App.waitAndBypass(imp);
 					} else {
-						menuCommandText = 'Enable ' + SCRIPT_NAME + ' for ' + imp.name;
-						Util.log(imp.name + ' blacklisted');
+						var menuCommandText;
+						if (!Config.load().blacklist[imp.name]) {
+							menuCommandText = 'Disable ' + SCRIPT_NAME + ' for ' + imp.name;
+							App.waitAndBypass(imp);
+						} else {
+							menuCommandText = 'Enable ' + SCRIPT_NAME + ' for ' + imp.name;
+							Util.log(imp.name + ' blacklisted');
+						}
+						GM_registerMenuCommand(menuCommandText, function() {
+							Config.toggleBlacklist(imp.name);
+							location.reload();
+						});
 					}
-					GM_registerMenuCommand(menuCommandText, function() {
-						Config.toggleBlacklist(imp.name);
-						location.reload();
-					});
 					return true;
 				}
 			});
