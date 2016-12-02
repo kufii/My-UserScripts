@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.10
+// @version      1.5
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -11,6 +11,9 @@
 // @match        *://myaccount.nytimes.com/mobile/wall/smart/*
 // @match        *://mobile.nytimes.com/*
 // @grant        GM_xmlhttpRequest
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_registerMenuCommand
 // @grant        unsafeWindow
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
 // @noframes
@@ -135,7 +138,7 @@
 		wait: '.wsj-snippet-login',
 		referer: 'http://www.google.com',
 		afterReplace: function() {
-            W.loadCSS('//asset.wsj.net/public/extra.production-2a7a40d6.css');
+			W.loadCSS('//asset.wsj.net/public/extra.production-2a7a40d6.css');
 			var scripts = Util.qq('script');
 			var add = function(regex, onload) {
 				Util.addScript(scripts.filter(function(script) {
@@ -267,6 +270,42 @@
 	}];
 	// END OF IMPLEMENTATIONS
 
+	var Config = {
+		load: function() {
+			var defaults = {
+				blacklist: {}
+			};
+
+			var cfg = GM_getValue('cfg');
+			if (!cfg) return defaults;
+
+			cfg = JSON.parse(cfg);
+			for (var property in defaults) {
+				if (defaults.hasOwnProperty(property)) {
+					if (!cfg[property]) {
+						cfg[property] = defaults[property];
+					}
+				}
+			}
+
+			return cfg;
+		},
+
+		save: function(cfg) {
+			GM_setValue('cfg', JSON.stringify(cfg));
+		},
+
+		toggleBlacklist: function(imp) {
+			var cfg = Config.load();
+			if (cfg.blacklist[imp]) {
+				cfg.blacklist[imp] = false;
+			} else {
+				cfg.blacklist[imp] = true;
+			}
+			Config.save(cfg);
+		}
+	};
+
 	var App = {
 		currentImpName: null,
 
@@ -352,8 +391,19 @@
 			Util.log('starting...');
 			var success = imps.some(function(imp) {
 				if (imp.match && (new RegExp(imp.match, 'i')).test(W.location.href)) {
-					App.currentImpName = imp.name;
-					App.waitAndBypass(imp);
+					var menuCommandText;
+					if (!Config.load().blacklist[imp.name]) {
+						menuCommandText = 'Disable ' + SCRIPT_NAME + ' for ' + imp.name;
+						App.currentImpName = imp.name;
+						App.waitAndBypass(imp);
+					} else {
+						menuCommandText = 'Enable ' + SCRIPT_NAME + ' for ' + imp.name;
+						Util.log(imp.name + ' blacklisted');
+					}
+					GM_registerMenuCommand(menuCommandText, function() {
+						Config.toggleBlacklist(imp.name);
+						location.reload();
+					});
 					return true;
 				}
 			});
