@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.8
+// @version      1.4.9
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -70,6 +70,9 @@
 			s.onload = onload;
 			s.src = src;
 			document.body.appendChild(s);
+		},
+		prepend: function(parent, child) {
+			parent.insertBefore(child, parent.firstChild);
 		}
 	};
 
@@ -122,13 +125,13 @@
 
 	var implementations = [{
 		name: 'The Nation',
-		match: '^https?://www.thenation.com/article/.*',
+		match: '^https?://www\.thenation\.com/article/.*',
 		remove: '#paywall',
 		wait: '#paywall',
 		bmmode: function() { Paywall.hide(); }
 	}, {
 		name: 'Wall Street Journal',
-		match: '^https?://www.wsj.com/articles/.*',
+		match: '^https?://www\.wsj\.com/articles/.*',
 		wait: '.wsj-snippet-login',
 		referer: 'http://www.google.com',
 		afterReplace: function() {
@@ -145,7 +148,7 @@
 		}
 	}, {
 		name: 'Boston Globe',
-		match: '^https?://www.bostonglobe.com/.*',
+		match: '^https?://www\.bostonglobe\.com/.*',
 		css: {
 			'html, body, #contain': {
 				overflow: 'visible'
@@ -156,7 +159,7 @@
 		}
 	}, {
 		name: 'NY Times',
-		match: '^https?://www.nytimes.com/.*',
+		match: '^https?://www\.nytimes\.com/.*',
 		css: {
 			'html, body': {
 				overflow: 'visible'
@@ -197,6 +200,24 @@
 			// clear intervals once the paywall comes up to prevent changes afterward
 			waitForElems('#gatewayCreative', Util.clearAllIntervals, true);
 			this.cleanupStory(Util.q('#story'));
+			require(['jquery/nyt'], function($) {
+				require(['vhs'], function (vhs) {
+					Util.qq('.video').forEach(function(video) {
+						video.setAttribute('style', 'position: relative');
+						var bind = document.createElement('div');
+						bind.classList.add('video-bind');
+						var div = document.createElement('div');
+						div.setAttribute('style', 'padding-bottom: 56.25%; position: relative; overflow: hidden;');
+						bind.appendChild(div);
+						Util.prepend(video, bind);
+						vhs.player({
+							id: video.dataset.videoid,
+							container: $(div),
+							width: '100%'
+						});
+					});
+				});
+			});
 		}
 	}, {
 		name: 'NY Times Mobile Redirect',
@@ -209,7 +230,7 @@
 		}
 	}, {
 		name: 'NY Times Mobile Loader',
-		match: '^https?://mobile.nytimes.com',
+		match: '^https?://mobile\.nytimes\.com',
 		css: {
 			'.full-art': {
 				'font-family': 'Georgia,serif',
