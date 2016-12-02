@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.9
+// @version      1.4.10
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -213,7 +213,16 @@
 						vhs.player({
 							id: video.dataset.videoid,
 							container: $(div),
-							width: '100%'
+							width: '100%',
+							height: '100%',
+							mode: 'html5',
+							controlsOverlay: {
+								mode: 'article'
+							},
+							cover: {
+								mode: "article"
+							},
+							newControls: true
 						});
 					});
 				});
