@@ -18,6 +18,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Loft Lounge Board Game Filters](https://greasyfork.org/en/scripts/22579-loft-lounge-board-game-filters)
 * [MyAnimeList, External Hummingbird Links](https://greasyfork.org/en/scripts/23163-myanimelist-external-hummingbird-links)
 * [Newspaper Paywall Bypasser](https://greasyfork.org/en/scripts/18585-newspaper-paywall-bypasser)
+* [Nintendo Store Canada](https://greasyfork.org/en/scripts/25423-nintendo-store-canada)
 * [Prevent Wikia Ads](https://greasyfork.org/en/scripts/22420-prevent-wikia-ads)
 * [Reddit Disable No Participation](https://greasyfork.org/en/scripts/23529-reddit-disable-no-participation)
 * [Reddit Flair Linkifier](https://greasyfork.org/en/scripts/706-reddit-flair-linkifier)
