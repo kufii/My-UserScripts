@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         MyAnimeList, External Hummingbird Links
+// @name         MyAnimeList, External Kitsu Links
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
-// @description  Adds a link to the Hummingbird page in the External Links section
+// @version      2.0
+// @description  Adds a link to the Kitsu page in the External Links section
 // @author       Adrien Pyke
 // @match        *://myanimelist.net/anime/*
 // @grant        GM_xmlhttpRequest
@@ -11,9 +11,8 @@
 (function() {
 	'use strict';
 
-	var SCRIPT_NAME = 'MyAnimeList, External Hummingbird Links';
-	var API = 'https://hummingbird.me/api/v2';
-	var API_KEY = 'efdefcef5c444cf7b2ef';
+	var SCRIPT_NAME = 'MyAnimeList, External Kitsu Links';
+	var API = 'https://kitsu.io/api/edge';
 
 	var Util = {
 		log: function() {
@@ -31,24 +30,42 @@
 
 	var App = {
 		getHummingbirdLink: function(malid, cb) {
-			Util.log('Fetching Hummingbird ID for MAL ID:', malid);
+			Util.log('Fetching Kitsu ID for MAL ID:', malid);
 			GM_xmlhttpRequest({
 				method: 'GET',
-				url: API + '/anime/myanimelist:' + malid,
+				url: API + '/mappings?filter[external_site]=myanimelist/anime&filter[external_id]=' + malid,
 				headers: {
-					'X-Client-Id': API_KEY
+					'Accept': 'application/vnd.api+json'
 				},
 				onload: function(response) {
 					try {
 						var json = JSON.parse(response.responseText);
-						Util.log('Hummingbird ID:', json.anime.slug);
-						cb('https://hummingbird.me/anime/' + json.anime.slug);
+						Util.log('Kitsu mapping ID:', json.data[0].id);
+						GM_xmlhttpRequest({
+							method: 'GET',
+							url: API + '/mappings/' + json.data[0].id + '/media',
+							headers: {
+								'Accept': 'application/vnd.api+json'
+							},
+							onload: function(response) {
+								try {
+									var json = JSON.parse(response.responseText);
+									Util.log('Kitsu slug:', json.data.attributes.slug);
+									cb('https://kitsu.io/anime/' + json.data.attributes.slug);
+								} catch (err) {
+									Util.log('Failed to parse media API results');
+								}
+							},
+							onerror: function() {
+								Util.log('Failed to get Kitsu media slug');
+							}
+						});
 					} catch (err) {
-						Util.log('Failed to parse API results');
+						Util.log('Failed to parse mapping API results');
 					}
 				},
 				onerror: function() {
-					Util.log('Failed to get Hummingbird ID');
+					Util.log('Failed to get Kitsu mapping ID');
 				}
 			});
 		}
@@ -63,7 +80,7 @@
 				container.appendChild(document.createTextNode(', '));
 			}
 			var a = document.createElement('a');
-			a.textContent = 'Hummingbird';
+			a.textContent = 'Kitsu';
 			a.href = href;
 			a.setAttribute('target', '_blank');
 			container.appendChild(a);
