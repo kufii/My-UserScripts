@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name         Hummingbird Batoto Links
+// @name         Kitsu Batoto Links
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.1
-// @description  Adds Batoto links to Hummingbird Manga pages
+// @version      2.0
+// @description  Adds Batoto links to Kitsu manga pages
 // @author       Adrien Pyke
-// @match        *://hummingbird.me/*
+// @match        *://kitsu.io/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
@@ -12,8 +12,8 @@
 (function() {
 	'use strict';
 
-	var SCRIPT_NAME = 'Hummingbird Batoto Links';
-	var MANGA_REGEX = /^https?:\/\/hummingbird\.me\/manga\/[^\/]+\/?(?:\?.*)?$/;
+	var SCRIPT_NAME = 'Kitsu Batoto Links';
+	var MANGA_REGEX = /^https?:\/\/kitsu\.io\/manga\/[^\/]+\/?(?:\?.*)?$/;
 
 	var Util = {
 		log: function() {
@@ -62,6 +62,7 @@
 
 						var manga = Util.q('#rso > div > div:nth-child(1) h3 > a', tempDiv);
 						if (manga) {
+							manga.href = manga.href.replace('http', 'https');
 							Util.log(manga.href);
 							self.cache[title] = manga.href;
 							cb(manga.href);
@@ -80,25 +81,27 @@
 	};
 
 	waitForUrl(MANGA_REGEX, function() {
-		waitForElems('.series-title', function(title) {
-			var btnGroup = Util.q('.btn-group', title);
-			if (btnGroup) {
-				btnGroup.innerHTML = '';
-			} else {
-				btnGroup = document.createElement('div');
-				btnGroup.classList.add('btn-group');
-				title.appendChild(btnGroup);
+		waitForElems('.cover-username', function(title) {
+			var followGroup = document.querySelector('.cover-cta');
+			var formCheck = document.querySelector('.cover-cta form');
+			var formGroup = Util.q('.cover-cta', followGroup);
+			var btnGroup;
+			if (formCheck) {
+				followGroup.removeChild(formCheck);
 			}
 			var url = location.href;
 			App.getBatotoPage(Util.shallowTextContent(title), function(manga) {
 				if (location.href === url && manga) {
-					var link = document.createElement('a');
-					link.href = manga;
-					link.setAttribute('target', '_blank');
-					var icon = document.createElement('i');
-					icon.classList.add('fa', 'fa-book');
-					link.appendChild(icon);
-					btnGroup.appendChild(link);
+					formGroup = document.createElement('form');
+					formGroup.setAttribute('style', 'display: inline-block;');
+					formGroup.setAttribute('target', '_blank');
+					followGroup.appendChild(formGroup);
+					btnGroup = document.createElement('button');
+					btnGroup.classList.add('button');
+					btnGroup.classList.add('button--primary');
+					btnGroup.textContent = "Batoto";
+					formGroup.appendChild(btnGroup);
+					formGroup.setAttribute('action', manga);
 				}
 			});
 		}, true);
