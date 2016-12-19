@@ -8,7 +8,6 @@
 // @match        *://myanimelist.net/anime/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // @grant        GM_xmlhttpRequest
-// @grant        GM_addStyle
 // @grant        GM_registerMenuCommand
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -22,8 +21,6 @@
 	var API = 'https://kitsu.io/api/edge';
 	var REGEX = /^https?:\/\/kitsu\.io\/anime\/([^\/]+)\/?(?:\?.*)?$/;
 	var DIV_ID = 'kitsu-fansubs';
-
-	GM_addStyle('.trending-review-empty { margin-bottom: 20px; }');
 
 	var Util = {
 		log: function() {
@@ -224,7 +221,10 @@
 				Util.log('Loading Kitsu info...');
 				GM_xmlhttpRequest({
 					method: 'GET',
-					url: API + '/anime/' + id,
+					url: API + '/anime?filter[slug]=' + id + '&include=mappings',
+					headers: {
+						'Accept': 'application/vnd.api+json'
+					},
 					onload: function(response) {
 						Util.log('Loaded Kitsu info.');
 						cb(JSON.parse(response.responseText));
@@ -316,8 +316,10 @@
 					return;
 				}
 				self.getKitsuInfo(id, function(anime) {
-					if (anime.mal_id) {
-						self.getMALFansubInfo(anime.mal_id, function(fansubs) {
+					// Todo: Search mapping array properly
+					if (anime.included[0].attributes.externalSite == 'myanimelist/anime') {
+						var mal_id = anime.included[0].attributes.externalId;
+						self.getMALFansubInfo(mal_id, function(fansubs) {
 							self.fansubCache[id] = fansubs;
 							cb(fansubs);
 						});
