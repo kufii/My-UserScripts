@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name         Hummingbird Fansub Info
+// @name         Kitsu Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.2
-// @description  Show MAL fansub info on Hummingbird anime pages
+// @version      2.0
+// @description  Show MAL fansub info on Kitsu anime pages
 // @author       Adrien Pyke
-// @match        *://hummingbird.me/*
+// @match        *://kitsu.io/*
 // @match        *://myanimelist.net/anime/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // @grant        GM_xmlhttpRequest
@@ -18,10 +18,10 @@
 (function() {
 	'use strict';
 
-	var SCRIPT_NAME = 'Hummingbird Fansub Info';
-	var API = 'https://hummingbird.me/api/v1';
-	var REGEX = /^https?:\/\/hummingbird\.me\/anime\/([^\/]+)\/?(?:\?.*)?$/;
-	var DIV_ID = 'hbfs-fansubs';
+	var SCRIPT_NAME = 'Kitsu Fansub Info';
+	var API = 'https://kitsu.io/api/edge';
+	var REGEX = /^https?:\/\/kitsu\.io\/anime\/([^\/]+)\/?(?:\?.*)?$/;
+	var DIV_ID = 'kitsu-fansubs';
 
 	GM_addStyle('.trending-review-empty { margin-bottom: 20px; }');
 
@@ -123,7 +123,7 @@
 		}
 	};
 
-	if (location.hostname === 'hummingbird.me') {
+	if (location.hostname === 'kitsu.io') {
 		var Config = {
 			load: function() {
 				var defaults = {
@@ -214,23 +214,23 @@
 				init(Config.load());
 			}
 		};
-		GM_registerMenuCommand('Hummingbird Fansub Info Settings', Config.setup);
+		GM_registerMenuCommand('Kitsu Fansub Info Settings', Config.setup);
 
 		var App = {
 			fansubCache: {},
 			websiteCache: {},
 			votingTabs: {},
-			getHummingbirdInfo: function(id, cb) {
-				Util.log('Loading Hummingbird info...');
+			getKitsuInfo: function(id, cb) {
+				Util.log('Loading Kitsu info...');
 				GM_xmlhttpRequest({
 					method: 'GET',
 					url: API + '/anime/' + id,
 					onload: function(response) {
-						Util.log('Loaded Hummingbird info.');
+						Util.log('Loaded Kitsu info.');
 						cb(JSON.parse(response.responseText));
 					},
 					onerror: function(err) {
-						Util.log('Error loading Hummingbird info.');
+						Util.log('Error loading Kitsu info.');
 					}
 				});
 			},
@@ -315,7 +315,7 @@
 					cb(self.fansubCache[id]);
 					return;
 				}
-				self.getHummingbirdInfo(id, function(anime) {
+				self.getKitsuInfo(id, function(anime) {
 					if (anime.mal_id) {
 						self.getMALFansubInfo(anime.mal_id, function(fansubs) {
 							self.fansubCache[id] = fansubs;
