@@ -20,7 +20,7 @@
 	var SCRIPT_NAME = 'Kitsu Fansub Info';
 	var API = 'https://kitsu.io/api/edge';
 	var REGEX = /^https?:\/\/kitsu\.io\/anime\/([^\/]+)\/?(?:\?.*)?$/;
-	var DIV_ID = 'kitsu-fansubs';
+	var SECTION_ID = 'kitsu-fansubs';
 
 	var Util = {
 		log: function() {
@@ -348,22 +348,20 @@
 					}
 				});
 			},
-			getFansubDiv: function() {
-				var container = document.createElement('div');
-				container.classList.add('series-panel');
-				container.id = DIV_ID;
+			getFansubSection: function() {
+				var container = document.createElement('section');
+				container.classList.add('m-b-1');
+				container.id = SECTION_ID;
 
-				var titleDiv = document.createElement('div');
-				titleDiv.classList.add('panel-title', 'has-buttons');
-				container.appendChild(titleDiv);
-
-				var title = document.createElement('h4');
+				var title = document.createElement('h5');
 				title.textContent = 'Fansubs';
-				titleDiv.appendChild(title);
+				container.appendChild(title);
 
-				var btnGroup = document.createElement('div');
-				btnGroup.classList.add('btn-group');
-				titleDiv.appendChild(btnGroup);
+				var extLink = document.createElement('span');
+				extLink.classList.add('tag');
+				extLink.classList.add('role-tag');
+				extLink.setAttribute('style', 'margin-left: 5px; vertical-align: middle;');
+				title.appendChild(extLink);
 
 				return container;
 			},
@@ -497,10 +495,10 @@
 			var container = Util.q('.media-container');
 			var commFeed = Util.q('section:last-child', container);
 
-			var div = Util.q('#' + DIV_ID);
-			if (div) div.remove();
-			div = App.getFansubDiv();
-			container.insertBefore(div, commFeed);
+			var section = Util.q('#' + SECTION_ID);
+			if (section) section.remove();
+			section = App.getFansubSection();
+			container.insertBefore(section, commFeed);
 
 			var slug = location.href.match(REGEX)[1];
 			var url = location.href;
@@ -510,12 +508,13 @@
 						response.fansubs = App.filterFansubs(response.fansubs, cfg.lang);
 					}
 
-					var btnGroup = Util.q('.panel-title > .btn-group', div);
+					var extLink = Util.q('h5 > .tag', section);
 					var malLink = document.createElement('a');
 					malLink.href = response.url;
 					Util.setNewTab(malLink);
-					btnGroup.appendChild(malLink);
-					malLink.appendChild(Util.icon('external-link'));
+					malLink.textContent = 'MAL';
+					malLink.setAttribute('style', 'color: #FFF;');
+					extLink.appendChild(malLink);
 
 					if (response.fansubs.length > 0) {
 						var hiddenSpan = document.createElement('span');
@@ -525,7 +524,7 @@
 						response.fansubs.forEach(function(fansub, i) {
 							var fansubDiv = App.getFansubOutput(fansub);
 							if (i < 4) {
-								div.appendChild(fansubDiv);
+								section.appendChild(fansubDiv);
 							} else {
 								hiddenSpan.appendChild(fansubDiv);
 								addViewMore = true;
@@ -533,7 +532,7 @@
 						});
 
 						if (addViewMore) {
-							div.appendChild(hiddenSpan);
+							section.appendChild(hiddenSpan);
 							var viewMoreDiv = document.createElement('div');
 							viewMoreDiv.classList.add('view-more');
 
@@ -553,14 +552,14 @@
 								return false;
 							};
 
-							div.appendChild(viewMoreDiv);
+							section.appendChild(viewMoreDiv);
 						}
 					} else {
 						var p = document.createElement('p');
 						p.textContent = 'No fansubs found.';
 						p.style.textAlign = 'center';
 						p.style.marginTop = '5px';
-						div.appendChild(p);
+						section.appendChild(p);
 					}
 				}
 			});
