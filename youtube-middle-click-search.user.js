@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         Youtube Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.8
+// @version      1.4.9
 // @description  Middle clicking the search on youtube opens the results in a new tab
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
+// @require      https://greasyfork.org/scripts/25833-middle-click-event/code/Middle%20Click%20Event.js?version=164257
 // @grant        GM_openInTab
 // ==/UserScript==
 
@@ -29,6 +30,17 @@
 		// insert new button and hide old (as opposed to remove, removing was conflicting with another script I use)
 		oldButton.parentNode.insertBefore(button, oldButton.nextSibling);
 		oldButton.style.display = 'none';
+		// open results function
+		var openResults  = function(newTab) {
+			if (input.value.trim() === '' || input.value.trim() === initSearch && !newTab) return;
+			var url = location.origin + '/results?search_query=' + encodeURIComponent(input.value);
+			if (newTab) {
+				console.log('opening');
+				GM_openInTab(url, true);
+			} else {
+				window.location.href = url;
+			}
+		};
 		// bind events
 		button.onmousedown = function(e) {
 			if (e.button === 1) {
@@ -38,38 +50,45 @@
 		button.onclick = function(e) {
 			e.preventDefault();
 			e.stopImmediatePropagation();
-			if (input.value.trim() === '' || input.value.trim() === initSearch && e.button !== 1) return false;
-			var url = location.origin + '/results?search_query=' + encodeURIComponent(input.value);
-			if (e.button === 1) {
-				console.log('opening');
-				GM_openInTab(url, true);
-			} else if(e.button === 0) {
-				window.location.href = url;
+			if(e.button === 0) {
+				openResults();
 			}
 			return false;
 		};
+		button.addEventListener('middleclick', function(e) {
+			openResults(true);
+		});
 	};
 
 	var processResults = function() {
 		var elements = document.querySelectorAll('.gssb_e .gsq_a');
 		[].forEach.call(elements, function(element) {
 			if (element) {
+				var openResults = function(newTab) {
+					var url = location.origin + '/results?search_query=' + encodeURIComponent(element.querySelector('span').textContent);
+					if (newTab) {
+						console.log('opening');
+						GM_openInTab(url, true);
+					} else {
+						window.location.href = url;
+					}
+				};
 				element.onmousedown = function(e) {
 					if (e.button === 1) {
 						e.preventDefault();
 					}
 				};
 				element.onclick = function(e) {
-					var url = location.origin + '/results?search_query=' + encodeURIComponent(element.querySelector('span').textContent);
-					if (e.button === 1) {
-						console.log('opening');
-						GM_openInTab(url, true);
-					} else if(e.button === 0) {
-						window.location.href = url;
-					}
 					e.preventDefault();
+					if(e.button === 0) {
+						openResults();
+					}
 					return false;
 				};
+				element.addEventListener('middleclick', function(e) {
+					e.stopImmediatePropagation();
+					openResults(true);
+				});
 			}
 		});
 	};
