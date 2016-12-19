@@ -372,7 +372,7 @@
 					App.votingTabs.malid.close();
 					App.votingTabs.malid = null;
 				}
-				var url = 'http://myanimelist.net/anime/' + malid;
+				var url = 'https://myanimelist.net/anime/' + malid;
 				url = Util.setQueryParameter('US_VOTE', true, url);
 				url = Util.setQueryParameter('groupid', groupid, url);
 				url = Util.setQueryParameter('value', value, url);
@@ -494,16 +494,17 @@
 
 		var cfg = Config.load();
 		waitForUrl(REGEX, function() {
-			var container = Util.q('.community-column');
+			var container = Util.q('.media-container');
+			var commFeed = Util.q('section:last-child', container);
 
 			var div = Util.q('#' + DIV_ID);
 			if (div) div.remove();
 			div = App.getFansubDiv();
-			container.appendChild(div);
+			container.insertBefore(div, commFeed);
 
-			var id = location.href.match(REGEX)[1];
+			var slug = location.href.match(REGEX)[1];
 			var url = location.href;
-			App.getFansubs(id, function(response) {
+			App.getFansubs(slug, function(response) {
 				if (location.href === url) {
 					if (cfg.lang) {
 						response.fansubs = App.filterFansubs(response.fansubs, cfg.lang);
