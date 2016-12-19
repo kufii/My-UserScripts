@@ -1,13 +1,12 @@
 // ==UserScript==
 // @name         Google - Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1
+// @version      1.0.8
 // @description  Opens search results in new tab when you middle click
 // @author       Adrien Pyke
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/?(?:\?.*)?$/
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/search\/?\?.*$/
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
-// @require      https://greasyfork.org/scripts/25833-middle-click-event/code/Middle%20Click%20Event.js?version=164257
 // @grant        GM_openInTab
 // ==/UserScript==
 
@@ -61,18 +60,29 @@
 			}
 		};
 
-		btn.addEventListener('middleclick', function(e) {
-			e.stopImmediatePropagation();
-			var url = getUrl(input.value);
-			GM_openInTab(url, true);
-		});
+		btn.onclick = function(e) {
+			if (e.button === 1 && input.value.trim()) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				var url = getUrl(input.value);
+				GM_openInTab(url, true);
+				return false;
+			}
+		};
+
+		btn.onauxclick = btn.onclick;
 	});
 	waitForElems('.sbsb_b li .sbqs_c, .sbsb_b li .sbpqs_d', function(elem) {
-		elem.addEventListener('middleclick', function(e) {
-			e.stopImmediatePropagation();
-			var text = elem.classList.contains('sbpqs_d') ? elem.querySelector('span').textContent : elem.textContent;
-			var url = getUrl(text);
-			GM_openInTab(url, true);
-		});
+		elem.onclick = function(e) {
+			if (e.button === 1) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				var text = elem.classList.contains('sbpqs_d') ? elem.querySelector('span').textContent : elem.textContent;
+				var url = getUrl(text);
+				GM_openInTab(url, true);
+				return false;
+			}
+		};
+		elem.onauxclick = elem.onclick;
 	});
 })();
