@@ -8,6 +8,7 @@
 // @match        *://myanimelist.net/anime/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // @grant        GM_xmlhttpRequest
+// @grant        GM_addStyle
 // @grant        GM_registerMenuCommand
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -21,6 +22,8 @@
 	var API = 'https://kitsu.io/api/edge';
 	var REGEX = /^https?:\/\/kitsu\.io\/anime\/([^\/]+)\/?(?:\?.*)?$/;
 	var SECTION_ID = 'kitsu-fansubs';
+
+	GM_addStyle('@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css);');
 
 	var Util = {
 		log: function() {
