@@ -83,10 +83,10 @@
 		},
 		createModal: function(title, bodyDiv) {
 			var div = document.createElement('div');
-			div.classList.add('edit-series-modal');
 			var modal = document.createElement('div');
 			modal.classList.add('modal');
 			modal.style.display = 'block';
+			modal.style.overflowY = 'auto';
 			div.appendChild(modal);
 			var backdrop = document.createElement('div');
 			backdrop.classList.add('modal-backdrop', 'fade', 'in');
@@ -103,13 +103,16 @@
 			var body = document.createElement('div');
 			body.classList.add('modal-body');
 			content.appendChild(body);
+			var wrapper = document.createElement('div');
+			wrapper.classList.add('modal-wrapper');
+			body.appendChild(wrapper);
 
 			var h4 = document.createElement('h4');
 			h4.classList.add('modal-title');
 			h4.textContent = title;
 			header.appendChild(h4);
 
-			body.appendChild(bodyDiv);
+			wrapper.appendChild(bodyDiv);
 
 			div.onclick = function(e) {
 				if (e.target === modal || e.target === backdrop) {
