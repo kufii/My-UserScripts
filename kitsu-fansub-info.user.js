@@ -448,13 +448,13 @@
 				});
 
 				var votingButtons = document.createElement('div');
-				votingButtons.classList.add('pull-right');
+				votingButtons.classList.add('like-stream-item');
 				var voteUp = document.createElement('a');
 				var voteDown = document.createElement('a');
 				votingButtons.appendChild(voteUp);
 				votingButtons.appendChild(document.createTextNode(' '));
 				votingButtons.appendChild(voteDown);
-				name.appendChild(votingButtons);
+				streamActivity.appendChild(votingButtons);
 				voteUp.dataset.value = 1;
 				voteDown.dataset.value = 2;
 				voteUp.appendChild(Util.icon(fansub.value === 1 ? 'thumbs-up' : 'thumbs-o-up'));
