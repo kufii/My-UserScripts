@@ -363,6 +363,11 @@
 				extLink.setAttribute('style', 'margin-left: 5px; vertical-align: middle;');
 				title.appendChild(extLink);
 
+				var list = document.createElement('ul');
+				list.classList.add('media-list');
+				list.classList.add('w-100');
+				container.appendChild(list);
+
 				return container;
 			},
 			vote: function(malid, groupid, value, comment) {
@@ -382,10 +387,38 @@
 			},
 			getFansubOutput: function(fansub) {
 				var fansubDiv = document.createElement('div');
-				fansubDiv.classList.add('franchise-show');
+				fansubDiv.classList.add('stream-item');
+				fansubDiv.classList.add('row');
 
-				var name = document.createElement('h4');
-				fansubDiv.appendChild(name);
+				var streamWrap = document.createElement('div');
+				streamWrap.classList.add('stream-item-wrapper');
+				streamWrap.classList.add('stream-review-wrapper');
+				streamWrap.classList.add('col-sm-12');
+				fansubDiv.appendChild(streamWrap);
+
+				var streamReview = document.createElement('div');
+				streamReview.classList.add('stream-review');
+				streamReview.classList.add('row');
+				streamWrap.appendChild(streamReview);
+
+				var streamActivity = document.createElement('div');
+				streamActivity.classList.add('stream-item-activity');
+				streamWrap.appendChild(streamActivity);
+
+				var streamOptions = document.createElement('div');
+				streamOptions.classList.add('stream-item-options');
+				streamWrap.appendChild(streamOptions);
+
+				var streamContent = document.createElement('div');
+				streamContent.classList.add('stream-review-content');
+				streamReview.appendChild(streamContent);
+
+				var heading = document.createElement('small');
+				heading.classList.add('media-heading');
+				streamContent.appendChild(heading);
+
+				var name = document.createElement('h6');
+				heading.appendChild(name);
 
 				var nameLink = document.createElement('a');
 				nameLink.textContent = fansub.name;
@@ -441,15 +474,18 @@
 				voteDown.onclick = voteHandler;
 
 				var approvals = document.createElement('div');
-				approvals.classList.add('review-likes');
+				approvals.classList.add('comment-body');
 				approvals.textContent = fansub.totalApproved + ' of ' + fansub.totalVotes + ' users approve.';
-				fansubDiv.appendChild(approvals);
+				streamContent.appendChild(approvals);
 
 				if (fansub.comments && fansub.comments.length > 0) {
+					var commentsWrap = document.createElement('span');
+					commentsWrap.classList.add('more-wrapper');
+					streamOptions.appendChild(commentsWrap);
 					var commentsLink = document.createElement('a');
-					commentsLink.classList.add('pull-right');
+					commentsLink.classList.add('more-drop');
 					commentsLink.textContent = 'Comments...';
-					approvals.appendChild(commentsLink);
+					commentsWrap.appendChild(commentsLink);
 					commentsLink.onclick = function(e) {
 						e.preventDefault();
 						var commentsDiv = document.createElement('div');
@@ -516,6 +552,8 @@
 					malLink.setAttribute('style', 'color: #FFF;');
 					extLink.appendChild(malLink);
 
+					var list = Util.q('.media-list', section);
+
 					if (response.fansubs.length > 0) {
 						var hiddenSpan = document.createElement('span');
 						hiddenSpan.style.display = 'none';
@@ -524,7 +562,7 @@
 						response.fansubs.forEach(function(fansub, i) {
 							var fansubDiv = App.getFansubOutput(fansub);
 							if (i < 4) {
-								section.appendChild(fansubDiv);
+								list.appendChild(fansubDiv);
 							} else {
 								hiddenSpan.appendChild(fansubDiv);
 								addViewMore = true;
@@ -532,7 +570,7 @@
 						});
 
 						if (addViewMore) {
-							section.appendChild(hiddenSpan);
+							list.appendChild(hiddenSpan);
 							var viewMoreDiv = document.createElement('div');
 							viewMoreDiv.classList.add('view-more');
 
@@ -552,14 +590,14 @@
 								return false;
 							};
 
-							section.appendChild(viewMoreDiv);
+							list.appendChild(viewMoreDiv);
 						}
 					} else {
 						var p = document.createElement('p');
 						p.textContent = 'No fansubs found.';
 						p.style.textAlign = 'center';
 						p.style.marginTop = '5px';
-						section.appendChild(p);
+						list.appendChild(p);
 					}
 				}
 			});
