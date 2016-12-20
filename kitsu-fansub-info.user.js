@@ -23,7 +23,7 @@
 	var REGEX = /^https?:\/\/kitsu\.io\/anime\/([^\/]+)\/?(?:\?.*)?$/;
 	var SECTION_ID = 'kitsu-fansubs';
 
-	GM_addStyle('@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css);');
+	GM_addStyle('@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css); .fa.fa-thumbs-o-up, .fa.fa-thumbs-o-down { color: #464646; } .fa.fa-thumbs-up, .fa.fa-thumbs-o-up:hover { color: #16A085; } .fa.fa-thumbs-down, .fa.fa-thumbs-o-down:hover { color: #DB2409; }');
 
 	var Util = {
 		log: function() {
@@ -455,6 +455,8 @@
 				votingButtons.appendChild(document.createTextNode(' '));
 				votingButtons.appendChild(voteDown);
 				streamActivity.appendChild(votingButtons);
+				voteUp.href = '#';
+				voteDown.href = '#';
 				voteUp.dataset.value = 1;
 				voteDown.dataset.value = 2;
 				voteUp.appendChild(Util.icon(fansub.value === 1 ? 'thumbs-up' : 'thumbs-o-up'));
