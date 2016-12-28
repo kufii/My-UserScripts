@@ -50,17 +50,17 @@
 				Util.log('Loading cached info');
 				cb(self.cache[title]);
 			} else {
-				var url = 'https://www.google.com/search?q=' + encodeURIComponent(title.trim() + ' site:bato.to/comic/_/comics');
-				Util.log('Searching Google for Batoto page:', url);
+				var url = 'https://duckduckgo.com/html/?q=' + encodeURIComponent(title.trim() + ' site:bato.to/comic/_/comics');
+				Util.log('Searching DuckDuckGo for Batoto page:', url);
 				GM_xmlhttpRequest({
 					method: 'GET',
 					url: url,
 					onload: function(response) {
-						Util.log('Loaded Google search');
+						Util.log('Loaded DuckDuckGo search');
 						var tempDiv = document.createElement('div');
 						tempDiv.innerHTML = response.responseText;
 
-						var manga = Util.q('#rso > div > div:nth-child(1) h3 > a', tempDiv);
+						var manga = Util.q('#links > div:first-child .result__extras__url > a.result__url', tempDiv);
 						if (manga) {
 							manga.href = manga.href.replace('http://', 'https://');
 							Util.log('Batoto link:', manga.href);
@@ -73,7 +73,7 @@
 						}
 					},
 					onerror: function() {
-						Util.log('Error searching Google');
+						Util.log('Error searching DuckDuckGo');
 					}
 				});
 			}
