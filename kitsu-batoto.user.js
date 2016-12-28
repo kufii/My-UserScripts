@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Kitsu Batoto Links
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.1
+// @version      2.0.2
 // @description  Adds Batoto links to Kitsu manga pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
+// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
@@ -81,29 +81,32 @@
 	};
 
 	waitForUrl(MANGA_REGEX, function() {
-		waitForElems('.media-cover-wrapper .cover-username', function(title) {
-			var followGroup = Util.q('.media-cover-wrapper .cover-cta');
-			var linkCheck = Util.q('a', followGroup);
-			if (linkCheck) {
-				followGroup.removeChild(linkCheck);
-			}
-
-			var url = location.href;
-			App.getBatotoPage(Util.shallowTextContent(title), function(manga) {
-				if (location.href === url && manga) {
-					var linkElem = document.createElement('a');
-					linkElem.setAttribute('style', 'display: inline-block;');
-					linkElem.setAttribute('target', '_blank');
-					linkElem.href = manga;
-					followGroup.appendChild(linkElem);
-					var btnElem = document.createElement('button');
-					btnElem.classList.add('button');
-					btnElem.classList.add('button--primary');
-					btnElem.textContent = "Batoto";
-					btnElem.setAttribute('style', 'margin-top: 0.5px;');
-					linkElem.appendChild(btnElem);
+		waitForElems({
+			sel: '.media-cover-wrapper .cover-username',
+			stop: true,
+			onmatch: function(title) {
+				var followGroup = Util.q('.media-cover-wrapper .cover-cta');
+				var linkCheck = Util.q('a', followGroup);
+				if (linkCheck) {
+					followGroup.removeChild(linkCheck);
 				}
-			});
-		}, true);
+				var url = location.href;
+				App.getBatotoPage(Util.shallowTextContent(title), function(manga) {
+					if (location.href === url && manga) {
+						var linkElem = document.createElement('a');
+						linkElem.setAttribute('style', 'display: inline-block;');
+						linkElem.setAttribute('target', '_blank');
+						linkElem.href = manga;
+						followGroup.appendChild(linkElem);
+						var btnElem = document.createElement('button');
+						btnElem.classList.add('button');
+						btnElem.classList.add('button--primary');
+						btnElem.textContent = "Batoto";
+						btnElem.setAttribute('style', 'margin-top: 0.5px;');
+						linkElem.appendChild(btnElem);
+					}
+				});
+			}
+		});
 	});
 })();
