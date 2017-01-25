@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.2
+// @version      1.5.3
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -136,7 +136,7 @@
 		name: 'Wall Street Journal',
 		match: '^https?://www\.wsj\.com/articles/.*',
 		wait: '.wsj-snippet-login',
-		referer: 'http://www.google.com',
+		referer: 'https://t.co/T1323aaaa',
 		afterReplace: function() {
 			W.loadCSS('//asset.wsj.net/public/extra.production-2a7a40d6.css');
 			var scripts = Util.qq('script');
