@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.3
+// @version      1.5.4
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
 // @match        *://www.wsj.com/articles/*
+// @match        *://blogs.wsj.com/*
 // @match        *://www.bostonglobe.com/*
 // @match        *://www.nytimes.com/*
 // @match        *://myaccount.nytimes.com/mobile/wall/smart/*
@@ -134,7 +135,7 @@
 		bmmode: function() { Paywall.hide(); }
 	}, {
 		name: 'Wall Street Journal',
-		match: '^https?://www\.wsj\.com/articles/.*',
+		match: '^https?://.*\.wsj\.com/.*',
 		wait: '.wsj-snippet-login',
 		referer: 'https://t.co/T1323aaaa',
 		afterReplace: function() {
