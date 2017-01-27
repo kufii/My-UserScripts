@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.4
+// @version      1.5.5
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -170,6 +170,13 @@
 			},
 			'#gatewayCreative, #overlay': {
 				display: 'none'
+			},
+			'.media .image': {
+				'margin-bottom': '7px'
+			},
+			'.new-story-body-text': {
+				'font-size': '1.0625rem',
+				'line-height': '1.625rem'
 			}
 		},
 		cleanupStory: function(story) {
@@ -178,8 +185,9 @@
 				Util.qq('figure', story).forEach(function(figure) {
 					figure.outerHTML = figure.outerHTML.replace(/<figure/, '<div').replace(/<\/figure/, '</div');
 				});
-				Util.qq('.story-content', story).forEach(function(paragraph) {
-					paragraph.className = '';
+				Util.qq('.story-body-text', story).forEach(function(paragraph) {
+					paragraph.classList.remove('story-body-text');
+					paragraph.classList.add('new-story-body-text');
 				});
 			}
 			return story;
@@ -204,35 +212,35 @@
 			// clear intervals once the paywall comes up to prevent changes afterward
 			waitForElems('#gatewayCreative', Util.clearAllIntervals, true);
 			this.cleanupStory(Util.q('#story'));
-            setTimeout(function() {
-                require(['jquery/nyt'], function($) {
-                    require(['vhs'], function (vhs) {
-                        Util.qq('.video').forEach(function(video) {
-                            video.setAttribute('style', 'position: relative');
-                            var bind = document.createElement('div');
-                            bind.classList.add('video-bind');
-                            var div = document.createElement('div');
-                            div.setAttribute('style', 'padding-bottom: 56.25%; position: relative; overflow: hidden;');
-                            bind.appendChild(div);
-                            Util.prepend(video, bind);
-                            vhs.player({
-                                id: video.dataset.videoid,
-                                container: $(div),
-                                width: '100%',
-                                height: '100%',
-                                mode: 'html5',
-                                controlsOverlay: {
-                                    mode: 'article'
-                                },
-                                cover: {
-                                    mode: "article"
-                                },
-                                newControls: true
-                            });
-                        });
-                    });
-                });
-            }, 0);
+			setTimeout(function() {
+				require(['jquery/nyt'], function($) {
+					require(['vhs'], function (vhs) {
+						Util.qq('.video').forEach(function(video) {
+							video.setAttribute('style', 'position: relative');
+							var bind = document.createElement('div');
+							bind.classList.add('video-bind');
+							var div = document.createElement('div');
+							div.setAttribute('style', 'padding-bottom: 56.25%; position: relative; overflow: hidden;');
+							bind.appendChild(div);
+							Util.prepend(video, bind);
+							vhs.player({
+								id: video.dataset.videoid,
+								container: $(div),
+								width: '100%',
+								height: '100%',
+								mode: 'html5',
+								controlsOverlay: {
+									mode: 'article'
+								},
+								cover: {
+									mode: "article"
+								},
+								newControls: true
+							});
+						});
+					});
+				});
+			}, 0);
 		}
 	}, {
 		name: 'NY Times Mobile Redirect',
