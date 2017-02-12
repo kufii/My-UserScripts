@@ -31,7 +31,7 @@
 
 	var App = {
 		getKitsuLink: function(type, malid, cb) {
-			Util.log('Fetching Kitsu ID for MAL ID:', malid);
+			//Util.log('Fetching Kitsu ID for MAL ID:', malid);
 			GM_xmlhttpRequest({
 				method: 'GET',
 				url: API + '/mappings?filter[external_site]=myanimelist/' + type + '&filter[external_id]=' + malid,
@@ -41,7 +41,7 @@
 				onload: function(response) {
 					try {
 						var json = JSON.parse(response.responseText);
-						Util.log('Kitsu mapping ID:', json.data[0].id);
+						//Util.log('Kitsu mapping ID:', json.data[0].id);
 						GM_xmlhttpRequest({
 							method: 'GET',
 							url: API + '/mappings/' + json.data[0].id + '/media',
@@ -51,14 +51,14 @@
 							onload: function(response) {
 								try {
 									var json = JSON.parse(response.responseText);
-									Util.log('Kitsu slug:', json.data.attributes.slug);
+									//Util.log('Kitsu slug:', json.data.attributes.slug);
 									if (type == 'anime') {
 										cb('https://kitsu.io/anime/' + json.data.attributes.slug);
 									} else if (type == 'manga') {
 										cb('https://kitsu.io/manga/' + json.data.attributes.slug);
 									}
 								} catch (err) {
-									Util.log('Failed to parse media API results', err);
+									Util.log('Failed to parse media API results');
 								}
 							},
 							onerror: function() {
@@ -81,7 +81,7 @@
 		var type = match[1];
 		var id = match[2];
 		App.getKitsuLink(type, id, function(href) {
-			Util.log('Link', href);
+			Util.log('Link:', href);
 			var container = Util.q('#content > table > tbody > tr > td.borderClass .pb16');
 			if (container) {
 				container.appendChild(document.createTextNode(', '));
@@ -92,9 +92,9 @@
 				a.setAttribute('target', '_blank');
 				container.appendChild(a);
 
-				Util.log('Added link');
+				//Util.log('Added link');
 			} else {
-				Util.log('External Links doesn\'t exist');
+				//Util.log('External Links doesn\'t exist');
 				var ad = Util.q('#content > table > tbody > tr > td.borderClass .mt16');
 
 				var space = document.createElement('br');
@@ -114,7 +114,7 @@
 				b.setAttribute('target', '_blank');
 				links.appendChild(b);
 
-				Util.log('Added link');
+				//Util.log('Added link');
 			}
 		});
 	}
