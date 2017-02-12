@@ -58,7 +58,7 @@
 										cb('https://kitsu.io/manga/' + json.data.attributes.slug);
 									}
 								} catch (err) {
-									Util.log('Failed to parse media API results');
+									Util.log('Failed to parse media API results', err);
 								}
 							},
 							onerror: function() {
@@ -81,15 +81,20 @@
 		var type = match[1];
 		var id = match[2];
 		App.getKitsuLink(type, id, function(href) {
-			var container = Util.q('.pb16');
-			if (container.innerHTML.trim()) {
+			Util.log('Link', href);
+			var container = Util.q('#content > table > tbody > tr > td.borderClass .pb16');
+			if (container) {
 				container.appendChild(document.createTextNode(', '));
+
+				var a = document.createElement('a');
+				a.textContent = 'Kitsu';
+				a.href = href;
+				a.setAttribute('target', '_blank');
+				container.appendChild(a);
+				Util.log('Added link');
+			} else {
+				Util.log('External Links doesn\'t exist');
 			}
-			var a = document.createElement('a');
-			a.textContent = 'Kitsu';
-			a.href = href;
-			a.setAttribute('target', '_blank');
-			container.appendChild(a);
 		});
 	}
 })();
