@@ -91,9 +91,30 @@
 				a.href = href;
 				a.setAttribute('target', '_blank');
 				container.appendChild(a);
+
 				Util.log('Added link');
 			} else {
 				Util.log('External Links doesn\'t exist');
+				var ad = Util.q('#content > table > tbody > tr > td.borderClass .mt16');
+
+				var space = document.createElement('br');
+				ad.parentElement.insertBefore(space, ad);
+
+				var header = document.createElement('h2');
+				header.textContent = 'External Links';
+				ad.parentElement.insertBefore(header, ad);
+
+				var links = document.createElement('div');
+				links.classList.add('pb16');
+				ad.parentElement.insertBefore(links, ad);
+
+				var b = document.createElement('a');
+				b.textContent = 'Kitsu';
+				b.href = href;
+				b.setAttribute('target', '_blank');
+				links.appendChild(b);
+
+				Util.log('Added link');
 			}
 		});
 	}
