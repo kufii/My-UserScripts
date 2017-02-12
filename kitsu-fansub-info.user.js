@@ -23,7 +23,7 @@
 	var REGEX = /^https?:\/\/kitsu\.io\/anime\/([^\/]+)\/?(?:\?.*)?$/;
 	var SECTION_ID = 'kitsu-fansubs';
 
-	GM_addStyle('@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css); .fa.fa-thumbs-o-up, .fa.fa-thumbs-o-down { color: #464646; } .fa.fa-thumbs-up, .fa.fa-thumbs-o-up:hover { color: #16A085; } .fa.fa-thumbs-down, .fa.fa-thumbs-o-down:hover { color: #DB2409; }');
+	GM_addStyle('@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css);.fa.fa-thumbs-o-up,.fa.fa-thumbs-o-down{color:#464646;}.fa.fa-thumbs-up,.fa.fa-thumbs-o-up:hover{color:#16A085;}.fa.fa-thumbs-down,.fa.fa-thumbs-o-down:hover{color:#DB2409;}');
 
 	var Util = {
 		log: function() {
@@ -242,10 +242,10 @@
 			},
 			getMALFansubInfo: function(malid, cb) {
 				Util.log('Loading MAL info...');
-				var url = 'myanimelist.net/anime/' + malid;
+				var url = 'https://myanimelist.net/anime/' + malid;
 				GM_xmlhttpRequest({
 					method: 'GET',
-					url: 'https://' + url,
+					url: url,
 					onload: function(response) {
 						Util.log('Loaded MAL info.');
 						var tempDiv = document.createElement('div');
@@ -293,7 +293,7 @@
 									id: id,
 									malid: malid,
 									name: link.textContent,
-									url: 'http://myanimelist.net' + link.pathname + link.search,
+									url: 'https://myanimelist.net' + link.pathname + link.search,
 									tag: tag,
 									lang: lang,
 									totalVotes: totalVotes,
@@ -303,7 +303,7 @@
 								};
 							});
 							cb({
-								url: 'http://' + url + '#inlineContent',
+								url: url + '#inlineContent',
 								fansubs: fansubs
 							});
 						} else {
@@ -360,14 +360,9 @@
 				container.id = SECTION_ID;
 
 				var title = document.createElement('h5');
+				title.id = 'fansubs-title';
 				title.textContent = 'Fansubs';
 				container.appendChild(title);
-
-				var extLink = document.createElement('span');
-				extLink.classList.add('tag');
-				extLink.classList.add('role-tag');
-				extLink.setAttribute('style', 'margin-left: 5px; vertical-align: middle;');
-				title.appendChild(extLink);
 
 				var list = document.createElement('ul');
 				list.classList.add('media-list');
@@ -555,13 +550,13 @@
 								response.fansubs = App.filterFansubs(response.fansubs, cfg.lang);
 							}
 
-							var extLink = Util.q('h5 > .tag', section);
+							var extLink = Util.q('h5#fansubs-title', section);
 							var malLink = document.createElement('a');
 							malLink.href = response.url;
 							Util.setNewTab(malLink);
-							malLink.textContent = 'MAL';
-							malLink.setAttribute('style', 'color: #FFF;');
+							malLink.setAttribute('style', 'margin-left: 5px;');
 							extLink.appendChild(malLink);
+							malLink.appendChild(Util.icon('external-link'));
 
 							var list = Util.q('.media-list', section);
 
