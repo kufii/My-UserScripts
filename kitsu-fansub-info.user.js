@@ -539,77 +539,82 @@
 
 		var cfg = Config.load();
 		waitForUrl(REGEX, function() {
-			var container = Util.q('.media-container');
-			var commFeed = Util.q('section:last-child', container);
+			waitForElems({
+				sel: '.media-container > .row > .col-sm-8',
+				stop: true,
+				onmatch: function(container) {
+					var reviews = Util.qq('section.m-b-1', container)[1];
 
-			var section = Util.q('#' + SECTION_ID);
-			if (section) section.remove();
-			section = App.getFansubSection();
-			container.insertBefore(section, commFeed);
+					var section = Util.q('#' + SECTION_ID, container);
+					if (section) section.remove();
+					section = App.getFansubSection();
+					reviews.parentNode.insertBefore(section, reviews.nextSibling);
 
-			var slug = location.href.match(REGEX)[1];
-			var url = location.href;
-			App.getFansubs(slug, function(response) {
-				if (location.href === url) {
-					if (cfg.lang) {
-						response.fansubs = App.filterFansubs(response.fansubs, cfg.lang);
-					}
-
-					var extLink = Util.q('h5 > .tag', section);
-					var malLink = document.createElement('a');
-					malLink.href = response.url;
-					Util.setNewTab(malLink);
-					malLink.textContent = 'MAL';
-					malLink.setAttribute('style', 'color: #FFF;');
-					extLink.appendChild(malLink);
-
-					var list = Util.q('.media-list', section);
-
-					if (response.fansubs.length > 0) {
-						var hiddenSpan = document.createElement('span');
-						hiddenSpan.style.display = 'none';
-						var addViewMore = false;
-
-						response.fansubs.forEach(function(fansub, i) {
-							var fansubDiv = App.getFansubOutput(fansub);
-							if (i < 4) {
-								list.appendChild(fansubDiv);
-							} else {
-								hiddenSpan.appendChild(fansubDiv);
-								addViewMore = true;
+					var slug = location.href.match(REGEX)[1];
+					var url = location.href;
+					App.getFansubs(slug, function(response) {
+						if (location.href === url) {
+							if (cfg.lang) {
+								response.fansubs = App.filterFansubs(response.fansubs, cfg.lang);
 							}
-						});
 
-						if (addViewMore) {
-							list.appendChild(hiddenSpan);
-							var viewMoreDiv = document.createElement('div');
-							viewMoreDiv.classList.add('view-more');
+							var extLink = Util.q('h5 > .tag', section);
+							var malLink = document.createElement('a');
+							malLink.href = response.url;
+							Util.setNewTab(malLink);
+							malLink.textContent = 'MAL';
+							malLink.setAttribute('style', 'color: #FFF;');
+							extLink.appendChild(malLink);
 
-							var viewMore = document.createElement('a');
-							viewMore.textContent = 'View More Fansubs';
-							viewMoreDiv.appendChild(viewMore);
+							var list = Util.q('.media-list', section);
 
-							viewMore.onclick = function(e) {
-								e.preventDefault();
-								if (hiddenSpan.style.display === 'none') {
-									hiddenSpan.style.display = 'inline';
-									viewMore.textContent = 'View Less Fansubs';
-								} else {
-									hiddenSpan.style.display = 'none';
+							if (response.fansubs.length > 0) {
+								var hiddenSpan = document.createElement('span');
+								hiddenSpan.style.display = 'none';
+								var addViewMore = false;
+
+								response.fansubs.forEach(function(fansub, i) {
+									var fansubDiv = App.getFansubOutput(fansub);
+									if (i < 4) {
+										list.appendChild(fansubDiv);
+									} else {
+										hiddenSpan.appendChild(fansubDiv);
+										addViewMore = true;
+									}
+								});
+
+								if (addViewMore) {
+									list.appendChild(hiddenSpan);
+									var viewMoreDiv = document.createElement('div');
+									viewMoreDiv.classList.add('view-more');
+
+									var viewMore = document.createElement('a');
 									viewMore.textContent = 'View More Fansubs';
-								}
-								return false;
-							};
+									viewMoreDiv.appendChild(viewMore);
 
-							list.appendChild(viewMoreDiv);
+									viewMore.onclick = function(e) {
+										e.preventDefault();
+										if (hiddenSpan.style.display === 'none') {
+											hiddenSpan.style.display = 'inline';
+											viewMore.textContent = 'View Less Fansubs';
+										} else {
+											hiddenSpan.style.display = 'none';
+											viewMore.textContent = 'View More Fansubs';
+										}
+										return false;
+									};
+
+									list.appendChild(viewMoreDiv);
+								}
+							} else {
+								var p = document.createElement('p');
+								p.textContent = 'No fansubs found.';
+								p.style.textAlign = 'center';
+								p.style.marginTop = '5px';
+								list.appendChild(p);
+							}
 						}
-					} else {
-						var p = document.createElement('p');
-						p.textContent = 'No fansubs found.';
-						p.style.textAlign = 'center';
-						p.style.marginTop = '5px';
-						list.appendChild(p);
-					}
+					});
 				}
 			});
 		});
