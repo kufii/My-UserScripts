@@ -44,7 +44,7 @@
 						//Util.log('Kitsu mapping ID:', json.data[0].id);
 						GM_xmlhttpRequest({
 							method: 'GET',
-							url: API + '/mappings/' + json.data[0].id + '/media',
+							url: API + '/mappings/' + json.data[0].id + '/media?fields[media]=slug',
 							headers: {
 								'Accept': 'application/vnd.api+json'
 							},
