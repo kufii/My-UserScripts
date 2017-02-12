@@ -7,10 +7,8 @@
 // @match        *://kitsu.io/*
 // @match        *://myanimelist.net/anime/*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
-// @resource     icons https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css
 // @grant        GM_xmlhttpRequest
 // @grant        GM_addStyle
-// @grant        GM_getResourceText
 // @grant        GM_registerMenuCommand
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -25,8 +23,7 @@
 	var REGEX = /^https?:\/\/kitsu\.io\/anime\/([^\/]+)\/?(?:\?.*)?$/;
 	var SECTION_ID = 'kitsu-fansubs';
 
-	GM_addStyle(GM_getResourceText('icons'));
-	GM_addStyle('.fa.fa-thumbs-o-up,.fa.fa-thumbs-o-down{color:#464646;}.fa.fa-thumbs-up,.fa.fa-thumbs-o-up:hover{color:#16A085;}.fa.fa-thumbs-down,.fa.fa-thumbs-o-down:hover{color:#DB2409;}');
+	GM_addStyle('@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css); .fa.fa-thumbs-o-up, .fa.fa-thumbs-o-down { color: #464646; } .fa.fa-thumbs-up, .fa.fa-thumbs-o-up:hover { color: #16A085; } .fa.fa-thumbs-down, .fa.fa-thumbs-o-down:hover { color: #DB2409; }');
 
 	var Util = {
 		log: function() {
