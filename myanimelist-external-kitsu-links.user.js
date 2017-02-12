@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         MyAnimeList, External Kitsu Links
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0
+// @version      2.1
 // @description  Adds a link to the Kitsu page in the External Links section
 // @author       Adrien Pyke
 // @match        *://myanimelist.net/anime/*
+// @match        *://myanimelist.net/manga/*
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
@@ -29,11 +30,11 @@
 	};
 
 	var App = {
-		getHummingbirdLink: function(malid, cb) {
+		getKitsuLink: function(type, malid, cb) {
 			Util.log('Fetching Kitsu ID for MAL ID:', malid);
 			GM_xmlhttpRequest({
 				method: 'GET',
-				url: API + '/mappings?filter[external_site]=myanimelist/anime&filter[external_id]=' + malid,
+				url: API + '/mappings?filter[external_site]=myanimelist/' + type + '&filter[external_id]=' + malid,
 				headers: {
 					'Accept': 'application/vnd.api+json'
 				},
@@ -51,7 +52,11 @@
 								try {
 									var json = JSON.parse(response.responseText);
 									Util.log('Kitsu slug:', json.data.attributes.slug);
-									cb('https://kitsu.io/anime/' + json.data.attributes.slug);
+									if (type == 'anime') {
+										cb('https://kitsu.io/anime/' + json.data.attributes.slug);
+									} else if (type == 'manga') {
+										cb('https://kitsu.io/manga/' + json.data.attributes.slug);
+									}
 								} catch (err) {
 									Util.log('Failed to parse media API results');
 								}
@@ -71,10 +76,11 @@
 		}
 	};
 
-	var match = location.href.match(/^https?:\/\/myanimelist\.net\/anime\/([0-9]+)/i);
+	var match = location.href.match(/^https?:\/\/myanimelist\.net\/(anime|manga)\/([0-9]+)/i);
 	if (match) {
-		var id = match[1];
-		App.getHummingbirdLink(id, function(href) {
+		var type = match[1];
+		var id = match[2];
+		App.getKitsuLink(type, id, function(href) {
 			var container = Util.q('.pb16');
 			if (container.innerHTML.trim()) {
 				container.appendChild(document.createTextNode(', '));
