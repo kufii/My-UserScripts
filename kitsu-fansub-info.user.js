@@ -23,7 +23,7 @@
 	var REGEX = /^https?:\/\/kitsu\.io\/anime\/([^\/]+)\/?(?:\?.*)?$/;
 	var SECTION_ID = 'kitsu-fansubs';
 
-	GM_addStyle('@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css);.fa.fa-thumbs-o-up,.fa.fa-thumbs-o-down{color:#464646;}.fa.fa-thumbs-up,.fa.fa-thumbs-o-up:hover{color:#16A085;}.fa.fa-thumbs-down,.fa.fa-thumbs-o-down:hover{color:#DB2409;}');
+	GM_addStyle('@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css);.fa.fa-thumbs-o-up,.fa.fa-thumbs-o-down{color:#464646;}.fa.fa-thumbs-up,.fa.fa-thumbs-o-up:hover{color:#16A085;}.fa.fa-thumbs-down,.fa.fa-thumbs-o-down:hover{color:#DB2409;}.fa.fa-smile-o{color:#16A085;}.fa.fa-frown-o{color:#DB2409;}');
 
 	var Util = {
 		log: function() {
@@ -494,15 +494,15 @@
 						var commentsDiv = document.createElement('div');
 						fansub.comments.forEach(function(comment) {
 							var div = document.createElement('div');
-							div.classList.add('media');
+							div.classList.add('author-header');
 
 							var smileContainer = document.createElement('div');
-							smileContainer.classList.add('quick-rating');
+							smileContainer.classList.add('review-avatar');
 							div.appendChild(smileContainer);
-							smileContainer.appendChild(comment.approves ? Util.icon('smile-o') : Util.icon('frown-o'));
+							smileContainer.appendChild(comment.approves ? Util.icon('smile-o') : Util.icon('frown-o')).setAttribute('style', 'font-size: 25px;');
 
 							var commentContainer = document.createElement('div');
-							commentContainer.classList.add('media-body');
+							commentContainer.classList.add('comment-body');
 							div.appendChild(commentContainer);
 							var commentText = document.createElement('p');
 							commentText.textContent = comment.text;
