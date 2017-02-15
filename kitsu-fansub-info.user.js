@@ -286,7 +286,7 @@
 								var value = 3;
 								if (voteUpButton.src.match('good\-on\.gif$')) {
 									value = 1;
-								} else if (voteDownButton.src.match('bad\-on\.gif$')) { 
+								} else if (voteDownButton.src.match('bad\-on\.gif$')) {
 									value = 2;
 								}
 								return {
@@ -487,6 +487,7 @@
 					streamOptions.appendChild(commentsWrap);
 					var commentsLink = document.createElement('a');
 					commentsLink.classList.add('more-drop');
+					commentsLink.href = '#';
 					commentsLink.textContent = 'Comments...';
 					commentsWrap.appendChild(commentsLink);
 					commentsLink.onclick = function(e) {
@@ -510,6 +511,7 @@
 
 							commentsDiv.appendChild(div);
 						});
+						Util.q('.author-header:last-child', commentsDiv).setAttribute('style', 'border-bottom: none;');
 						Util.createModal(fansub.name, commentsDiv);
 						return false;
 					};
@@ -578,9 +580,14 @@
 								if (addViewMore) {
 									list.appendChild(hiddenSpan);
 									var viewMoreDiv = document.createElement('div');
-									viewMoreDiv.classList.add('view-more');
+									viewMoreDiv.classList.add('text-xs-center');
+									viewMoreDiv.classList.add('w-100');
 
 									var viewMore = document.createElement('a');
+									viewMore.classList.add('button');
+									viewMore.classList.add('button--secondary');
+									viewMore.setAttribute('style', 'color: #FFF;');
+									viewMore.href = '#';
 									viewMore.textContent = 'View More Fansubs';
 									viewMoreDiv.appendChild(viewMore);
 
