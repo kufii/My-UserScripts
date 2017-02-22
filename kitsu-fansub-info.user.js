@@ -510,8 +510,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				var voteHandler = function(e) {
 					e.preventDefault();
 					var clickedNode = e.target;
-					if (clickedNode.nodeName === 'I') {
+					if (clickedNode.nodeName === 'svg') {
 						clickedNode = clickedNode.parentNode;
+					} else if (clickedNode.nodeName === 'path') {
+						clickedNode = clickedNode.parentNode.parentNode;
 					}
 					var value = parseInt(clickedNode.dataset.value);
 					if (value === fansub.value) {
