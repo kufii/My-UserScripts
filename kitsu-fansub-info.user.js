@@ -363,13 +363,20 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					return;
 				}
 				self.getKitsuInfo(id, function(anime) {
-					// Todo: Search mapping array properly
-					if (anime.included[0].attributes.externalSite == 'myanimelist/anime') {
-						var mal_id = anime.included[0].attributes.externalId;
+					var mal_id;
+					for (var i = 0; i < anime.included.length; i++) {
+						if (anime.included[i].attributes.externalSite == 'myanimelist/anime') {
+							mal_id = anime.included[i].attributes.externalId;
+						}
+					}
+					if (mal_id) {
 						self.getMALFansubInfo(mal_id, function(fansubs) {
 							self.fansubCache[id] = fansubs;
 							cb(fansubs);
 						});
+					} else {
+						Util.log('MAL ID not found');
+						return;
 					}
 				});
 			},
