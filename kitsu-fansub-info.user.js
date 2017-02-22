@@ -376,6 +376,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 						});
 					} else {
 						Util.log('MAL ID not found');
+						var section = Util.q('#' + SECTION_ID);
+						if (section) section.remove();
 						return;
 					}
 				});
