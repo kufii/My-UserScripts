@@ -114,14 +114,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			node.setAttribute('target', '_blank');
 			node.setAttribute('rel', 'noopener noreferrer');
 		},
-		icon: function(name, color, scaleX, scaleY) {
+		icon: function(name, color, size, scale) {
 			var newIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 			newIcon.innerHTML = Icon[name];
 			newIcon.setAttribute('viewBox', '0 0 50 50');
 			newIcon.setAttribute('width', '20');
 			newIcon.setAttribute('height', '20');
 			if (color) newIcon.setAttribute('fill', color);
-			if (scaleX && scaleY) newIcon.setAttribute('transform', 'scale(' + scaleX + ', ' + scaleY + ')');
+			if (size) { newIcon.setAttribute('width', size); newIcon.setAttribute('height', size); }
+			if (scale) newIcon.setAttribute('transform', 'scale(' + scale[0] + ', ' + scale[1] + ')');
 			return newIcon;
 		},
 		createModal: function(title, bodyDiv) {
@@ -497,13 +498,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 				if (fansub.value === 1) {
 					voteUp.appendChild(Util.icon('thumbsUp', '#16A085'));
-					voteDown.appendChild(Util.icon('thumbsUp', '', '-1', '-1'));
+					voteDown.appendChild(Util.icon('thumbsUp', '', '', [-1, -1]));
 				} else if (fansub.value === 2) {
 					voteUp.appendChild(Util.icon('thumbsUp', ''));
-					voteDown.appendChild(Util.icon('thumbsUp','#DB2409', '-1', '-1'));
+					voteDown.appendChild(Util.icon('thumbsUp','#DB2409', '', [-1, -1]));
 				} else {
 					voteUp.appendChild(Util.icon('thumbsUp', ''));
-					voteDown.appendChild(Util.icon('thumbsUp', '', '-1', '-1'));
+					voteDown.appendChild(Util.icon('thumbsUp', '', '', [-1, -1]));
 				}
 
 				var voteHandler = function(e) {
@@ -522,13 +523,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 					if (fansub.value === 1) {
 						voteUp.appendChild(Util.icon('thumbsUp', '#16A085'));
-						voteDown.appendChild(Util.icon('thumbsUp', '', '-1', '-1'));
+						voteDown.appendChild(Util.icon('thumbsUp', '', '', [-1, -1]));
 					} else if (fansub.value === 2) {
 						voteUp.appendChild(Util.icon('thumbsUp', ''));
-						voteDown.appendChild(Util.icon('thumbsUp','#DB2409', '-1', '-1'));
+						voteDown.appendChild(Util.icon('thumbsUp','#DB2409', '', [-1, -1]));
 					} else {
 						voteUp.appendChild(Util.icon('thumbsUp', ''));
-						voteDown.appendChild(Util.icon('thumbsUp', '', '-1', '-1'));
+						voteDown.appendChild(Util.icon('thumbsUp', '', '', [-1, -1]));
 					}
 				};
 				voteUp.onclick = voteHandler;
@@ -557,11 +558,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 							var smileContainer = document.createElement('div');
 							smileContainer.classList.add('review-avatar');
+							smileContainer.setAttribute('style', 'margin-right: 0');
 							div.appendChild(smileContainer);
-							smileContainer.appendChild(comment.approves ? Util.icon('plus', '#16A085') : Util.icon('minus', '#DB2409'));
+							smileContainer.appendChild(comment.approves ? Util.icon('plus', '#16A085', 25) : Util.icon('minus', '#DB2409', 25));
 
 							var commentContainer = document.createElement('div');
 							commentContainer.classList.add('comment-body');
+							commentContainer.setAttribute('style', 'margin-left: 40px');
 							div.appendChild(commentContainer);
 							var commentText = document.createElement('p');
 							commentText.textContent = comment.text;
