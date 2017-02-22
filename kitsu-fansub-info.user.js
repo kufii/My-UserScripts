@@ -493,11 +493,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				});
 
 				var votingButtons = document.createElement('div');
-				votingButtons.classList.add('like-stream-item');
+				votingButtons.setAttribute('style', 'display:inline-block;float:left;padding:2px 0 4px;position:relative;');
 				var voteUp = document.createElement('a');
 				var voteDown = document.createElement('a');
 				votingButtons.appendChild(voteUp);
-				votingButtons.appendChild(document.createTextNode(' '));
 				votingButtons.appendChild(voteDown);
 				streamActivity.appendChild(votingButtons);
 				voteUp.href = '#';
@@ -506,14 +505,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				voteDown.dataset.value = 2;
 
 				if (fansub.value === 1) {
-					voteUp.appendChild(Util.icon('thumbsUp', '#16A085'));
-					voteDown.appendChild(Util.icon('thumbsUp', '', '', [-1, -1]));
+					voteUp.appendChild(Util.icon('thumbsUp', '#16A085')).setAttribute('style', 'width:23px;height:auto;float:left;');
+					voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
 				} else if (fansub.value === 2) {
-					voteUp.appendChild(Util.icon('thumbsUp', ''));
-					voteDown.appendChild(Util.icon('thumbsUp','#DB2409', '', [-1, -1]));
+					voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
+					voteDown.appendChild(Util.icon('thumbsUp','#DB2409', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
 				} else {
-					voteUp.appendChild(Util.icon('thumbsUp', ''));
-					voteDown.appendChild(Util.icon('thumbsUp', '', '', [-1, -1]));
+					voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
+					voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
 				}
 
 				var voteHandler = function(e) {
@@ -533,14 +532,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					voteUp.innerHTML = voteDown.innerHTML = '';
 
 					if (fansub.value === 1) {
-						voteUp.appendChild(Util.icon('thumbsUp', '#16A085'));
-						voteDown.appendChild(Util.icon('thumbsUp', '', '', [-1, -1]));
+						voteUp.appendChild(Util.icon('thumbsUp', '#16A085')).setAttribute('style', 'width:23px;height:auto;float:left;');
+						voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
 					} else if (fansub.value === 2) {
-						voteUp.appendChild(Util.icon('thumbsUp', ''));
-						voteDown.appendChild(Util.icon('thumbsUp','#DB2409', '', [-1, -1]));
+						voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
+						voteDown.appendChild(Util.icon('thumbsUp','#DB2409', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
 					} else {
-						voteUp.appendChild(Util.icon('thumbsUp', ''));
-						voteDown.appendChild(Util.icon('thumbsUp', '', '', [-1, -1]));
+						voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
+						voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
 					}
 				};
 				voteUp.onclick = voteHandler;
