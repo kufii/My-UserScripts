@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.5
+// @version      1.5.6
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -11,6 +11,7 @@
 // @match        *://www.nytimes.com/*
 // @match        *://myaccount.nytimes.com/mobile/wall/smart/*
 // @match        *://mobile.nytimes.com/*
+// @match        *://www.latimes.com/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -68,6 +69,16 @@
 			for (var i = 1; i <= interval_id; i++) {
 				window.clearInterval(i);
 			}
+		},
+		hijackScrollEvent: function(cb) {
+			document.onscroll = function(e) {
+				if (cb) {
+					cb(e);
+				}
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				return false;
+			};
 		},
 		addScript: function(src, onload) {
 			var s = document.createElement('script');
@@ -244,7 +255,7 @@
 		}
 	}, {
 		name: 'NY Times Mobile Redirect',
-		match: '^https?://myaccount.nytimes.com/mobile/wall/smart/.*',
+		match: '^https?://myaccount\.nytimes\.com/mobile/wall/smart/.*',
 		fn: function() {
 			var article = Util.getQueryParameter('EXIT_URI');
 			if (article) {
@@ -278,6 +289,18 @@
 			}
 			return null;
 		}
+	}, {
+		name: "LA Times",
+		match: "^https?://www\.latimes\.com/.*",
+		css: {
+			'div#reg-overlay': {
+				display: 'none'
+			},
+			'html, body': {
+				overflow: 'visible'
+			}
+		},
+		fn: Util.hijackScrollEvent
 	}];
 	// END OF IMPLEMENTATIONS
 
