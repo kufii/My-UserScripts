@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.7
+// @version      1.5.8
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -12,7 +12,6 @@
 // @match        *://myaccount.nytimes.com/mobile/wall/smart/*
 // @match        *://mobile.nytimes.com/*
 // @match        *://www.latimes.com/*
-// @match        *://www.hd.se/*/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -309,18 +308,6 @@
 			}
 		},
 		fn: Util.hijackScrollEvent
-	}, {
-		name: 'HD',
-		match: '^https?://www\.hd\.se/.*',
-		css: {
-			'.article__premium-box': {
-				display: 'none'
-			}
-		},
-		fn: function() {
-			W.hdsconfig = JSON.parse('{"product":"hd","name":"HD","productUrl":"http://www.hd.se/","path":"/2017-04-05/sjukvardsdirektoren-petades-men-far-14-miljoner-aven-om-hon-far-nytt-jobb","isHttps":false,"mastertag":"skåne","tags":"Skåne, Region Skåne","authors":"Karin Zillén","story":"","published":"2017-04-05T18:00:00+02:00","gender":"","articleType":"news","social":"","newsvalue":4,"lifespan":"1D","uuid":"0280bd7c-26bf-4b71-b867-0ada0cddf226","isNative":false,"isDevice":"d","isDeviceSource":"header","isArticle":true,"isNativeArticle":false,"isPremium":false,"isPremiumLocked":false,"burtConfig":{"productionHosts":["www.sydsvenskan.se","www.hd.se","8till5.se"],"trackingKeyDesktop":"HDSQZUN1YSEG","trackingKeyMobile":"MOB6BANGQGWG","demographicProvider":"cint","cloudKeys":["INS8GFMRVMI1","HDSTWFNLCVSV"],"cloudKeysMobile":["ADN9G2NGQG38"]},"fusionHost":"fusion.hd.se","sifoConfig":{"codigoId":"70159045256e467386afbe47ac56bacc","desktopImages":[],"mobileImages":[]},"chartbeatUid":"51730","glimrToken":"AZ2DGU8PX6R3LFSVV215","chartbeatDomain":"hd.se","cxenceSiteID":"9222360895795383877","fbPixelId":"1666177630287272","mtp":"0804","loggedIn":false,"splusuid":"","userUUID":"","premiumUser":false,"premium":{"id":"hd.se","variant":"large_hd","splus":"account.hd.se","res":{"hd":"hd.se-premium"}},"supportFlexbox":true,"legacyCSS":"/assets/css/hd-legacy-d663773b91.css","pageType":"ArticlePage","fusionZone":"hdsyd.dator.hd.skane.ovrigt","fusionLayout":"Article_short"}');
-		},
-		referrer: 'https://www.google.ca'
 	}];
 	// END OF IMPLEMENTATIONS
 
