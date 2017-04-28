@@ -9,7 +9,6 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Google - Middle Click Search](https://greasyfork.org/en/scripts/22183-google-middle-click-search)
 * [Greasy Fork - Auto Enable Syntax-Highlighting Source Editor](https://greasyfork.org/en/scripts/22223-greasy-fork-auto-enable-syntax-highlighting-source-editor)
 * [Greasy Fork - Change Default Script Sort on User Profiles](https://greasyfork.org/en/scripts/22202-greasy-fork-change-default-script-sort-on-user-profiles)
-* [Hummingbird 10 Point Ratings](https://greasyfork.org/en/scripts/707-hummingbird-10-point-ratings)
 * [Hummingbird User Compare](https://greasyfork.org/en/scripts/5680-hummingbird-user-compare)
 * [Imgur Mirror](https://greasyfork.org/en/scripts/18806-imgur-mirror)
 * [Kitsu Batoto Links](https://greasyfork.org/en/scripts/22888-hummingbird-batoto-links)
