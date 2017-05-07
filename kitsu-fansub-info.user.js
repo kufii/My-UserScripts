@@ -364,9 +364,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				}
 				self.getKitsuInfo(id, function(anime) {
 					var mal_id;
-					for (var i = 0; i < anime.included.length; i++) {
-						if (anime.included[i].attributes.externalSite == 'myanimelist/anime') {
-							mal_id = anime.included[i].attributes.externalId;
+					if (anime.included) {
+						for (var i = 0; i < anime.included.length; i++) {
+							if (anime.included[i].attributes.externalSite == 'myanimelist/anime') {
+								mal_id = anime.included[i].attributes.externalId;
+							}
 						}
 					}
 					if (mal_id) {
