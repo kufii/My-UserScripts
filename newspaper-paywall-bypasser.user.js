@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.8
+// @version      1.5.9
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -12,6 +12,7 @@
 // @match        *://myaccount.nytimes.com/mobile/wall/smart/*
 // @match        *://mobile.nytimes.com/*
 // @match        *://www.latimes.com/*
+// @match        *://www.washingtonpost.com/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -308,6 +309,24 @@
 			}
 		},
 		fn: Util.hijackScrollEvent
+	}, {
+		name: 'Washington Post',
+		match: '^https?://www\.washingtonpost\.com/.*',
+		css: {
+			'.wp_signin, #wp_Signin': {
+				display: 'none'
+			},
+			'html, body': {
+				overflow: 'visible'
+			}
+		},
+		fn: function() {
+			var handler = function(e) {
+				e.stopImmediatePropagation();
+			};
+			document.addEventListener('keydown', handler, true);
+			document.addEventListener('mousewheel', handler, true);
+		}
 	}];
 	// END OF IMPLEMENTATIONS
 
