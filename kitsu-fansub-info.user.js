@@ -265,7 +265,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			websiteCache: {},
 			votingTabs: {},
 			getKitsuInfo: function(id, cb) {
-				Util.log('Loading Kitsu info...');
+				//Util.log('Loading Kitsu info...');
 				GM_xmlhttpRequest({
 					method: 'GET',
 					url: API + '/anime?filter[slug]=' + id + '&include=mappings',
@@ -282,7 +282,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				});
 			},
 			getMALFansubInfo: function(malid, cb) {
-				Util.log('Loading MAL info...');
+				//Util.log('Loading MAL info...');
 				var url = 'https://myanimelist.net/anime/' + malid;
 				GM_xmlhttpRequest({
 					method: 'GET',
@@ -385,7 +385,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				});
 			},
 			getWebsite: function(id, cb) {
-				Util.log('Getting website for ' + id);
+				//Util.log('Getting website for ' + id);
 				var self = this;
 				if (self.websiteCache[id]) {
 					cb(self.websiteCache[id]);
@@ -399,7 +399,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 						tempDiv.innerHTML = response.responseText;
 						var link = Util.q('td.borderClass > a:first-of-type', tempDiv);
 						if (link && link.getAttribute('href')) {
-							Util.log('Found website for id');
+							//Util.log('Found website for id');
 							self.websiteCache[id] = link.href;
 							cb(link.href);
 						}
