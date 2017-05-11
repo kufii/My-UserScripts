@@ -60,7 +60,7 @@
 						var tempDiv = document.createElement('div');
 						tempDiv.innerHTML = response.responseText;
 
-						var manga = Util.q('#links > div:first-child .result__extras__url > a.result__url', tempDiv);
+						var manga = Util.q('#links > div.result .result__extras__url > a.result__url', tempDiv);
 						if (manga) {
 							manga.href = manga.href.replace('http://', 'https://');
 							Util.log('Batoto link:', manga.href);
