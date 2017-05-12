@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Batoto Links
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.2
+// @version      2.0.3
 // @description  Adds Batoto links to Kitsu manga pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
