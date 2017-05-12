@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0
+// @version      2.0.1
 // @description  Show MAL fansub info on Kitsu anime pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
