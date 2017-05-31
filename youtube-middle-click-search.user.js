@@ -1,84 +1,84 @@
 // ==UserScript==
 // @name         Youtube Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      1.4.10
+// @version      2.0
 // @description  Middle clicking the search on youtube opens the results in a new tab
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
+// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // @grant        GM_openInTab
 // ==/UserScript==
 
 (function() {
 	'use strict';
 
-	console.log('started YMCS');
-	var processBtn = function(element) {
-		console.log('found search button');
-		// setup references
-		var oldButton = document.querySelector('#search-btn'),
-			button = document.createElement('button'),
-			input = document.querySelector('#masthead-search-term'),
-			initSearch = input.value.trim();
-		// imitate old button style
-		button.appendChild(oldButton.firstChild.cloneNode(true));
-		button.firstChild.style.margin = '0 25px';
-		button.style.padding = '0';
-		button.className = oldButton.className;
-		button.setAttribute('type', 'button');
-		// insert new button and hide old (as opposed to remove, removing was conflicting with another script I use)
-		oldButton.parentNode.insertBefore(button, oldButton.nextSibling);
-		oldButton.style.display = 'none';
-		// bind events
-		button.onmousedown = function(e) {
-			if (e.button === 1) {
-				e.preventDefault();
-			}
-		};
-		button.onclick = function(e) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			if (input.value.trim() === '' || input.value.trim() === initSearch && e.button !== 1) return false;
-			var url = location.origin + '/results?search_query=' + encodeURIComponent(input.value);
-			if (e.button === 1) {
-				console.log('opening');
-				GM_openInTab(url, true);
-			} else if(e.button === 0) {
-				window.location.href = url;
-			}
-			return false;
-		};
-		button.onauxclick = button.onclick;
+	var SCRIPT_NAME = 'YMCS';
+
+	var Util = {
+		log: function() {
+			var args = [].slice.call(arguments);
+			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
+			console.log.apply(console, args);
+		},
+		q: function(query, context) {
+			return (context || document).querySelector(query);
+		},
+		qq: function(query, context) {
+			return [].slice.call((context || document).querySelectorAll(query));
+		},
+		getQueryParameter: function(name, url) {
+			if (!url) url = window.location.href;
+			name = name.replace(/[\[\]]/g, "\\$&");
+			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+				results = regex.exec(url);
+			if (!results) return null;
+			if (!results[2]) return '';
+			return decodeURIComponent(results[2].replace(/\+/g, " "));
+		}
 	};
 
-	var processResults = function() {
-		var elements = document.querySelectorAll('.gssb_e .gsq_a');
-		[].forEach.call(elements, function(element) {
-			if (element) {
-				element.onmousedown = function(e) {
-					if (e.button === 1) {
-						e.preventDefault();
-					}
-				};
-				element.onclick = function(e) {
-					var url = location.origin + '/results?search_query=' + encodeURIComponent(element.querySelector('span').textContent);
-					if (e.button === 1) {
-						console.log('opening');
-						GM_openInTab(url, true);
-					} else if(e.button === 0) {
-						window.location.href = url;
-					}
+	waitForElems({
+		sel: '#search-icon-legacy',
+		stop: true,
+		onmatch: function(btn) {
+			btn.onmousedown = function(e) {
+				if (e.button === 1) {
 					e.preventDefault();
-					return false;
-				};
-				element.onauxclick = element.onclick;
-			}
-		});
-	};
+				}
+			};
+			btn.onclick = function(e) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
 
-	waitForElems('#search-btn', processBtn, true);
-	waitForElems('.gssb_e', function(table) {
-		var tick = new MutationObserver(processResults);
-		tick.observe(table, { subtree: true, childList: true, attributes: true });
+				var input = Util.q("input#search").value.trim();
+				if (!input) return false;
+
+				var url = location.origin + '/results?search_query=' + encodeURIComponent(input);
+				if (e.button === 1) {
+					GM_openInTab(url, true);
+				} else if(e.button === 0) {
+					window.location.href = url;
+				}
+
+				return false;
+			};
+			btn.onauxclick = btn.onclick;
+		}
+	});
+
+	waitForElems({
+		sel: '.sbpqs_a, .sbqs_c',
+		onmatch: function(result) {
+			result.onclick = function(e) {
+				var search = result.textContent;
+				var url = location.origin + '/results?search_query=' + encodeURIComponent(search);
+				if (e.button === 1) {
+					GM_openInTab(url, true);
+				} else if(e.button === 0) {
+					window.location.href = url;
+				}
+			};
+			result.onauxclick = result.onclick;
+		}
 	});
 })();
