@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Unblocker
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.1
+// @version      2.0
 // @description  Auto redirects blocked videos to the mirror site eachvideo.com
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/watch*
@@ -104,9 +104,13 @@
 	GM_registerMenuCommand('Youtube Unblocker Settings', Config.setup);
 
 	if (location.hostname === 'www.youtube.com') {
-		if (document.querySelector('#player-unavailable:not(.hid)')) {
-			location.replace(location.protocol + '//eachvideo.com/watch' + location.search);
-		}
+		waitForElems({
+			sel: '.ytd-playability-error-supported-renderers',
+			stop: true,
+			onmatch: function() {
+				location.replace(location.protocol + '//eachvideo.com/watch' + location.search);
+			}
+		});
 	} else {
 		var cfg = Config.load();
 		if (!cfg.autoplay) {
