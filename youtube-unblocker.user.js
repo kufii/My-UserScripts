@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Youtube Unblocker
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0
+// @version      2.0.1
 // @description  Auto redirects blocked videos to the mirror site eachvideo.com
 // @author       Adrien Pyke
-// @match        *://www.youtube.com/watch*
+// @match        *://www.youtube.com/*
 // @match        *://eachvideo.com/watch*
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // @grant        GM_registerMenuCommand
@@ -106,7 +106,6 @@
 	if (location.hostname === 'www.youtube.com') {
 		waitForElems({
 			sel: '.ytd-playability-error-supported-renderers',
-			stop: true,
 			onmatch: function() {
 				location.replace(location.protocol + '//eachvideo.com/watch' + location.search);
 			}
