@@ -99,6 +99,7 @@
 						var linkElem = document.createElement('a');
 						linkElem.setAttribute('style', 'display: inline-block;');
 						linkElem.setAttribute('target', '_blank');
+						linkElem.rel = 'noopener';
 						linkElem.href = manga;
 						followGroup.appendChild(linkElem);
 						var btnElem = document.createElement('button');
