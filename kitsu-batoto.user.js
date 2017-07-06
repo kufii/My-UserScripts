@@ -40,6 +40,9 @@
 
 			return texts.join('');
 		},
+		encodeQuery: function(query) {
+			return encodeURIComponent(query.trim().replace('!', '"!"'));
+		}
 	};
 
 	var App = {
@@ -50,7 +53,7 @@
 				Util.log('Loading cached info');
 				cb(self.cache[title]);
 			} else {
-				var url = 'https://duckduckgo.com/html/?q=' + encodeURIComponent(title.trim() + ' site:bato.to/comic/_/comics');
+				var url = 'https://duckduckgo.com/html/?q=' + Util.encodeQuery(title + ' site:bato.to/comic/_/comics');
 				Util.log('Searching DuckDuckGo for Batoto page:', url);
 				GM_xmlhttpRequest({
 					method: 'GET',
