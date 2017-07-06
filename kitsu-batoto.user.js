@@ -13,7 +13,7 @@
 	'use strict';
 
 	var SCRIPT_NAME = 'Kitsu Batoto Links';
-	var MANGA_REGEX = /^https?:\/\/kitsu\.io\/manga\/[^\/]+\/?(?:\?.*)?$/;
+	var REGEX = /^https?:\/\/kitsu\.io\/manga\/[^\/]+\/?(?:\?.*)?$/;
 
 	var Util = {
 		log: function() {
@@ -26,19 +26,6 @@
 		},
 		qq: function(query, context) {
 			return [].slice.call((context || document).querySelectorAll(query));
-		},
-		shallowTextContent: function(elem) {
-			var child = elem.firstChild;
-			var texts = [];
-
-			while (child) {
-				if (child.nodeType == 3) {
-					texts.push(child.data);
-				}
-				child = child.nextSibling;
-			}
-
-			return texts.join('');
 		},
 		encodeQuery: function(query) {
 			return encodeURIComponent(query.trim().replace(/\s+/g, ' ').replace('!', '"!"'));
@@ -59,7 +46,6 @@
 					method: 'GET',
 					url: url,
 					onload: function(response) {
-						Util.log('Loaded DuckDuckGo search');
 						var tempDiv = document.createElement('div');
 						tempDiv.innerHTML = response.responseText;
 
@@ -83,31 +69,30 @@
 		}
 	};
 
-	waitForUrl(MANGA_REGEX, function() {
+	waitForUrl(REGEX, function() {
 		waitForElems({
 			sel: '.media-cover-wrapper .cover-username',
 			stop: true,
 			onmatch: function(title) {
-				var followGroup = Util.q('.media-cover-wrapper .cover-cta');
-				var linkCheck = Util.q('a', followGroup);
-				if (linkCheck) {
-					followGroup.removeChild(linkCheck);
+				var btnGroup = title.nextElementSibling;
+				if (btnGroup.childNodes[2]) {
+					btnGroup.removeChild(btnGroup.childNodes[2])
 				}
 				var url = location.href;
-				App.getBatotoPage(Util.shallowTextContent(title), function(manga) {
+				App.getBatotoPage(title.textContent, function(manga) {
 					if (location.href === url && manga) {
-						var linkElem = document.createElement('a');
-						linkElem.setAttribute('style', 'display: inline-block;');
-						linkElem.setAttribute('target', '_blank');
-						linkElem.rel = 'noopener';
-						linkElem.href = manga;
-						followGroup.appendChild(linkElem);
-						var btnElem = document.createElement('button');
-						btnElem.classList.add('button');
-						btnElem.classList.add('button--primary');
-						btnElem.textContent = "Batoto";
-						btnElem.setAttribute('style', 'margin-top: 0.5px;');
-						linkElem.appendChild(btnElem);
+						var link = document.createElement('a');
+						link.id = 'batoto-link';
+						link.href = manga;
+						link.target = '_blank';
+						link.rel = 'noopener';
+						link.style.display = 'inline-block';
+						link.style.marginLeft = '5px';
+						btnGroup.appendChild(link);
+						var btn = document.createElement('button');
+						btn.className = 'button button--primary active';
+						btn.textContent = 'Batoto';
+						link.appendChild(btn);
 					}
 				});
 			}
