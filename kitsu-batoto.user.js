@@ -41,7 +41,7 @@
 			return texts.join('');
 		},
 		encodeQuery: function(query) {
-			return encodeURIComponent(query.trim().replace('!', '"!"'));
+			return encodeURIComponent(query.trim().replace(/\s+/g, ' ').replace('!', '"!"'));
 		}
 	};
 
