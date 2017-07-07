@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.9
+// @version      1.5.10
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -187,7 +187,7 @@
 			'html, body': {
 				overflow: 'visible'
 			},
-			'#gatewayCreative, #overlay': {
+			'#Gateway_optly, #overlay': {
 				display: 'none'
 			},
 			'.media .image': {
@@ -229,7 +229,7 @@
 		},
 		fn: function() {
 			// clear intervals once the paywall comes up to prevent changes afterward
-			waitForElems('#gatewayCreative', Util.clearAllIntervals, true);
+			waitForElems('#Gateway_optly', Util.clearAllIntervals, true);
 			this.cleanupStory(Util.q('#story'));
 			setTimeout(function() {
 				require(['jquery/nyt'], function($) {
