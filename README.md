@@ -4,6 +4,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 ## List of UserScripts
 * [Auto Select Sun/Moon on PokemonDB](https://greasyfork.org/en/scripts/25060-auto-select-sun-moon-on-pokemondb)
 * [Cubemania - Auto Select Inspection](https://greasyfork.org/en/scripts/27009-cubemania-auto-select-inspection)
+* [GCPedia Ace Editor](https://greasyfork.org/en/scripts/31427-gcpedia-ace-editor)
 * [GitHub Editor - Change Default Settings](https://greasyfork.org/en/scripts/21964-github-editor-change-default-settings)
 * [Google Music Confirm Close](https://greasyfork.org/en/scripts/6032-google-music-confirm-close)
 * [Google - Middle Click Search](https://greasyfork.org/en/scripts/22183-google-middle-click-search)
