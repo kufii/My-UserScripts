@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         GCPedia Ace Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.2
+// @version      1.1.3
 // @description  Use the Ace Editor when editing things on GCPedia
 // @author       Adrien Pyke
 // @match        http://www.gcpedia.gc.ca/gcwiki/index.php*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
+// @grant        unsafeWindow
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // ==/UserScript==
 
@@ -217,7 +218,7 @@
 				}
 			});
 			Util.addScript('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js', function() {
-				var editor = ace.edit('ace');
+				var editor = unsafeWindow.ace.edit('ace');
 				editor.setTheme('ace/theme/' + Config.load().theme);
 				editor.getSession().setMode('ace/mode/html');
 				editor.resize();
