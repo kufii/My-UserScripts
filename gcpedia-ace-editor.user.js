@@ -1,11 +1,13 @@
 // ==UserScript==
 // @name         GCPedia Ace Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.1
 // @description  Use the Ace Editor when editing things on GCPedia
 // @author       Adrien Pyke
 // @match        http://www.gcpedia.gc.ca/gcwiki/index.php*
-// @grant        none
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_registerMenuCommand
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // ==/UserScript==
 
@@ -52,6 +54,111 @@
 		}
 	};
 
+	var Config = {
+		load: function() {
+			var defaults = {
+				theme: 'monokai'
+			};
+
+			var cfg = GM_getValue('cfg');
+			if (!cfg) return defaults;
+
+			cfg = JSON.parse(cfg);
+			for (var property in defaults) {
+				if (defaults.hasOwnProperty(property)) {
+					if (!cfg[property]) {
+						cfg[property] = defaults[property];
+					}
+				}
+			}
+
+			return cfg;
+		},
+
+		save: function(cfg) {
+			GM_setValue('cfg', JSON.stringify(cfg));
+		},
+
+		setup: function(editor) {
+			var createContainer = function() {
+				var div = document.createElement('div');
+				div.style.backgroundColor = 'white';
+				div.style.padding = '5px';
+				div.style.border = '1px solid black';
+				div.style.position = 'fixed';
+				div.style.top = '0';
+				div.style.right = '0';
+				div.style.zIndex = 99999;
+				return div;
+			};
+
+			var createSelect = function(label, options, value) {
+				var select = document.createElement('select');
+				select.style.margin = '2px';
+				var optgroup = document.createElement('optgroup');
+				if (label) {
+					optgroup.setAttribute('label', label);
+				}
+				select.appendChild(optgroup);
+				options.forEach(function(opt) {
+					var option = document.createElement('option');
+					option.setAttribute('value', opt);
+					option.textContent = opt;
+					optgroup.appendChild(option);
+				});
+				select.value = value;
+				return select;
+			};
+
+			var createButton = function(text, onclick) {
+				var button = document.createElement('button');
+				button.style.margin = '2px';
+				button.textContent = text;
+				button.onclick = onclick;
+				return button;
+			};
+
+			var createLabel = function(label) {
+				var lbl = document.createElement('span');
+				lbl.textContent = label;
+				return lbl;
+			};
+
+			var createLineBreak = function() {
+				return document.createElement('br');
+			};
+
+			var init = function(cfg) {
+				var div = createContainer();
+
+				var theme = createSelect('Theme', ["ambiance", "chaos", "chrome", "clouds", "clouds_midnight", "cobalt", "crimson_editor", "dawn", "dreamweaver", "eclipse", "github", "gob", "gruvbox", "idle_fingers", "iplastic", "katzenmilch", "kr_theme", "kuroir", "merbivore", "merbivore_soft", "mono_industrial", "monokai", "pastel_on_dark", "solarized_dark", "solarized_light", "sqlserver", "terminal", "textmate", "tomorrow", "tomorrow_night", "tomorrow_night_blue", "tomorrow_night_bright", "tomorrow_night_eighties", "twilight", "vibrant_ink", "xcode"], cfg.theme);
+				div.appendChild(createLabel('Theme: '));
+				div.appendChild(theme);
+				div.appendChild(createLineBreak());
+
+				theme.onchange = function() {
+					editor.setTheme('ace/theme/' + theme.value);
+				};
+
+				div.appendChild(createButton('Save', function(e) {
+					var settings = {
+						theme: theme.value
+					};
+					Config.save(settings);
+					div.remove();
+				}));
+
+				div.appendChild(createButton('Cancel', function(e) {
+					editor.setTheme('ace/theme/' + cfg.theme);
+					div.remove();
+				}));
+
+				document.body.appendChild(div);
+			};
+			init(Config.load());
+		}
+	};
+
 	waitForElems({
 		sel: '.wikiEditor-ui',
 		stop: true,
@@ -74,11 +181,15 @@
 			});
 			Util.addScript('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js', function() {
 				var editor = ace.edit('ace');
-				editor.setTheme('ace/theme/monokai');
+				editor.setTheme('ace/theme/' + Config.load().theme);
 				editor.getSession().setMode("ace/mode/html");
 				editor.resize();
 				editor.getSession().on('change', function(e) {
 					textArea.value = editor.getValue();
+				});
+
+				GM_registerMenuCommand('GCPedia Ace Editor Settings', function() {
+					Config.setup(editor);
 				});
 			});
 		}
