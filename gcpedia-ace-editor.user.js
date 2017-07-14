@@ -35,6 +35,12 @@
 			s.src = src;
 			document.body.appendChild(s);
 		},
+		addScriptText: function(code, onload) {
+			var s = document.createElement('script');
+			s.onload = onload;
+			s.textContent = code;
+			document.body.appendChild(s);
+		},
 		appendStyle: function(css) {
 			var out = '';
 			for (var selector in css) {
@@ -222,9 +228,11 @@
 				editor.setTheme('ace/theme/' + Config.load().theme);
 				editor.getSession().setMode('ace/mode/html');
 				editor.resize();
-				editor.getSession().on('change', function(e) {
-					textArea.value = editor.getValue();
-				});
+				
+				unsafeWindow.aceEditor = editor;
+				unsafeWindow.originalTextArea = textArea;
+				
+				Util.addScriptText("aceEditor.getSession().on('change', function(){originalTextArea.value = aceEditor.getValue()})");
 
 				GM_registerMenuCommand('GCPedia Ace Editor Settings', function() {
 					Config.setup(editor);
