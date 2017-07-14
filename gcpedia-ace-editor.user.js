@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GCPedia Ace Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1
+// @version      1.1.1
 // @description  Use the Ace Editor when editing things on GCPedia
 // @author       Adrien Pyke
 // @match        http://www.gcpedia.gc.ca/gcwiki/index.php*
@@ -131,7 +131,43 @@
 			var init = function(cfg) {
 				var div = createContainer();
 
-				var theme = createSelect('Theme', ["ambiance", "chaos", "chrome", "clouds", "clouds_midnight", "cobalt", "crimson_editor", "dawn", "dreamweaver", "eclipse", "github", "gob", "gruvbox", "idle_fingers", "iplastic", "katzenmilch", "kr_theme", "kuroir", "merbivore", "merbivore_soft", "mono_industrial", "monokai", "pastel_on_dark", "solarized_dark", "solarized_light", "sqlserver", "terminal", "textmate", "tomorrow", "tomorrow_night", "tomorrow_night_blue", "tomorrow_night_bright", "tomorrow_night_eighties", "twilight", "vibrant_ink", "xcode"], cfg.theme);
+				var theme = createSelect('Theme', [
+						'ambiance',
+						'chaos',
+						'chrome',
+						'clouds',
+						'clouds_midnight',
+						'cobalt',
+						'crimson_editor',
+						'dawn',
+						'dreamweaver',
+						'eclipse', 'github',
+						'gob',
+						'gruvbox',
+						'idle_fingers',
+						'iplastic',
+						'katzenmilch',
+						'kr_theme',
+						'kuroir',
+						'merbivore',
+						'merbivore_soft',
+						'mono_industrial',
+						'monokai',
+						'pastel_on_dark',
+						'solarized_dark',
+						'solarized_light',
+						'sqlserver',
+						'terminal',
+						'textmate',
+						'tomorrow',
+						'tomorrow_night',
+						'tomorrow_night_blue',
+						'tomorrow_night_bright',
+						'tomorrow_night_eighties',
+						'twilight',
+						'vibrant_ink',
+						'xcode'
+					], cfg.theme);
 				div.appendChild(createLabel('Theme: '));
 				div.appendChild(theme);
 				div.appendChild(createLineBreak());
@@ -182,7 +218,7 @@
 			Util.addScript('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js', function() {
 				var editor = ace.edit('ace');
 				editor.setTheme('ace/theme/' + Config.load().theme);
-				editor.getSession().setMode("ace/mode/html");
+				editor.getSession().setMode('ace/mode/html');
 				editor.resize();
 				editor.getSession().on('change', function(e) {
 					textArea.value = editor.getValue();
