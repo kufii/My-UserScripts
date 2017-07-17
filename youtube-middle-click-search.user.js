@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0
+// @version      2.0.1
 // @description  Middle clicking the search on youtube opens the results in a new tab
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -34,6 +34,9 @@
 			if (!results) return null;
 			if (!results[2]) return '';
 			return decodeURIComponent(results[2].replace(/\+/g, " "));
+		},
+		encodeURIWithPlus: function(string) {
+			return encodeURIComponent(string).replace(/%20/g, '+');
 		}
 	};
 
@@ -53,7 +56,7 @@
 				var input = Util.q("input#search").value.trim();
 				if (!input) return false;
 
-				var url = location.origin + '/results?search_query=' + encodeURIComponent(input);
+				var url = location.origin + '/results?search_query=' + Util.encodeURIWithPlus(input);
 				if (e.button === 1) {
 					GM_openInTab(url, true);
 				} else if(e.button === 0) {
@@ -67,15 +70,24 @@
 	});
 
 	waitForElems({
-		sel: '.sbpqs_a, .sbqs_c',
+		sel: '.sbsb_c',
 		onmatch: function(result) {
 			result.onclick = function(e) {
-				var search = result.textContent;
-				var url = location.origin + '/results?search_query=' + encodeURIComponent(search);
-				if (e.button === 1) {
-					GM_openInTab(url, true);
-				} else if(e.button === 0) {
-					window.location.href = url;
+				if (!e.target.classList.contains('sbsb_i')) {
+					var search = Util.q('.sbpqs_a, .sbqs_c', result).textContent;
+
+					var url = location.origin + '/results?search_query=' + Util.encodeURIWithPlus(search);
+					if (e.button === 1) {
+						GM_openInTab(url, true);
+					} else if(e.button === 0) {
+						window.location.href = url;
+					}
+				} else {
+					if (e.button === 1) {
+						// prevent opening in new tab if they middle click the remove button
+						e.preventDefault();
+						e.stopImmediatePropagation();
+					}
 				}
 			};
 			result.onauxclick = result.onclick;
