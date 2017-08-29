@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GCPedia Ace Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.4
+// @version      1.1.5
 // @description  Use the Ace Editor when editing things on GCPedia
 // @author       Adrien Pyke
 // @match        http://www.gcpedia.gc.ca/*
@@ -222,9 +222,11 @@
 				editor.setTheme('ace/theme/' + Config.load().theme);
 				editor.getSession().setMode('ace/mode/html');
 				editor.resize();
-				editor.getSession().on('change', function(e) {
-					textArea.value = editor.getValue();
-				});
+				
+				unsafeWindow.aceEditor = editor;
+				unsafeWindow.originalTextArea = textArea;
+				
+				Util.addScriptText("aceEditor.getSession().on('change', function(){originalTextArea.value = aceEditor.getValue()})");
 
 				GM_registerMenuCommand('GCPedia Ace Editor Settings', function() {
 					Config.setup(editor);
