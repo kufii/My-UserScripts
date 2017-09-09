@@ -42,7 +42,7 @@
 						var json = JSON.parse(response.responseText);
 						GM_xmlhttpRequest({
 							method: 'GET',
-							url: API + '/mappings/' + json.data[0].id + '/media?fields[media]=slug',
+							url: API + '/mappings/' + json.data[0].id + '/item?fields[' + type + ']=slug',
 							headers: {
 								'Accept': 'application/vnd.api+json'
 							},
