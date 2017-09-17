@@ -71,28 +71,51 @@
 
 	waitForUrl(REGEX, function() {
 		waitForElems({
-			sel: '.media-cover-wrapper .cover-username',
+			sel: '.media-sidebar',
 			stop: true,
-			onmatch: function(title) {
-				var btnGroup = title.nextElementSibling;
-				if (btnGroup.childNodes[2]) {
-					btnGroup.removeChild(btnGroup.childNodes[2])
-				}
+			onmatch: function(node) {
+				var title = Util.q('.media--title h3');
 				var url = location.href;
 				App.getBatotoPage(title.textContent, function(manga) {
+					var check = Util.q('.where-to-watch-widget');
+					if (!manga && check) check.remove();
+
 					if (location.href === url && manga) {
-						var link = document.createElement('a');
-						link.id = 'batoto-link';
-						link.href = manga;
-						link.target = '_blank';
-						link.rel = 'noopener';
-						link.style.display = 'inline-block';
-						link.style.marginLeft = '5px';
-						btnGroup.appendChild(link);
-						var btn = document.createElement('button');
-						btn.className = 'button button--primary active';
-						btn.textContent = 'Batoto';
-						link.appendChild(btn);
+						if (check) {
+							var updateLink = Util.q('#batoto-link');
+							updateLink.href = manga;
+						} else {
+							var section = document.createElement('div');
+							section.className = 'where-to-watch-widget';
+
+							var header = document.createElement('span');
+							header.className = 'where-to-watch-header';
+							var headerText = document.createElement('span');
+							headerText.textContent = 'Read Online';
+							header.appendChild(headerText);
+							section.appendChild(header);
+
+							var listWrap = document.createElement('ul');
+							listWrap.className = 'nav';
+							var list = document.createElement('li');
+							listWrap.appendChild(list);
+							section.appendChild(listWrap);
+
+							var link = document.createElement('a');
+							link.id = 'batoto-link';
+							link.href = manga;
+							link.target = '_blank';
+							link.rel = 'noopener noreferrer';
+							link.setAttribute('aria-label', 'Batoto');
+							link.className = 'hint--top hint--bounce hint--rounded';
+							var img = document.createElement('img');
+							img.src = 'https://my.mixtape.moe/ettnpe.png';
+							img.style.verticalAlign = 'text-bottom';
+							link.appendChild(img);
+							list.appendChild(link);
+
+							node.appendChild(section);
+						}
 					}
 				});
 			}
