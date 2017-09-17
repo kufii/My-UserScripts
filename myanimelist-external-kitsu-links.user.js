@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MyAnimeList, External Kitsu Links
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1
+// @version      2.1.2
 // @description  Adds a link to the Kitsu page in the External Links section
 // @author       Adrien Pyke
 // @match        *://myanimelist.net/anime/*
