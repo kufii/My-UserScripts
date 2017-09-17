@@ -31,7 +31,6 @@
 
 	var App = {
 		getKitsuLink: function(type, malid, cb) {
-			//Util.log('Fetching Kitsu ID for MAL ID:', malid);
 			GM_xmlhttpRequest({
 				method: 'GET',
 				url: API + '/mappings?filter[external_site]=myanimelist/' + type + '&filter[external_id]=' + malid,
@@ -41,17 +40,15 @@
 				onload: function(response) {
 					try {
 						var json = JSON.parse(response.responseText);
-						//Util.log('Kitsu mapping ID:', json.data[0].id);
 						GM_xmlhttpRequest({
 							method: 'GET',
-							url: API + '/mappings/' + json.data[0].id + '/media?fields[media]=slug',
+							url: API + '/mappings/' + json.data[0].id + '/item?fields[' + type + ']=slug',
 							headers: {
 								'Accept': 'application/vnd.api+json'
 							},
 							onload: function(response) {
 								try {
 									var json = JSON.parse(response.responseText);
-									//Util.log('Kitsu slug:', json.data.attributes.slug);
 									if (type == 'anime') {
 										cb('https://kitsu.io/anime/' + json.data.attributes.slug);
 									} else if (type == 'manga') {
@@ -89,32 +86,26 @@
 				var a = document.createElement('a');
 				a.textContent = 'Kitsu';
 				a.href = href;
-				a.setAttribute('target', '_blank');
+				a.target = '_blank';
+				a.rel = 'noopener';
 				container.appendChild(a);
-
-				//Util.log('Added link');
 			} else {
-				//Util.log('External Links doesn\'t exist');
-				var ad = Util.q('#content > table > tbody > tr > td.borderClass .mt16');
-
-				var space = document.createElement('br');
-				ad.parentElement.insertBefore(space, ad);
+				var sidebar = Util.q('#content > table > tbody > tr > td.borderClass > div');
 
 				var header = document.createElement('h2');
 				header.textContent = 'External Links';
-				ad.parentElement.insertBefore(header, ad);
+				sidebar.appendChild(header);
 
 				var links = document.createElement('div');
 				links.classList.add('pb16');
-				ad.parentElement.insertBefore(links, ad);
+				sidebar.appendChild(links);
 
 				var b = document.createElement('a');
 				b.textContent = 'Kitsu';
 				b.href = href;
-				b.setAttribute('target', '_blank');
+				b.target = '_blank';
+				b.rel = 'noopener';
 				links.appendChild(b);
-
-				//Util.log('Added link');
 			}
 		});
 	}
