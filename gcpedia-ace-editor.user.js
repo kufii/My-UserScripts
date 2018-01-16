@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GCPedia Ace Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.6
+// @version      1.1.7
 // @description  Use the Ace Editor when editing things on GCPedia
 // @author       Adrien Pyke
 // @match        http://www.gcpedia.gc.ca/*
@@ -204,22 +204,20 @@
 	};
 
 	waitForElems({
-		sel: '.wikiEditor-ui',
+		sel: '#wpTextbox1',
 		stop: true,
-		onmatch: function() {
-			var textArea = Util.q('#wpTextbox1');
-
+		onmatch: function(textArea) {
 			var wrapper = document.createElement('div');
 			wrapper.id = 'ace';
 			wrapper.textContent = textArea.value;
 
-			Util.appendAfter(Util.q('.wikiEditor-ui'), wrapper);
+			Util.appendAfter(textArea, wrapper);
 
 			Util.appendStyle({
 				'.ace_editor': {
 					height: '600px'
 				},
-				'.wikiEditor-ui': {
+				'.wikiEditor-ui, #wpTextbox1': {
 					display: 'none'
 				}
 			});
@@ -228,10 +226,10 @@
 				editor.setTheme('ace/theme/' + Config.load().theme);
 				editor.getSession().setMode('ace/mode/html');
 				editor.resize();
-				
+
 				unsafeWindow.aceEditor = editor;
 				unsafeWindow.originalTextArea = textArea;
-				
+
 				Util.addScriptText("aceEditor.getSession().on('change', function(){originalTextArea.value = aceEditor.getValue()})");
 
 				GM_registerMenuCommand('GCPedia Ace Editor Settings', function() {
