@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         The Works Burger Chooser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.3
+// @version      1.1
 // @description  Choose a random burger on the works menu
 // @author       Adrien Pyke
-// @match        *://www.worksburger.com/Menu/Burger-Menu.aspx*
+// @match        *://worksburger.com/menu/burger-menu/*
 // @grant        unsafeWindow
 // ==/UserScript==
 
@@ -50,12 +50,14 @@
 	var selectBurger = function() {
 		Util.log('Choosing Random Burger...');
 
-		var burgers = Util.qq('.burger-block');
+		var burgers = Util.qq('.vc_grid-item-mini');
 		burgers.forEach(function(burger) {
 			burger.removeAttribute('style');
 		});
 
 		var burger = burgers[Math.floor(Math.random() * burgers.length)];
+
+		Util.log(burger);
 
 		burger.setAttribute('style', Util.css({
 			'transition': '.5s',
@@ -68,7 +70,7 @@
 			burger.style.transform = 'scale(1, 1)';
 		}, 500);
 
-		W.scroll(0, burger.offsetTop);
+		burger.scrollIntoView();
 	};
 
 	if (W.BM_MODE) {
