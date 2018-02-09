@@ -24,6 +24,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Reddit Flair Linkifier](https://greasyfork.org/en/scripts/706-reddit-flair-linkifier)
 * [RetailMeNot Enhancer](https://greasyfork.org/en/scripts/23203-retailmenot-enhancer)
 * [SoundCloud Toggle Continuous Play and Autoplay](https://greasyfork.org/en/scripts/22549-soundcloud-toggle-continuous-play-and-autoplay)
+* [Telegram Web Emojione](https://greasyfork.org/en/scripts/38330-telegram-web-emojione)
 * [The Works Burger Chooser](https://greasyfork.org/en/scripts/22582-the-works-burger-chooser)
 * [userstyles.org - Auto Enable Source Editor](https://greasyfork.org/en/scripts/22361-userstyles-org-auto-enable-source-editor)
 * [userstyles.org - auto select keep me logged in](https://greasyfork.org/en/scripts/22419-userstyles-org-auto-select-keep-me-logged-in)
