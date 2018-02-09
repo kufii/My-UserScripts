@@ -6,7 +6,7 @@
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
 // @grant        none
-// @require      https://raw.githubusercontent.com/emojione/emojione/master/lib/js/emojione.min.js
+// @require      https://greasyfork.org/scripts/38329-emojione-min-js/code/emojioneminjs.js?version=250047
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // ==/UserScript==
 
