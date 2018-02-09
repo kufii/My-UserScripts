@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.3
+// @version      1.0.4
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -46,7 +46,25 @@
 		}
 	};
 
-	Util.appendStyle('.emojione {width: 18px;} ');
+	var sizes = [
+		{
+			size: 20
+		}, {
+			class: 'im_short_message_text',
+			size: 18
+		}, {
+			class: 'composer_emoji_tooltip',
+			size: 26
+		}
+	];
+
+	Util.appendStyle(sizes.map(function(size) {
+		var output = '';
+		if (size.class) {
+			output = '.' + size.class;
+		}
+		return output + ' .emojione {width: ' + size.size + 'px;}';
+	}).join(''));
 
 	var replacements = {
 		':+1:': ':thumbsup:',
