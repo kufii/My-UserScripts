@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.1
-// @description  Replaces old iOS emojis with Emojione
+// @version      1.0
+// @description  try to take over the world!
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
 // @grant        none
@@ -66,6 +66,7 @@
 		'.im_message_author',
 		'.im_message_webpage_site',
 		'.im_message_webpage_title',
+        '.im_message_webpage_description',
 		'.im_short_message_text',
 		'.im_dialog_peer > span'
 	];
