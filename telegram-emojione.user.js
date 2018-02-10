@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.11
+// @version      1.0.12
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -71,7 +71,7 @@
 		':large_blue_circle:': ':blue_circle:'
 	};
 
-	var convert = function(msg) {
+	var convert = function(msg, watchForChanges) {
 		var html = '';
 
 		Util.qq('.emoji', msg).forEach(function(emoji) {
@@ -101,6 +101,15 @@
 		});
 
 		msg.innerHTML = html;
+		if (watchForChanges) {
+			var changes = waitForElems({
+				context: msg,
+				onchange: function() {
+					changes.stop();
+					convert(msg, true);
+				}
+			});
+		}
 	};
 
 	waitForElems({
@@ -129,14 +138,7 @@
 			'.im_short_message_media > span > span > span'
 		].join(','),
 		onmatch: function(msg) {
-			convert(msg);
-			var changes = waitForElems({
-				context: msg,
-				onchange: function() {
-					changes.stop();
-					convert(msg);
-				}
-			});
+			convert(msg, true);
 		}
 	});
 
