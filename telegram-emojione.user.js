@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.9
+// @version      1.0.10
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -34,9 +34,6 @@
 		},
 		regexEscape: function(str) {
 			return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-		},
-		shouldWatchForChanges: function(msg) {
-			return msg.classList.contains('im_short_message_text') || msg.parentNode.parentNode.parentNode.classList.contains('im_short_message_media');
 		}
 	};
 
@@ -104,16 +101,6 @@
 		});
 
 		msg.innerHTML = html;
-
-		if (Util.shouldWatchForChanges(msg)) {
-			var changes = waitForElems({
-				context: msg,
-				onchange: function() {
-					changes.stop();
-					convert(msg);
-				}
-			});
-		}
 	};
 
 	waitForElems({
@@ -130,13 +117,28 @@
 		].join(','),
 		onmatch: function(msg) {
 			convert(msg);
-			if (!Util.shouldWatchForChanges(msg)) {
-				setTimeout(function() {
-					if (msg.innerHTML.indexOf('<img') === -1) {
-						convert(msg);
-					}
-				}, 200);
-			}
+			setTimeout(function() {
+				if (msg.innerHTML.indexOf('<img') === -1) {
+					convert(msg);
+				}
+			}, 200);
+		}
+	});
+
+	waitForElems({
+		sel: [
+			'.im_short_message_text',
+			'.im_short_message_media > span > span > span'
+		].join(','),
+		onmatch: function(msg) {
+			convert(msg);
+			var changes = waitForElems({
+				context: msg,
+				onchange: function() {
+					changes.stop();
+					convert(msg);
+				}
+			});
 		}
 	});
 
