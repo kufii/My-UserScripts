@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.8
+// @version      1.0.9
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -34,6 +34,9 @@
 		},
 		regexEscape: function(str) {
 			return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+		},
+		shouldWatchForChanges: function(msg) {
+			return msg.classList.contains('im_short_message_text') || msg.parentNode.parentNode.parentNode.classList.contains('im_short_message_media');
 		}
 	};
 
@@ -41,23 +44,22 @@
 		{
 			size: 20
 		}, {
-			class: 'im_short_message_text',
-			size: 18
+			class: ['im_short_message_text', 'im_short_message_media'],
+			size: 16
 		}, {
-			class: 'composer_emoji_tooltip',
-			size: 26
-		}, {
-			class: 'stickerset_modal_sticker_alt',
+			class: ['composer_emoji_tooltip', 'stickerset_modal_sticker_alt'],
 			size: 26
 		}
 	];
 
 	Util.appendStyle(sizes.map(function(size) {
-		var output = '';
+		var output = '.emojione';
 		if (size.class) {
-			output = '.' + size.class;
+			output = size.class.map(function(c) {
+				return '.' + c + ' .emojione';
+			}).join(', ');
 		}
-		return output + ' .emojione {width: ' + size.size + 'px;}';
+		return output + ' {width: ' + size.size + 'px;}';
 	}).join(''));
 
 	var replacements = {
@@ -102,6 +104,16 @@
 		});
 
 		msg.innerHTML = html;
+
+		if (Util.shouldWatchForChanges(msg)) {
+			var changes = waitForElems({
+				context: msg,
+				onchange: function() {
+					changes.stop();
+					convert(msg);
+				}
+			});
+		}
 	};
 
 	waitForElems({
@@ -112,16 +124,19 @@
 			'.im_message_webpage_title > a',
 			'.im_message_webpage_description',
 			'.im_short_message_text',
+			'.im_short_message_media > span > span > span',
 			'.im_dialog_peer > span',
 			'.stickerset_modal_sticker_alt'
 		].join(','),
 		onmatch: function(msg) {
 			convert(msg);
-			setTimeout(function() {
-				if (msg.innerHTML.indexOf('<img') === -1) {
-					convert(msg);
-				}
-			}, 200);
+			if (!Util.shouldWatchForChanges(msg)) {
+				setTimeout(function() {
+					if (msg.innerHTML.indexOf('<img') === -1) {
+						convert(msg);
+					}
+				}, 200);
+			}
 		}
 	});
 
