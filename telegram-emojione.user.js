@@ -71,7 +71,7 @@
 		':large_blue_circle:': ':blue_circle:'
 	};
 
-	var convert = function(msg, watchForChanges) {
+	var convert = function(msg, watch, watchContinuously) {
 		var html = '';
 
 		Util.qq('.emoji', msg).forEach(function(emoji) {
@@ -101,14 +101,19 @@
 		});
 
 		msg.innerHTML = html;
-		if (watchForChanges) {
+		if (watch) {
 			var changes = waitForElems({
 				context: msg,
 				onchange: function() {
 					changes.stop();
-					convert(msg, true);
+					convert(msg, watchContinuously, watchContinuously);
 				}
 			});
+			if (!watchContinuously) {
+				setTimeout(function() {
+					changes.stop();
+				}, 1000); // if no changes after 1 second, assume no changes
+			}
 		}
 	};
 
@@ -123,12 +128,7 @@
 			'.stickerset_modal_sticker_alt'
 		].join(','),
 		onmatch: function(msg) {
-			convert(msg);
-			setTimeout(function() {
-				if (msg.innerHTML.indexOf('<img') === -1) {
-					convert(msg);
-				}
-			}, 200);
+			convert(msg, true);
 		}
 	});
 
@@ -138,7 +138,7 @@
 			'.im_short_message_media > span > span > span'
 		].join(','),
 		onmatch: function(msg) {
-			convert(msg, true);
+			convert(msg, true, true);
 		}
 	});
 
