@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.4
+// @version      1.0.5
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -34,15 +34,6 @@
 		},
 		regexEscape: function(str) {
 			return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-		},
-		textContentWithBreaks: function(node) {
-			var lines = [];
-			node.innerHTML.split('<br>').forEach(function(line) {
-				var tempDiv = document.createElement('div');
-				tempDiv.innerHTML = line;
-				lines.push(tempDiv.textContent);
-			});
-			return lines.join('\n');
 		}
 	};
 
@@ -79,28 +70,32 @@
 	};
 
 	var convert = function(msg) {
-		var content = Util.textContentWithBreaks(msg);
-		for (var property in replacements) {
-			if (replacements.hasOwnProperty(property)) {
-				content = content.replace(new RegExp(Util.regexEscape(property), 'g'), replacements[property]);
+		msg.childNodes.forEach(function(node) {
+			if (node.classList && node.classList.contains('emoji')) {
+				node.removeAttribute('class');
 			}
-		}
-
-		msg.innerHTML = emojione.toImage(emojione.shortnameToUnicode(content));
+			var content = node.textContent;
+			if (content) {
+				for (var property in replacements) {
+					if (replacements.hasOwnProperty(property)) {
+						content = content.replace(new RegExp(Util.regexEscape(property), 'g'), replacements[property]);
+					}
+				}
+				node.innerHTML = emojione.toImage(emojione.shortnameToUnicode(content));
+			}
+		});
 	};
 
-	var selectors = [
-		'.im_message_text',
-		'.im_message_author',
-		'.im_message_webpage_site',
-		'.im_message_webpage_title',
-        '.im_message_webpage_description',
-		'.im_short_message_text',
-		'.im_dialog_peer > span'
-	];
-
 	waitForElems({
-		sel: selectors.join(','),
+		sel: [
+			'.im_message_text',
+			'.im_message_author',
+			'.im_message_webpage_site',
+			'.im_message_webpage_title > a',
+			'.im_message_webpage_description',
+			'.im_short_message_text',
+			'.im_dialog_peer > span'
+		].join(','),
 		onmatch: function(msg) {
 			convert(msg);
 			setTimeout(function() {
