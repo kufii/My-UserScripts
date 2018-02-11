@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.14
+// @version      1.0.15
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -69,6 +69,12 @@
 		':boat:': ':sailboat:',
 		':car:': ':red_car:',
 		':large_blue_circle:': ':blue_circle:'
+	};
+
+	var getImageSrc = function(shortname) {
+		var tempDiv = document.createElement('div');
+		tempDiv.innerHTML = emojione.toImage(replacements[shortname] || shortname);
+		return Util.q('img', tempDiv).src;
 	};
 
 	var convert = function(msg, watch, watchContinuously) {
@@ -148,6 +154,27 @@
 		sel: '.composer_emoji_btn',
 		onmatch: function(btn) {
 			btn.innerHTML = emojione.toImage(replacements[btn.title] || btn.title);
+		}
+	});
+
+	waitForElems({
+		sel: '.composer_emoji_option',
+		onmatch: function(option) {
+			var emoji = Util.q('span', option).textContent;
+			emoji = replacements[emoji] || emoji;
+			Util.q('.emoji', option).outerHTML = emojione.toImage(emoji);
+		}
+	});
+
+	var textarea = Util.q('.composer_rich_textarea');
+	waitForElems({
+		context: textarea,
+		onchange: function() {
+			Util.qq('.emoji').forEach(function(emoji) {
+				emoji.removeAttribute('style');
+				emoji.style.backgroundImage = 'url(' + getImageSrc(emoji.alt) + ')';
+				emoji.style.backgroundSize = 'cover';
+			});
 		}
 	});
 })();
