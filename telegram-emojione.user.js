@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.21
+// @version      1.0.22
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -94,7 +94,7 @@
 
 				// fix for rainbow flags
 				content = emojione.shortnameToUnicode(content);
-				content = content.replace(new RegExp(Util.regexEscape('\uD83C\uDFF3\uD83C\uDF08')), 'g', '\uD83C\uDFF3\uFE0F\u200D\uD83C\uDF08');
+				content = content.replace(new RegExp(Util.regexEscape('\uD83C\uDFF3\uD83C\uDF08'), 'g'), '\uD83C\uDFF3\uFE0F\u200D\uD83C\uDF08');
 				
 				var withEmoji = emojione.toImage(content);
 				if (node.nodeType === Node.TEXT_NODE) {
