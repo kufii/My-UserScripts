@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.26
+// @version      1.0.27
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -72,6 +72,15 @@
 		'\uD83C\uDFF3': '\uD83C\uDFF3\uFE0F'
 	};
 
+	var makeReplacements = function(str) {
+		for (var property in replacements) {
+			if (replacements.hasOwnProperty(property)) {
+				str = str.replace(new RegExp(Util.regexEscape(property), 'g'), replacements[property]);
+			}
+		}
+		return str;
+	};
+
 	var getImageSrc = function(shortname) {
 		var tempDiv = document.createElement('div');
 		tempDiv.innerHTML = emojione.toImage(replacements[shortname] || shortname);
@@ -85,11 +94,7 @@
 		msg.childNodes.forEach(function(node) {
 			var content = node.textContent;
 			if (content) {
-				for (var property in replacements) {
-					if (replacements.hasOwnProperty(property)) {
-						content = content.replace(new RegExp(Util.regexEscape(property), 'g'), replacements[property]);
-					}
-				}
+				content = makeReplacements(content);
 
 				var withEmoji = emojione.toImage(emojione.shortnameToUnicode(content));
 				if (node.nodeType === Node.TEXT_NODE) {
@@ -183,7 +188,7 @@
 			var convertNodes = function(node) {
 				if (node.nodeType === Node.TEXT_NODE) {
 					var tempDiv = document.createElement('div');
-					tempDiv.innerHTML = emojione.toImage(node.textContent);
+					tempDiv.innerHTML = emojione.toImage(makeReplacements(node.textContent));
 					if (Util.q('img', tempDiv)) {
 						Util.qq('img', tempDiv).forEach(function(emoji) {
 							emoji.removeAttribute('class');
@@ -198,11 +203,12 @@
 						node.remove();
 					}
 				} else if (node.tagName === 'IMG') {
-					Util.log(node);
-					node.removeAttribute('style');
-					node.classList.add('e1-converted');
-					node.style.backgroundImage = 'url(' + getImageSrc(node.alt) + ')';
-					node.style.backgroundSize = 'cover';
+					if (!node.classList.contains('e1-converted')) {
+						node.removeAttribute('style');
+						node.classList.add('e1-converted');
+						node.style.backgroundImage = 'url(' + getImageSrc(node.alt) + ')';
+						node.style.backgroundSize = 'cover';
+					}
 				} else {
 					if (node.childNodes) {
 						Array.from(node.childNodes).forEach(convertNodes);
