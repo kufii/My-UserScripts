@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.22
+// @version      1.0.23
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -68,7 +68,8 @@
 		':hocho:': ':knife:',
 		':boat:': ':sailboat:',
 		':car:': ':red_car:',
-		':large_blue_circle:': ':blue_circle:'
+		':large_blue_circle:': ':blue_circle:',
+		'\uD83C\uDFF3': '\uD83C\uDFF3\uFE0F'
 	};
 
 	var getImageSrc = function(shortname) {
@@ -92,11 +93,7 @@
 					}
 				}
 
-				// fix for rainbow flags
-				content = emojione.shortnameToUnicode(content);
-				content = content.replace(new RegExp(Util.regexEscape('\uD83C\uDFF3\uD83C\uDF08'), 'g'), '\uD83C\uDFF3\uFE0F\u200D\uD83C\uDF08');
-				
-				var withEmoji = emojione.toImage(content);
+				var withEmoji = emojione.toImage(emojione.shortnameToUnicode(content));
 				if (node.nodeType === Node.TEXT_NODE) {
 					html += withEmoji;
 				} else {
