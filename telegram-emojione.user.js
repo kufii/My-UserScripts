@@ -170,7 +170,7 @@
 	waitForElems({
 		context: textarea,
 		onchange: function() {
-			Util.qq('.emoji').forEach(function(emoji) {
+			Util.qq('.emoji', textarea).forEach(function(emoji) {
 				emoji.removeAttribute('style');
 				emoji.style.backgroundImage = 'url(' + getImageSrc(emoji.alt) + ')';
 				emoji.style.backgroundSize = 'cover';
