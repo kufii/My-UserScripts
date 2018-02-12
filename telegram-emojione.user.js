@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.23
+// @version      1.0.24
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
 // @grant        none
+// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=250853
 // @require      https://greasyfork.org/scripts/38329-emojione-min-js/code/emojioneminjs.js?version=250047
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
 // ==/UserScript==
 
 (function() {
@@ -72,13 +72,17 @@
 		'\uD83C\uDFF3': '\uD83C\uDFF3\uFE0F'
 	};
 
-	var getImageSrc = function(shortname) {
+	var shortnameToUnicode = function(shortname) {
+		return emojione.shortnameToUnicode(replacements[shortname] || shortname);
+	};
+
+	var getImageSrc = function(unicode) {
 		var tempDiv = document.createElement('div');
-		tempDiv.innerHTML = emojione.toImage(replacements[shortname] || shortname);
+		tempDiv.innerHTML = emojione.unicodeToImage(unicode);
 		return Util.q('img', tempDiv).src;
 	};
 
-	var convert = function(msg, watch, watchContinuously) {
+	var convert = function(msg) {
 		var html = '';
 
 		Util.qq('.emoji', msg).forEach(function(emoji) {
@@ -108,20 +112,6 @@
 		});
 
 		msg.innerHTML = html;
-		if (watch) {
-			var changes = waitForElems({
-				context: msg,
-				onchange: function() {
-					changes.stop();
-					convert(msg, watchContinuously, watchContinuously);
-				}
-			});
-			if (!watchContinuously) {
-				setTimeout(function() {
-					changes.stop();
-				}, 1000); // if no changes after 1 second, assume no changes
-			}
-		}
 	};
 
 	waitForElems({
@@ -137,7 +127,17 @@
 			'.im_message_document_caption'
 		].join(','),
 		onmatch: function(msg) {
-			convert(msg, true);
+			convert(msg);
+			var changes = waitForElems({
+				context: msg,
+				onchange: function() {
+					changes.stop();
+					convert(msg);
+				}
+			});
+			setTimeout(function() {
+				changes.stop();
+			}, 1000); // if no changes after 1 second, assume no changes
 		}
 	});
 
@@ -147,7 +147,15 @@
 			'.im_short_message_media > span > span > span'
 		].join(','),
 		onmatch: function(msg) {
-			convert(msg, true, true);
+			convert(msg);
+			var changes = waitForElems({
+				context: msg,
+				onchange: function() {
+					changes.stop();
+					convert(msg);
+					changes.resume();
+				}
+			});
 		}
 	});
 
@@ -168,15 +176,50 @@
 	});
 
 	var textarea = Util.q('.composer_rich_textarea');
-	waitForElems({
+	var textChanges = waitForElems({
 		context: textarea,
+		config: {
+			characterData: true,
+			childList: true,
+			subtree: true
+		},
 		onchange: function() {
-			Util.qq('.emoji:not(.e1-converted)', textarea).forEach(function(emoji) {
-				emoji.removeAttribute('style');
-				emoji.classList.add('e1-converted');
-				emoji.style.backgroundImage = 'url(' + getImageSrc(emoji.alt) + ')';
-				emoji.style.backgroundSize = 'cover';
-			});
+			textChanges.stop();
+
+			var convertNodes = function(node) {
+				if (node.nodeType === Node.TEXT_NODE) {
+					var tempDiv = document.createElement('div');
+					tempDiv.innerHTML = emojione.unicodeToImage(node.textContent);
+					if (Util.q('img', tempDiv)) {
+						Util.qq('img', tempDiv).forEach(function(emoji) {
+							emoji.removeAttribute('class');
+							emoji.classList.add('emoji', 'emoji-w20', 'emoji-spritesheet-0', 'e1-converted');
+							emoji.style.backgroundImage = 'url(' + emoji.src + ')';
+							emoji.style.backgroundSize = 'cover';
+							emoji.src = 'img/blank.gif';
+						});
+						tempDiv.childNodes.forEach(function(tempChild) {
+							node.parentNode.insertBefore(tempChild.cloneNode(), node);
+						});
+						node.remove();
+					}
+				} else if (node.tagName === 'IMG') {
+					if (!node.classList.contains('e1-converted')) {
+						node.removeAttribute('style');
+						node.classList.add('e1-converted');
+						node.alt = shortnameToUnicode(node.alt);
+						node.style.backgroundImage = 'url(' + getImageSrc(node.alt) + ')';
+						node.style.backgroundSize = 'cover';
+					}
+				} else {
+					if (node.childNodes) {
+						node.childNodes.forEach(convertNodes);
+					}
+				}
+			};
+			textarea.childNodes.forEach(convertNodes);
+
+			textChanges.resume();
 		}
 	});
 })();
