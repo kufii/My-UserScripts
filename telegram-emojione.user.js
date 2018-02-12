@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.17
+// @version      1.0.18
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -68,7 +68,8 @@
 		':hocho:': ':knife:',
 		':boat:': ':sailboat:',
 		':car:': ':red_car:',
-		':large_blue_circle:': ':blue_circle:'
+		':large_blue_circle:': ':blue_circle:',
+		'\uD83C\uDFF3': '\uD83C\uDFF3\uFE0F\u200D'
 	};
 
 	var getImageSrc = function(shortname) {
