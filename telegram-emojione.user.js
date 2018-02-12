@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.25
+// @version      1.0.26
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -72,13 +72,9 @@
 		'\uD83C\uDFF3': '\uD83C\uDFF3\uFE0F'
 	};
 
-	var shortnameToUnicode = function(shortname) {
-		return emojione.shortnameToUnicode(replacements[shortname] || shortname);
-	};
-
-	var getImageSrc = function(unicode) {
+	var getImageSrc = function(shortname) {
 		var tempDiv = document.createElement('div');
-		tempDiv.innerHTML = emojione.unicodeToImage(unicode);
+		tempDiv.innerHTML = emojione.toImage(replacements[shortname] || shortname);
 		return Util.q('img', tempDiv).src;
 	};
 
@@ -97,7 +93,7 @@
 
 				var withEmoji = emojione.toImage(emojione.shortnameToUnicode(content));
 				if (node.nodeType === Node.TEXT_NODE) {
-					var tempDiv = document.creteElement('div');
+					var tempDiv = document.createElement('div');
 					tempDiv.innerHTML = withEmoji;
 					if (Util.q('img', tempDiv)) {
 						tempDiv.childNodes.forEach(function(child) {
@@ -187,7 +183,7 @@
 			var convertNodes = function(node) {
 				if (node.nodeType === Node.TEXT_NODE) {
 					var tempDiv = document.createElement('div');
-					tempDiv.innerHTML = emojione.unicodeToImage(node.textContent);
+					tempDiv.innerHTML = emojione.toImage(node.textContent);
 					if (Util.q('img', tempDiv)) {
 						Util.qq('img', tempDiv).forEach(function(emoji) {
 							emoji.removeAttribute('class');
@@ -202,20 +198,18 @@
 						node.remove();
 					}
 				} else if (node.tagName === 'IMG') {
-					if (!node.classList.contains('e1-converted')) {
-						node.removeAttribute('style');
-						node.classList.add('e1-converted');
-						node.alt = shortnameToUnicode(node.alt);
-						node.style.backgroundImage = 'url(' + getImageSrc(node.alt) + ')';
-						node.style.backgroundSize = 'cover';
-					}
+					Util.log(node);
+					node.removeAttribute('style');
+					node.classList.add('e1-converted');
+					node.style.backgroundImage = 'url(' + getImageSrc(node.alt) + ')';
+					node.style.backgroundSize = 'cover';
 				} else {
 					if (node.childNodes) {
-						node.childNodes.forEach(convertNodes);
+						Array.from(node.childNodes).forEach(convertNodes);
 					}
 				}
 			};
-			textarea.childNodes.forEach(convertNodes);
+			Array.from(textarea.childNodes).forEach(convertNodes);
 
 			textChanges.resume();
 		}
