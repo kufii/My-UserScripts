@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.29
+// @version      1.0.30
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -34,6 +34,14 @@
 		},
 		regexEscape: function(str) {
 			return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+		},
+		buildEmoji: function(img, src) {
+			img.removeAttribute('style');
+			img.removeAttribute('class');
+			img.classList.add('emoji', 'e1-converted');
+			img.style.backgroundImage = 'url(' + src + ')';
+			img.style.backgroundSize = 'cover';
+			img.src = 'img/blank.gif';
 		}
 	};
 
@@ -50,13 +58,13 @@
 	];
 
 	Util.appendStyle(sizes.map(function(size) {
-		var output = '.emojione';
+		var output = '.emoji';
 		if (size.class) {
 			output = size.class.map(function(c) {
-				return '.' + c + ' .emojione';
+				return '.' + c + ' .emoji';
 			}).join(', ');
 		}
-		return output + ' {width: ' + size.size + 'px;}';
+		return output + ' {width: ' + size.size + 'px; height: ' + size.size + 'px;}';
 	}).join(''));
 
 	var replacements = {
@@ -89,7 +97,7 @@
 	};
 
 	var convert = function(msg) {
-		Util.qq('.emoji', msg).forEach(function(emoji) {
+		Util.qq('.emoji:not(.e1-converted)', msg).forEach(function(emoji) {
 			emoji.outerHTML = emoji.textContent;
 		});
 		Array.from(msg.childNodes).forEach(function(node) {
@@ -102,6 +110,10 @@
 					var tempDiv = document.createElement('div');
 					tempDiv.innerHTML = withEmoji;
 					if (Util.q('img', tempDiv)) {
+						Util.qq('img', tempDiv).forEach(function(emoji) {
+							Util.buildEmoji(emoji, emoji.src);
+						});
+
 						tempDiv.childNodes.forEach(function(child) {
 							msg.insertBefore(child.cloneNode(), node);
 						});
@@ -163,6 +175,8 @@
 		sel: '.composer_emoji_btn',
 		onmatch: function(btn) {
 			btn.innerHTML = emojione.toImage(replacements[btn.title] || btn.title);
+			var img = Util.q('img', btn);
+			Util.buildEmoji(img, img.src);
 		}
 	});
 
@@ -172,6 +186,8 @@
 			var emoji = Util.q('span', option).textContent;
 			emoji = replacements[emoji] || emoji;
 			Util.q('.emoji', option).outerHTML = emojione.toImage(emoji);
+			var img = Util.q('img', option);
+			Util.buildEmoji(img, img.src);
 		}
 	});
 
@@ -192,11 +208,7 @@
 					tempDiv.innerHTML = emojione.toImage(makeReplacements(node.textContent));
 					if (Util.q('img', tempDiv)) {
 						Util.qq('img', tempDiv).forEach(function(emoji) {
-							emoji.removeAttribute('class');
-							emoji.classList.add('emoji', 'emoji-w20', 'emoji-spritesheet-0', 'e1-converted');
-							emoji.style.backgroundImage = 'url(' + emoji.src + ')';
-							emoji.style.backgroundSize = 'cover';
-							emoji.src = 'img/blank.gif';
+							Util.buildEmoji(emoji, emoji.src);
 						});
 						Array.from(tempDiv.childNodes).forEach(function(tempChild) {
 							node.parentNode.insertBefore(tempChild, node);
@@ -205,10 +217,7 @@
 					}
 				} else if (node.tagName === 'IMG') {
 					if (!node.classList.contains('e1-converted')) {
-						node.removeAttribute('style');
-						node.classList.add('e1-converted');
-						node.style.backgroundImage = 'url(' + getImageSrc(node.alt) + ')';
-						node.style.backgroundSize = 'cover';
+						Util.buildEmoji(node, getImageSrc(node.alt));
 					}
 				} else {
 					if (node.childNodes) {
