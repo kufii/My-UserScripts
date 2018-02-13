@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.27
+// @version      1.0.28
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -91,7 +91,7 @@
 		Util.qq('.emoji', msg).forEach(function(emoji) {
 			emoji.outerHTML = emoji.textContent;
 		});
-		msg.childNodes.forEach(function(node) {
+		Array.from(msg.childNodes).forEach(function(node) {
 			var content = node.textContent;
 			if (content) {
 				content = makeReplacements(content);
@@ -197,8 +197,8 @@
 							emoji.style.backgroundSize = 'cover';
 							emoji.src = 'img/blank.gif';
 						});
-						tempDiv.childNodes.forEach(function(tempChild) {
-							node.parentNode.insertBefore(tempChild.cloneNode(), node);
+						Array.from(tempDiv.childNodes).forEach(function(tempChild) {
+							node.parentNode.insertBefore(tempChild, node);
 						});
 						node.remove();
 					}
