@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.32
+// @version      1.0.33
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
-// @grant        none
+// @grant        GM_addStyle
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=250853
 // @require      https://greasyfork.org/scripts/38329-emojione-min-js/code/emojioneminjs.js?version=250047
 // ==/UserScript==
@@ -26,11 +26,6 @@
 		},
 		qq: function(query, context) {
 			return [].slice.call((context || document).querySelectorAll(query));
-		},
-		appendStyle: function(str) {
-			var style = document.createElement('style');
-			style.textContent = str;
-			document.head.appendChild(style);
 		},
 		regexEscape: function(str) {
 			return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
@@ -57,7 +52,7 @@
 		}
 	];
 
-	Util.appendStyle(sizes.map(function(size) {
+	GM_addStyle(sizes.map(function(size) {
 		var output = '.emoji';
 		if (size.class) {
 			output = size.class.map(function(c) {
@@ -106,8 +101,6 @@
 			var content = node.textContent;
 			if (content) {
 				content = makeReplacements(content);
-
-				Util.log(emojione.shortnameToUnicode(content));
 
 				var tempDiv = document.createElement('div');
 				tempDiv.innerHTML = emojione.toImage(content);
