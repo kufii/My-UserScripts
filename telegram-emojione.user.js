@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.34
+// @version      1.0.35
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -72,10 +72,10 @@
 		':boat:': ':sailboat:',
 		':car:': ':red_car:',
 		':large_blue_circle:': ':blue_circle:',
-		'\uD83C\uDFF3': '\uD83C\uDFF3\uFE0F',
-		'\uD83D\uDECF': '\uD83D\uDECF\uFE0F',
-		'\u2640': '\u2640\uFE0F',
-		'\uFE0F\uFE0F': '\uFE0F'
+		'\uD83C\uDFF3': '\uD83C\uDFF3\uFE0F', // Flag
+		'\uD83D\uDECF': '\uD83D\uDECF\uFE0F', // Bed
+		'\u2640': '\u2640\uFE0F', // Female Sign
+		'\uFE0F\uFE0F': '\uFE0F' // Fix for ZWJ
 	};
 
 	var makeReplacements = function(str) {
