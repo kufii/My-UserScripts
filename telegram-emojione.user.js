@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.31
+// @version      1.0.32
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -78,6 +78,8 @@
 		':car:': ':red_car:',
 		':large_blue_circle:': ':blue_circle:',
 		'\uD83C\uDFF3': '\uD83C\uDFF3\uFE0F',
+		'\uD83D\uDECF': '\uD83D\uDECF\uFE0F',
+		'\u2640': '\u2640\uFE0F',
 		'\uFE0F\uFE0F': '\uFE0F'
 	};
 
@@ -105,10 +107,16 @@
 			if (content) {
 				content = makeReplacements(content);
 
-				var withEmoji = emojione.toImage(emojione.shortnameToUnicode(content));
+				Util.log(emojione.shortnameToUnicode(content));
+
+				var tempDiv = document.createElement('div');
+				tempDiv.innerHTML = emojione.toImage(content);
+				Util.qq('img', tempDiv).forEach(function(emoji) {
+					emoji.outerHTML = emoji.alt;
+				});
+				tempDiv.innerHTML = emojione.toImage(tempDiv.textContent);
+
 				if (node.nodeType === Node.TEXT_NODE) {
-					var tempDiv = document.createElement('div');
-					tempDiv.innerHTML = withEmoji;
 					if (Util.q('img', tempDiv)) {
 						Util.qq('img', tempDiv).forEach(function(emoji) {
 							Util.buildEmoji(emoji, emoji.src);
@@ -120,7 +128,7 @@
 						node.remove();
 					}
 				} else {
-					node.innerHTML = withEmoji;
+					node.innerHTML = tempDiv.innerHTML;
 				}
 			}
 		});
