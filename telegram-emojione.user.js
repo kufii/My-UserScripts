@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.35
+// @version      1.0.36
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -30,6 +30,59 @@
 		regexEscape: function(str) {
 			return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 		},
+		forEachProperty: function(object, callback) {
+			for (var property in object) {
+				if (object.hasOwnProperty(property)) {
+					callback(property, object[property]);
+				}
+			}
+		}
+	};
+
+	var EmojiHelper = {
+		replacements: {
+			':+1:': ':thumbsup:',
+			':facepunch:': ':punch:',
+			':hand:': ':raised_hand:',
+			':moon:': ':waxing_gibbous_moon:',
+			':phone:': ':telephone:',
+			':hocho:': ':knife:',
+			':boat:': ':sailboat:',
+			':car:': ':red_car:',
+			':large_blue_circle:': ':blue_circle:',
+			'\uD83C\uDFF3': '\uD83C\uDFF3\uFE0F', // Flag
+			'\uD83D\uDECF': '\uD83D\uDECF\uFE0F', // Bed
+			'\u2640': '\u2640\uFE0F', // Female Sign
+			'\uFE0F\uFE0F': '\uFE0F' // Fix for ZWJ
+		},
+		sizes: [
+			{
+				size: 20
+			}, {
+				class: ['im_short_message_text', 'im_short_message_media'],
+				size: 16
+			}, {
+				class: ['composer_emoji_tooltip', 'stickerset_modal_sticker_alt'],
+				size: 26
+			}
+		],
+		addStyles: function() {
+			GM_addStyle(EmojiHelper.sizes.map(function(size) {
+				var output = '.emoji';
+				if (size.class) {
+					output = size.class.map(function(c) {
+						return '.' + c + ' .emoji';
+					}).join(', ');
+				}
+				return output + ' {width: ' + size.size + 'px; height: ' + size.size + 'px;}';
+			}).join(''));
+		},
+		makeReplacements: function(str) {
+			Util.forEachProperty(EmojiHelper.replacements, function(key, value) {
+				str = str.replace(new RegExp(Util.regexEscape(key), 'g'), value);
+			});
+			return str;
+		},
 		buildEmoji: function(img, src) {
 			img.removeAttribute('style');
 			img.removeAttribute('class');
@@ -37,109 +90,74 @@
 			img.style.backgroundImage = 'url(' + src + ')';
 			img.style.backgroundSize = 'cover';
 			img.src = 'img/blank.gif';
-		}
-	};
+		},
+		toEmoji: function(text) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = emojione.toImage(EmojiHelper.makeReplacements(text));
 
-	var sizes = [
-		{
-			size: 20
-		}, {
-			class: ['im_short_message_text', 'im_short_message_media'],
-			size: 16
-		}, {
-			class: ['composer_emoji_tooltip', 'stickerset_modal_sticker_alt'],
-			size: 26
-		}
-	];
+			Util.qq('img', tempDiv).forEach(function(emoji) {
+				emoji.outerHTML = emoji.alt;
+			});
+			tempDiv.innerHTML = emojione.toImage(tempDiv.textContent);
 
-	GM_addStyle(sizes.map(function(size) {
-		var output = '.emoji';
-		if (size.class) {
-			output = size.class.map(function(c) {
-				return '.' + c + ' .emoji';
-			}).join(', ');
-		}
-		return output + ' {width: ' + size.size + 'px; height: ' + size.size + 'px;}';
-	}).join(''));
+			Util.qq('img', tempDiv).forEach(function(emoji) {
+				EmojiHelper.buildEmoji(emoji, emoji.src);
+			});
 
-	var replacements = {
-		':+1:': ':thumbsup:',
-		':facepunch:': ':punch:',
-		':hand:': ':raised_hand:',
-		':moon:': ':waxing_gibbous_moon:',
-		':phone:': ':telephone:',
-		':hocho:': ':knife:',
-		':boat:': ':sailboat:',
-		':car:': ':red_car:',
-		':large_blue_circle:': ':blue_circle:',
-		'\uD83C\uDFF3': '\uD83C\uDFF3\uFE0F', // Flag
-		'\uD83D\uDECF': '\uD83D\uDECF\uFE0F', // Bed
-		'\u2640': '\u2640\uFE0F', // Female Sign
-		'\uFE0F\uFE0F': '\uFE0F' // Fix for ZWJ
-	};
-
-	var makeReplacements = function(str) {
-		for (var property in replacements) {
-			if (replacements.hasOwnProperty(property)) {
-				str = str.replace(new RegExp(Util.regexEscape(property), 'g'), replacements[property]);
-			}
-		}
-		return str;
-	};
-
-	var getImageSrc = function(shortname) {
-		var tempDiv = document.createElement('div');
-		tempDiv.innerHTML = emojione.toImage(replacements[shortname] || shortname);
-		return Util.q('img', tempDiv).src;
-	};
-
-	var convert = function(msg) {
-		Util.qq('.emoji:not(.e1-converted)', msg).forEach(function(emoji) {
-			emoji.outerHTML = emoji.textContent;
-		});
-		Array.from(msg.childNodes).forEach(function(node) {
-			var content = node.textContent;
-			if (content) {
-				content = makeReplacements(content);
-
-				var tempDiv = document.createElement('div');
-				tempDiv.innerHTML = emojione.toImage(content);
-				Util.qq('img', tempDiv).forEach(function(emoji) {
-					emoji.outerHTML = emoji.alt;
+			return tempDiv.innerHTML;
+		},
+		shortnameToSrc: function(shortname) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = emojione.toImage(EmojiHelper.replacements[shortname] || shortname);
+			return Util.q('img', tempDiv).src;
+		},
+		convert: function(node) {
+			if (node.childNodes && node.childNodes.length > 0) {
+				Util.qq('span.emoji', node).forEach(function(emoji) {
+					emoji.outerHTML = emoji.textContent;
 				});
-				tempDiv.innerHTML = emojione.toImage(tempDiv.textContent);
+			}
+			if (node.nodeType === Node.TEXT_NODE) {
+				var tempDiv = document.createElement('div');
+				tempDiv.innerHTML = EmojiHelper.toEmoji(node.textContent);
 
 				if (Util.q('img', tempDiv)) {
-					Util.qq('img', tempDiv).forEach(function(emoji) {
-						Util.buildEmoji(emoji, emoji.src);
+					Array.from(tempDiv.childNodes).forEach(function(tempChild) {
+						node.parentNode.insertBefore(tempChild, node);
 					});
-
-					if (node.nodeType === Node.TEXT_NODE) {
-						Array.from(tempDiv.childNodes).forEach(function(child) {
-							msg.insertBefore(child, node);
-						});
-						node.remove();
-					} else {
-						node.innerHTML = tempDiv.innerHTML;
-					}
+					node.remove();
 				}
+			} else if (node.tagName === 'IMG') {
+				if (!node.classList.contains('e1-converted')) {
+					EmojiHelper.buildEmoji(node, EmojiHelper.shortnameToSrc(node.alt));
+				}
+			} else if (node.childNodes) {
+				Array.from(node.childNodes).forEach(EmojiHelper.convert);
+			}
+		}
+	};
 
-				if (node.nodeType === Node.TEXT_NODE) {
-					if (Util.q('img', tempDiv)) {
-						Util.qq('img', tempDiv).forEach(function(emoji) {
-							Util.buildEmoji(emoji, emoji.src);
-						});
+	EmojiHelper.addStyles();
 
-						Array.from(tempDiv.childNodes).forEach(function(child) {
-							msg.insertBefore(child, node);
-						});
-						node.remove();
-					}
-				} else {
-					node.innerHTML = tempDiv.innerHTML;
+	var convertAndWatch = function(node, continuous, config) {
+		EmojiHelper.convert(node);
+		var changes = waitForElems({
+			context: node,
+			config: config,
+			onchange: function() {
+				changes.stop();
+				EmojiHelper.convert(node);
+				if (continuous) {
+					changes.resume();
 				}
 			}
 		});
+		if (!continuous) {
+			// if no changes after 1 second, assume no changes
+			setTimeout(function() {
+				changes.stop();
+			}, 1000);
+		}
 	};
 
 	waitForElems({
@@ -154,18 +172,8 @@
 			'.im_message_photo_caption',
 			'.im_message_document_caption'
 		].join(','),
-		onmatch: function(msg) {
-			convert(msg);
-			var changes = waitForElems({
-				context: msg,
-				onchange: function() {
-					changes.stop();
-					convert(msg);
-				}
-			});
-			setTimeout(function() {
-				changes.stop();
-			}, 1000); // if no changes after 1 second, assume no changes
+		onmatch: function(node) {
+			convertAndWatch(node);
 		}
 	});
 
@@ -174,76 +182,28 @@
 			'.im_short_message_text',
 			'.im_short_message_media > span > span > span'
 		].join(','),
-		onmatch: function(msg) {
-			convert(msg);
-			var changes = waitForElems({
-				context: msg,
-				onchange: function() {
-					changes.stop();
-					convert(msg);
-					changes.resume();
-				}
-			});
+		onmatch: function(node) {
+			convertAndWatch(node, true);
 		}
+	});
+
+	convertAndWatch(Util.q('.composer_rich_textarea'), true, {
+		characterData: true,
+		childList: true,
+		subtree: true
 	});
 
 	waitForElems({
 		sel: '.composer_emoji_btn',
 		onmatch: function(btn) {
-			btn.innerHTML = emojione.toImage(replacements[btn.title] || btn.title);
-			var img = Util.q('img', btn);
-			Util.buildEmoji(img, img.src);
+			btn.innerHTML = EmojiHelper.toEmoji(btn.title);
 		}
 	});
 
 	waitForElems({
 		sel: '.composer_emoji_option',
 		onmatch: function(option) {
-			var emoji = Util.q('span', option).textContent;
-			emoji = replacements[emoji] || emoji;
-			Util.q('.emoji', option).outerHTML = emojione.toImage(emoji);
-			var img = Util.q('img', option);
-			Util.buildEmoji(img, img.src);
-		}
-	});
-
-	var textarea = Util.q('.composer_rich_textarea');
-	var textChanges = waitForElems({
-		context: textarea,
-		config: {
-			characterData: true,
-			childList: true,
-			subtree: true
-		},
-		onchange: function() {
-			textChanges.stop();
-
-			var convertNodes = function(node) {
-				if (node.nodeType === Node.TEXT_NODE) {
-					var tempDiv = document.createElement('div');
-					tempDiv.innerHTML = emojione.toImage(makeReplacements(node.textContent));
-					if (Util.q('img', tempDiv)) {
-						Util.qq('img', tempDiv).forEach(function(emoji) {
-							Util.buildEmoji(emoji, emoji.src);
-						});
-						Array.from(tempDiv.childNodes).forEach(function(tempChild) {
-							node.parentNode.insertBefore(tempChild, node);
-						});
-						node.remove();
-					}
-				} else if (node.tagName === 'IMG') {
-					if (!node.classList.contains('e1-converted')) {
-						Util.buildEmoji(node, getImageSrc(node.alt));
-					}
-				} else {
-					if (node.childNodes) {
-						Array.from(node.childNodes).forEach(convertNodes);
-					}
-				}
-			};
-			Array.from(textarea.childNodes).forEach(convertNodes);
-
-			textChanges.resume();
+			Util.q('.emoji', option).outerHTML = EmojiHelper.toEmoji(Util.q('span', option).textContent);
 		}
 	});
 })();
