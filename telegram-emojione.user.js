@@ -7,7 +7,7 @@
 // @match        *://web.telegram.org/*
 // @grant        GM_addStyle
 // @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=250853
-// @require      https://cdn.rawgit.com/emojione/emojione/d56ef200/lib/js/emojione.js
+// @require      https://cdn.rawgit.com/emojione/emojione/9a81e8462ea5c1efc8e4f2947944d0a248b8ec73/lib/js/emojione.min.js
 // ==/UserScript==
 
 (function() {
