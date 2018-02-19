@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         SoundCloud Toggle Continuous Play and Autoplay
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.7
+// @version      1.0.8
 // @description  Adds options to toggle continuous play and autoplay in SoundCloud
 // @author       Adrien Pyke
 // @match        *://soundcloud.com/*
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
+// @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // @grant        GM_registerMenuCommand
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -182,33 +182,42 @@
 	obs.observe(Util.q('.playControls__soundBadge'), { subtree: true, childList: true });
 
 	// override the click event for elements that shouldn't trigger a pause
-	waitForElems('.skipControl, .playButton, .compactTrackList__item, .fullListenHero__foreground', function(elem) {
-		elem.addEventListener('click', function(e) {
-			if (timeout) {
-				clearTimeout(timeout);
-				timeout = null;
-			}
-		});
-	});
-	// waveforms need to be handled differently
-	waitForElems('.waveform__layer', function(elem) {
-		elem.addEventListener('click', function(e) {
-			setTimeout(function() {
-				if (!App.isPlaying()) {
-					Util.log('Playing via Waveform');
-					App.play();
+	waitForElems({
+		sel: '.skipControl, .playButton, .compactTrackList__item, .fullListenHero__foreground',
+		onmatch: function(elem) {
+			elem.addEventListener('click', function(e) {
+				if (timeout) {
+					clearTimeout(timeout);
+					timeout = null;
 				}
-			}, 0);
-		});
+			});
+		}
 	});
 
+	// waveforms need to be handled differently
+	waitForElems({
+		sel: '.waveform__layer',
+		onmatch: function(elem) {
+			elem.addEventListener('click', function(e) {
+				setTimeout(function() {
+					if (!App.isPlaying()) {
+						Util.log('Playing via Waveform');
+						App.play();
+					}
+				}, 0);
+			});
+		}
+	});
 
 	// fix for buttons constantly showing buffering
-	waitForElems('.sc-button-buffering', function(button) {
-		if (!App.isPlaying()) {
-			button.classList.remove('sc-button-buffering');
-			button.setAttribute('title', 'Play');
-			button.textContent = 'Play';
+	waitForElems({
+		sel: '.sc-button-buffering',
+		onmatch: function(button) {
+			if (!App.isPlaying()) {
+				button.classList.remove('sc-button-buffering');
+				button.setAttribute('title', 'Play');
+				button.textContent = 'Play';
+			}
 		}
 	});
 })();
