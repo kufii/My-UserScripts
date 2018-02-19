@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Kitsu Batoto Links
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.6
+// @version      2.0.7
 // @description  Adds Batoto links to Kitsu manga pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
+// @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
