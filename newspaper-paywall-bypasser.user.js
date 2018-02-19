@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.10
+// @version      1.5.11
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -18,7 +18,7 @@
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
 // @grant        unsafeWindow
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
+// @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // @noframes
 // ==/UserScript==
 
@@ -229,7 +229,12 @@
 		},
 		fn: function() {
 			// clear intervals once the paywall comes up to prevent changes afterward
-			waitForElems('#Gateway_optly', Util.clearAllIntervals, true);
+			waitForElems({
+				sel: '#Gateway_optly',
+				stop: true,
+				onmatch: Util.clearAllIntervals
+			});
+
 			this.cleanupStory(Util.q('#story'));
 			setTimeout(function() {
 				require(['jquery/nyt'], function($) {
@@ -437,10 +442,14 @@
 					setTimeout(App.bypass(imp), imp.wait || 0);
 				} else {
 					var wait = waitType === 'function' ? imp.wait() : imp.wait;
-					waitForElems(wait, function() {
-						Util.log('Condition fulfilled, bypassing');
-						App.bypass(imp);
-					}, true);
+					waitForElems({
+						sel: wait,
+						stop: true,
+						onmatch: function() {
+							Util.log('Condition fulfilled, bypassing');
+							App.bypass(imp);
+						}
+					});
 				}
 			} else {
 				App.bypass(imp);
