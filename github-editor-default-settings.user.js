@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Editor - Change Default Settings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.10
+// @version      1.0.11
 // @description  change default settings for the github editor
 // @author       Adrien Pyke
 // @match        *://github.com/*/new/*
@@ -9,7 +9,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
+// @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
 (function() {
@@ -148,7 +148,10 @@
 	GM_registerMenuCommand('GitHub Editor Settings', setup);
 	var settings = loadConfig();
 
-	waitForElems('.CodeMirror-code', function() {
-		applySettings(settings);
+	waitForElems({
+		sel: '.CodeMirror-code',
+		onmatch: function() {
+			applySettings(settings);
+		}
 	});
 })();
