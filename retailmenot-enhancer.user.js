@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RetailMeNot Enhancer
 // @namespace    https://greasyfork.org/users/649
-// @version      3.0.1
+// @version      3.0.2
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
@@ -10,7 +10,7 @@
 // @match        *://www.retailmenot.es/*
 // @match        *://www.retailmenot.it/*
 // @match        *://www.retailmenot.pl/*
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
+// @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // @grant        GM_openInTab
 // ==/UserScript==
 
