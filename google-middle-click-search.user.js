@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Google - Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.8
+// @version      1.0.9
 // @description  Opens search results in new tab when you middle click
 // @author       Adrien Pyke
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/?(?:\?.*)?$/
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/search\/?\?.*$/
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=122976
+// @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // @grant        GM_openInTab
 // ==/UserScript==
 
@@ -51,38 +51,45 @@
 		}
 	};
 
-	waitForElems('#_fZl', function(btn) {
-		var input = document.querySelector('#lst-ib');
+	waitForElems({
+		sel: '#_fZl',
+		onmatch: function(btn) {
+			var input = document.querySelector('#lst-ib');
 
-		btn.onmousedown = function(e) {
-			if (e.button === 1) {
-				e.preventDefault();
-			}
-		};
+			btn.onmousedown = function(e) {
+				if (e.button === 1) {
+					e.preventDefault();
+				}
+			};
 
-		btn.onclick = function(e) {
-			if (e.button === 1 && input.value.trim()) {
-				e.preventDefault();
-				e.stopImmediatePropagation();
-				var url = getUrl(input.value);
-				GM_openInTab(url, true);
-				return false;
-			}
-		};
+			btn.onclick = function(e) {
+				if (e.button === 1 && input.value.trim()) {
+					e.preventDefault();
+					e.stopImmediatePropagation();
+					var url = getUrl(input.value);
+					GM_openInTab(url, true);
+					return false;
+				}
+			};
 
-		btn.onauxclick = btn.onclick;
+			btn.onauxclick = btn.onclick;
+		}
 	});
-	waitForElems('.sbsb_b li .sbqs_c, .sbsb_b li .sbpqs_d', function(elem) {
-		elem.onclick = function(e) {
-			if (e.button === 1) {
-				e.preventDefault();
-				e.stopImmediatePropagation();
-				var text = elem.classList.contains('sbpqs_d') ? elem.querySelector('span').textContent : elem.textContent;
-				var url = getUrl(text);
-				GM_openInTab(url, true);
-				return false;
-			}
-		};
-		elem.onauxclick = elem.onclick;
+
+	waitForElems({
+		sel: '.sbsb_b li .sbqs_c, .sbsb_b li .sbpqs_d',
+		onmatch: function(elem) {
+			elem.onclick = function(e) {
+				if (e.button === 1) {
+					e.preventDefault();
+					e.stopImmediatePropagation();
+					var text = elem.classList.contains('sbpqs_d') ? elem.querySelector('span').textContent : elem.textContent;
+					var url = getUrl(text);
+					GM_openInTab(url, true);
+					return false;
+				}
+			};
+			elem.onauxclick = elem.onclick;
+		}
 	});
 })();
