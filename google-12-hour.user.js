@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Google, 12 hour date-time picker
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Switches the date time picker on google searches to a 12 hour clock
 // @author       Adrien Pyke
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/.*$/
 // @grant        none
-// @require      https://greasyfork.org/scripts/5679-wait-for-elements/code/Wait%20For%20Elements.js?version=147465
+// @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
 (function() {
