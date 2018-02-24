@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.38
+// @version      1.1
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -10,36 +10,28 @@
 // @require      https://cdn.rawgit.com/emojione/emojione/9a81e8462ea5c1efc8e4f2947944d0a248b8ec73/lib/js/emojione.min.js
 // ==/UserScript==
 
-(function() {
+(() => {
 	'use strict';
 
-	var SCRIPT_NAME = 'Telegram Web Emojione';
+	const SCRIPT_NAME = 'Telegram Web Emojione';
 
-	var Util = {
-		log: function() {
-			var args = [].slice.call(arguments);
-			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
+	let Util = {
+		log(...args) {
+			args.unshift(`%c${SCRIPT_NAME}:`, 'font-weight: bold;color: #233c7b;');
 			console.log.apply(console, args);
 		},
-		q: function(query, context) {
+		q(query, context) {
 			return (context || document).querySelector(query);
 		},
-		qq: function(query, context) {
-			return [].slice.call((context || document).querySelectorAll(query));
+		qq(query, context) {
+			return Array.from((context || document).querySelectorAll(query));
 		},
-		regexEscape: function(str) {
+		regexEscape(str) {
 			return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-		},
-		forEachProperty: function(object, callback) {
-			for (var property in object) {
-				if (object.hasOwnProperty(property)) {
-					callback(property, object[property]);
-				}
-			}
 		}
 	};
 
-	var EmojiHelper = {
+	let EmojiHelper = {
 		replacements: {
 			':+1:': ':thumbsup:',
 			':facepunch:': ':punch:',
@@ -66,65 +58,55 @@
 				size: 26
 			}
 		],
-		addStyles: function() {
-			GM_addStyle(EmojiHelper.sizes.map(function(size) {
-				var output = '.emoji';
+		addStyles() {
+			GM_addStyle(EmojiHelper.sizes.map(size => {
+				let output = '.emoji';
 				if (size.class) {
-					output = size.class.map(function(c) {
-						return '.' + c + ' .emoji';
-					}).join(', ');
+					output = size.class.map(c => `.${c} .emoji`).join(', ');
 				}
-				return output + ' {width: ' + size.size + 'px; height: ' + size.size + 'px;}';
+				return output + `{width: ${size.size}px; height: ${size.size}px;}`;
 			}).join(''));
 		},
-		makeReplacements: function(str) {
-			Util.forEachProperty(EmojiHelper.replacements, function(key, value) {
+		makeReplacements(str) {
+			Object.entries(EmojiHelper.replacements).forEach(([key, value]) => {
 				str = str.replace(new RegExp(Util.regexEscape(key), 'g'), value);
 			});
 			return str;
 		},
-		buildEmoji: function(img, src) {
+		buildEmoji(img, src) {
 			img.removeAttribute('style');
 			img.removeAttribute('class');
 			img.classList.add('emoji', 'e1-converted');
-			img.style.backgroundImage = 'url(' + src + ')';
+			img.style.backgroundImage = `url(${src})`;
 			img.style.backgroundSize = 'cover';
 			img.src = 'img/blank.gif';
 		},
-		toEmoji: function(text) {
-			var tempDiv = document.createElement('div');
+		toEmoji(text) {
+			let tempDiv = document.createElement('div');
 			tempDiv.innerHTML = emojione.toImage(EmojiHelper.makeReplacements(text));
 
-			Util.qq('img', tempDiv).forEach(function(emoji) {
-				emoji.outerHTML = emoji.alt;
-			});
+			Util.qq('img', tempDiv).forEach(emoji => emoji.outerHTML = emoji.alt);
 			tempDiv.innerHTML = emojione.toImage(tempDiv.textContent);
 
-			Util.qq('img', tempDiv).forEach(function(emoji) {
-				EmojiHelper.buildEmoji(emoji, emoji.src);
-			});
+			Util.qq('img', tempDiv).forEach(emoji => EmojiHelper.buildEmoji(emoji, emoji.src));
 
 			return tempDiv.innerHTML;
 		},
-		shortnameToSrc: function(shortname) {
-			var tempDiv = document.createElement('div');
+		shortnameToSrc(shortname) {
+			let tempDiv = document.createElement('div');
 			tempDiv.innerHTML = emojione.toImage(EmojiHelper.replacements[shortname] || shortname);
 			return Util.q('img', tempDiv).src;
 		},
-		convert: function(node) {
+		convert(node) {
 			if (node.childNodes && node.childNodes.length > 0) {
-				Util.qq('span.emoji', node).forEach(function(emoji) {
-					emoji.outerHTML = emoji.textContent;
-				});
+				Util.qq('span.emoji', node).forEach(emoji => emoji.outerHTML = emoji.textContent);
 			}
 			if (node.nodeType === Node.TEXT_NODE) {
-				var tempDiv = document.createElement('div');
+				let tempDiv = document.createElement('div');
 				tempDiv.innerHTML = EmojiHelper.toEmoji(node.textContent);
 
 				if (Util.q('img', tempDiv)) {
-					Array.from(tempDiv.childNodes).forEach(function(tempChild) {
-						node.parentNode.insertBefore(tempChild, node);
-					});
+					Array.from(tempDiv.childNodes).forEach(tempChild => node.parentNode.insertBefore(tempChild, node));
 					node.remove();
 				}
 			} else if (node.tagName === 'IMG') {
@@ -139,12 +121,12 @@
 
 	EmojiHelper.addStyles();
 
-	var convertAndWatch = function(node, continuous, config) {
+	let convertAndWatch = function(node, continuous, config) {
 		EmojiHelper.convert(node);
-		var changes = waitForElems({
+		let changes = waitForElems({
 			context: node,
-			config: config,
-			onchange: function() {
+			config,
+			onchange() {
 				changes.stop();
 				EmojiHelper.convert(node);
 				if (continuous) {
@@ -154,9 +136,7 @@
 		});
 		if (!continuous) {
 			// if no changes after 1 second, assume no changes
-			setTimeout(function() {
-				changes.stop();
-			}, 1000);
+			setTimeout(changes.stop, 1000);
 		}
 	};
 
@@ -172,7 +152,7 @@
 			'.im_message_photo_caption',
 			'.im_message_document_caption'
 		].join(','),
-		onmatch: function(node) {
+		onmatch(node) {
 			convertAndWatch(node);
 		}
 	});
@@ -182,7 +162,7 @@
 			'.im_short_message_text',
 			'.im_short_message_media > span > span > span'
 		].join(','),
-		onmatch: function(node) {
+		onmatch(node) {
 			convertAndWatch(node, true);
 		}
 	});
@@ -195,14 +175,14 @@
 
 	waitForElems({
 		sel: '.composer_emoji_btn',
-		onmatch: function(btn) {
+		onmatch(btn) {
 			btn.innerHTML = EmojiHelper.toEmoji(btn.title);
 		}
 	});
 
 	waitForElems({
 		sel: '.composer_emoji_option',
-		onmatch: function(option) {
+		onmatch(option) {
 			Util.q('.emoji', option).outerHTML = EmojiHelper.toEmoji(Util.q('span', option).textContent);
 		}
 	});
