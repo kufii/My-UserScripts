@@ -1,0 +1,9 @@
+{
+	"extends": "adpyke-es6",
+	"env": {
+		"greasemonkey": true
+	},
+	"globals": {
+		"waitForElems": true
+	}
+}

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.1
+// @version      1.1.2
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -9,29 +9,30 @@
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // @require      https://cdn.rawgit.com/emojione/emojione/9a81e8462ea5c1efc8e4f2947944d0a248b8ec73/lib/js/emojione.min.js
 // ==/UserScript==
+/* global emojione */
 
 (() => {
 	'use strict';
 
 	const SCRIPT_NAME = 'Telegram Web Emojione';
 
-	let Util = {
+	const Util = {
 		log(...args) {
 			args.unshift(`%c${SCRIPT_NAME}:`, 'font-weight: bold;color: #233c7b;');
-			console.log.apply(console, args);
+			console.log(...args);
 		},
-		q(query, context) {
-			return (context || document).querySelector(query);
+		q(query, context = document) {
+			return context.querySelector(query);
 		},
-		qq(query, context) {
-			return Array.from((context || document).querySelectorAll(query));
+		qq(query, context = document) {
+			return Array.from(context.querySelectorAll(query));
 		},
 		regexEscape(str) {
-			return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+			return str.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
 		}
 	};
 
-	let EmojiHelper = {
+	const EmojiHelper = {
 		replacements: {
 			':+1:': ':thumbsup:',
 			':facepunch:': ':punch:',
@@ -121,7 +122,7 @@
 
 	EmojiHelper.addStyles();
 
-	let convertAndWatch = function(node, continuous, config) {
+	const convertAndWatch = function(node, continuous, config) {
 		EmojiHelper.convert(node);
 		let changes = waitForElems({
 			context: node,
