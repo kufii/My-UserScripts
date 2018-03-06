@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Batoto Links
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.1
+// @version      2.1.2
 // @description  Adds Batoto links to Kitsu manga pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -35,7 +35,7 @@
 		cache: {},
 		getBatotoPage(title, cb) {
 			let self = this;
-			if (self.cache.hasOwnProperty(title)) {
+			if (self.cache[title]) {
 				Util.log('Loading cached info');
 				cb(self.cache[title]);
 			} else {

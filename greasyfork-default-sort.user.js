@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Greasy Fork - Change Default Script Sort
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.1
+// @version      1.2.2
 // @description  Change default script sort on GreasyFork
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/*/users/*
@@ -59,13 +59,11 @@
 			if (!cfg) return defaults;
 
 			cfg = JSON.parse(cfg);
-			for (let property in defaults) {
-				if (defaults.hasOwnProperty(property)) {
-					if (!cfg[property]) {
-						cfg[property] = defaults[property];
-					}
+			Object.entries(defaults).forEach(([key, value]) => {
+				if (typeof cfg[key] === 'undefined') {
+					cfg[key] = value;
 				}
-			}
+			});
 
 			return cfg;
 		},

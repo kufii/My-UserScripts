@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.1
+// @version      1.2.2
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -345,13 +345,11 @@
 			if (!cfg) return defaults;
 
 			cfg = JSON.parse(cfg);
-			for (let property in defaults) {
-				if (defaults.hasOwnProperty(property)) {
-					if (!cfg[property]) {
-						cfg[property] = defaults[property];
-					}
+			Object.entries(defaults).forEach(([key, value]) => {
+				if (typeof cfg[key] === 'undefined') {
+					cfg[key] = value;
 				}
-			}
+			});
 
 			return cfg;
 		},

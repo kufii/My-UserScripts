@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.1
+// @version      2.1.2
 // @description  Show MAL fansub info on Kitsu anime pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -167,13 +167,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				if (!cfg) return defaults;
 
 				cfg = JSON.parse(cfg);
-				for (let property in defaults) {
-					if (defaults.hasOwnProperty(property)) {
-						if (!cfg[property]) {
-							cfg[property] = defaults[property];
-						}
+				Object.entries(defaults).forEach(([key, value]) => {
+					if (typeof cfg[key] === 'undefined') {
+						cfg[key] = value;
 					}
-				}
+				});
 
 				return cfg;
 			},
