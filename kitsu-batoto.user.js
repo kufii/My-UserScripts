@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Batoto Links
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1
+// @version      2.1.1
 // @description  Adds Batoto links to Kitsu manga pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -39,7 +39,7 @@
 				Util.log('Loading cached info');
 				cb(self.cache[title]);
 			} else {
-				let url = 'https://duckduckgo.com/html/?q=' + Util.encodeQuery(title + ' site:bato.to/comic/_/comics');
+				let url = `https://duckduckgo.com/html/?q=${Util.encodeQuery(`${title} site:bato.to/comic/_/comics`)}`;
 				Util.log('Searching DuckDuckGo for Batoto page:', url);
 				GM_xmlhttpRequest({
 					method: 'GET',

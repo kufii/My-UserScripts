@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RetailMeNot Enhancer
 // @namespace    https://greasyfork.org/users/649
-// @version      3.1
+// @version      3.1.1
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
@@ -30,33 +30,32 @@
 		qq(query, context = document) {
 			return Array.from(context.querySelectorAll(query));
 		},
-		getQueryParameter(name, url) {
-			if (!url) url = window.location.href;
+		getQueryParameter(name, url = window.location.href) {
 			name = name.replace(/[[\]]/g, '\\$&');
-			let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+			let regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
 				results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
 			return decodeURIComponent(results[2].replace(/\+/g, ' '));
 		},
-		setQueryParameter(key, value, url) {
+		setQueryParameter(key, value, url = window.location.href) {
 			if (!url) url = window.location.href;
-			let re = new RegExp('([?&])' + key + '=.*?(&|#|$)(.*)', 'gi'),
+			let re = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'gi'),
 				hash;
 
 			if (re.test(url)) {
-				if (typeof value !== 'undefined' && value !== null) return url.replace(re, '$1' + key + '=' + value + '$2$3');
+				if (typeof value !== 'undefined' && value !== null) return url.replace(re, `$1${key}=${value}$2$3`);
 				else {
 					hash = url.split('#');
 					url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
-					if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+					if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += `#${hash[1]}`;
 					return url;
 				}
 			} else if (typeof value !== 'undefined' && value !== null) {
 				let separator = url.indexOf('?') !== -1 ? '&' : '?';
 				hash = url.split('#');
-				url = hash[0] + separator + key + '=' + value;
-				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+				url = `${hash[0] + separator + key}=${value}`;
+				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += `#${hash[1]}`;
 				return url;
 			} else return url;
 		},
@@ -71,9 +70,9 @@
 			if (days) {
 				let date = new Date();
 				date.setTime(date.getTime()+(days*24*60*60*1000));
-				expires = '; expires='+date.toGMTString();
+				expires = `; expires=${date.toGMTString()}`;
 			} else expires = '';
-			document.cookie = name+'='+value+expires+'; path=/';
+			document.cookie = `${name}=${value}${expires}; path=/`;
 		}
 	};
 
@@ -89,7 +88,7 @@
 			sel: '.js-outclick, .js-title > a, .js-triggers-outclick, .js-coupon-square, .offer-item-in-list',
 			onmatch(button) {
 				let path = button.dataset.newTab && !button.dataset.newTab.match(/^\/out/i) ? button.dataset.newTab : button.dataset.mainTab;
-				let href = window.location.protocol + '//' + window.location.host + path;
+				let href = `${window.location.protocol}//${window.location.host}${path}`;
 				if (path) {
 					let handler = e => {
 						e.preventDefault();
@@ -136,7 +135,7 @@
 		waitForElems({
 			sel: '.offer, .stage .coupon',
 			onmatch(offer) {
-				let href = window.location.protocol + '//' + window.location.host + window.location.pathname + '?c=' + offer.dataset.offerid;
+				let href = `${window.location.protocol}//${window.location.host}${window.location.pathname}?c=${offer.dataset.offerid}`;
 
 				let clickHandler = e => {
 					e.preventDefault();
@@ -191,11 +190,11 @@
 			sel: '.coupon',
 			onmatch(coupon) {
 				let id = coupon.dataset.suffix;
-				let href = window.location.protocol + '//' + window.location.host + window.location.pathname + '?r=1#' + id;
+				let href = `${window.location.protocol}//${window.location.host}${window.location.pathname}?r=1#${id}`;
 				let clickHandler = e => {
 					e.preventDefault();
 					e.stopImmediatePropagation();
-					Util.createCookie('click_' + id, true);
+					Util.createCookie(`click_${id}`, true);
 					if (e.button === 1) {
 						GM_openInTab(href, true);
 					} else {
@@ -219,7 +218,7 @@
 	}).forEach(link => {
 		let url = Util.getQueryParameter('url', link.href);
 		if (url) {
-			link.href = window.location.protocol + '//' + window.location.host + url;
+			link.href = `${window.location.protocol}//${window.location.host}${url}`;
 		}
 	});
 

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1
+// @version      2.1.1
 // @description  Show MAL fansub info on Kitsu anime pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -71,33 +71,31 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		qq(query, context = document) {
 			return Array.from(context.querySelectorAll(query));
 		},
-		getQueryParameter(name, url) {
-			if (!url) url = location.href;
+		getQueryParameter(name, url = location.href) {
 			name = name.replace(/[[\]]/g, '\\$&');
-			let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+			let regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
 				results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
 			return decodeURIComponent(results[2].replace(/\+/g, ' '));
 		},
-		setQueryParameter(key, value, url) {
-			if (!url) url = window.location.href;
-			let re = new RegExp('([?&])' + key + '=.*?(&|#|$)(.*)', 'gi'),
+		setQueryParameter(key, value, url = location.href) {
+			let re = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'gi'),
 				hash;
 
 			if (re.test(url)) {
-				if (typeof value !== 'undefined' && value !== null) return url.replace(re, '$1' + key + '=' + value + '$2$3');
+				if (typeof value !== 'undefined' && value !== null) return url.replace(re, `$1${key}=${value}$2$3`);
 				else {
 					hash = url.split('#');
 					url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
-					if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+					if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += `#${hash[1]}`;
 					return url;
 				}
 			} else if (typeof value !== 'undefined' && value !== null) {
 				let separator = url.indexOf('?') !== -1 ? '&' : '?';
 				hash = url.split('#');
-				url = hash[0] + separator + key + '=' + value;
-				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+				url = `${hash[0] + separator + key}=${value}`;
+				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += `#${hash[1]}`;
 				return url;
 			} else return url;
 		},
@@ -113,7 +111,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			newIcon.setAttribute('height', '20');
 			if (color) newIcon.setAttribute('fill', color);
 			if (size) { newIcon.setAttribute('width', size); newIcon.setAttribute('height', size); }
-			if (scale) newIcon.setAttribute('transform', 'scale(' + scale[0] + ', ' + scale[1] + ')');
+			if (scale) newIcon.setAttribute('transform', `scale(${scale[0]}, ${scale[1]})`);
 			return newIcon;
 		},
 		createModal(title, bodyDiv) {
@@ -259,7 +257,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				// Util.log('Loading Kitsu info...');
 				GM_xmlhttpRequest({
 					method: 'GET',
-					url: API + '/anime?filter[slug]=' + id + '&include=mappings',
+					url: `${API}/anime?filter[slug]=${id}&include=mappings`,
 					headers: {
 						'Accept': 'application/vnd.api+json'
 					},
@@ -274,7 +272,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			},
 			getMALFansubInfo(malid, cb) {
 				// Util.log('Loading MAL info...');
-				let url = 'https://myanimelist.net/anime/' + malid;
+				let url = `https://myanimelist.net/anime/${malid}`;
 				GM_xmlhttpRequest({
 					method: 'GET',
 					url,
@@ -296,8 +294,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 								let tag = (tagNode && tagNode.textContent !== '[]') ? tagNode.textContent : null;
 								let langNode = Util.q('small:nth-of-type(2)', node);
 								let lang = (langNode) ? langNode.textContent.substring(1, langNode.textContent.length - 1) : null;
-								let voteUpButton = Util.q('#good' + id, node);
-								let voteDownButton = Util.q('#bad' + id, node);
+								let voteUpButton = Util.q(`#good${id}`, node);
+								let voteDownButton = Util.q(`#bad${id}`, node);
 								let approvalNode = Util.q('a:nth-of-type(5) > small', node);
 								let totalApproved = 0;
 								let totalVotes = 0;
@@ -307,7 +305,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 									if (match) {
 										totalApproved = match[1];
 										totalVotes = match[2];
-										comments = Util.qq('#fsgComments' + id + ' > .spaceit', node).map(comment => {
+										comments = Util.qq(`#fsgComments${id} > .spaceit`, node).map(comment => {
 											return {
 												text: comment.textContent,
 												approves: !comment.hasAttribute('style')
@@ -325,7 +323,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 									id,
 									malid,
 									name: link.textContent,
-									url: 'https://myanimelist.net' + link.pathname + link.search,
+									url: `https://myanimelist.net${link.pathname}${link.search}`,
 									tag,
 									lang,
 									totalVotes,
@@ -335,7 +333,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 								};
 							});
 							cb({
-								url: url + '#inlineContent',
+								url: `${url}#inlineContent`,
 								fansubs
 							});
 						} else {
@@ -369,7 +367,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 						});
 					} else {
 						Util.log('MAL ID not found');
-						let section = Util.q('#' + SECTION_ID);
+						let section = Util.q(`#${SECTION_ID}`);
 						if (section) section.remove();
 
 					}
@@ -384,7 +382,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				}
 				GM_xmlhttpRequest({
 					method: 'GET',
-					url: 'https://myanimelist.net/fansub-groups.php?id=' + id,
+					url: `https://myanimelist.net/fansub-groups.php?id=${id}`,
 					onload(response) {
 						let tempDiv = document.createElement('div');
 						tempDiv.innerHTML = response.responseText;
@@ -419,7 +417,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					App.votingTabs.malid.close();
 					App.votingTabs.malid = null;
 				}
-				let url = 'https://myanimelist.net/anime/' + malid;
+				let url = `https://myanimelist.net/anime/${malid}`;
 				url = Util.setQueryParameter('US_VOTE', true, url);
 				url = Util.setQueryParameter('groupid', groupid, url);
 				url = Util.setQueryParameter('value', value, url);
@@ -472,7 +470,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 				if (fansub.lang) {
 					let lang = document.createElement('small');
-					lang.textContent = ' ' + fansub.lang;
+					lang.textContent = ` ${fansub.lang}`;
 					name.appendChild(lang);
 				}
 
@@ -540,7 +538,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 				let approvals = document.createElement('div');
 				approvals.classList.add('comment-body');
-				approvals.textContent = fansub.totalApproved + ' of ' + fansub.totalVotes + ' users approve.';
+				approvals.textContent = `${fansub.totalApproved} of ${fansub.totalVotes} users approve.`;
 				streamContent.appendChild(approvals);
 
 				if (fansub.comments && fansub.comments.length > 0) {
@@ -602,7 +600,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				onmatch(container) {
 					let reviews = Util.qq('section.m-b-1', container)[1];
 
-					let section = Util.q('#' + SECTION_ID, container);
+					let section = Util.q(`#${SECTION_ID}`, container);
 					if (section) section.remove();
 					section = App.getFansubSection();
 					reviews.parentNode.insertBefore(section, reviews.nextSibling);
@@ -683,7 +681,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		let groupid = Util.getQueryParameter('groupid');
 		let value = Util.getQueryParameter('value');
 		let comment = Util.getQueryParameter('comment');
-		let button = Util.q('.js-fansub-set-vote-button[data-type="' + value +'"][data-group-id="' + groupid + '"]');
+		let button = Util.q(`.js-fansub-set-vote-button[data-type="${value}"][data-group-id="${groupid}"]`);
 		button.click();
 		if (value === '3') {
 			setTimeout(window.close, 0);

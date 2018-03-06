@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Imgur Mirror
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1
+// @version      1.1.1
 // @description  Switches all imgur links to the mirror site http://kageurufu.net/imgur
 // @author       Adrien Pyke
 // @include      http*
@@ -28,7 +28,7 @@
 			if (useGif && extension === '.mp4') {
 				extension = '.gif';
 			}
-			return 'http://kageurufu.net/imgur/?' + file + extension;
+			return `http://kageurufu.net/imgur/?${file + extension}`;
 		} else {
 			return null;
 		}

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1
+// @version      2.1.1
 // @description  Middle clicking the search on youtube opens the results in a new tab
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -25,10 +25,9 @@
 		qq(query, context = document) {
 			return Array.from(context.querySelectorAll(query));
 		},
-		getQueryParameter(name, url) {
-			if (!url) url = window.location.href;
-			name = name.replace(/[\[\]]/g, '\\$&');
-			let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+		getQueryParameter(name, url = window.location.href) {
+			name = name.replace(/[[\]]/g, '\\$&');
+			let regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
 				results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
@@ -55,7 +54,7 @@
 				let input = Util.q('input#search').value.trim();
 				if (!input) return false;
 
-				let url = location.origin + '/results?search_query=' + Util.encodeURIWithPlus(input);
+				let url = `${location.origin}/results?search_query=${Util.encodeURIWithPlus(input)}`;
 				if (e.button === 1) {
 					GM_openInTab(url, true);
 				} else if (e.button === 0) {
@@ -75,7 +74,7 @@
 				if (!e.target.classList.contains('sbsb_i')) {
 					let search = Util.q('.sbpqs_a, .sbqs_c', result).textContent;
 
-					let url = location.origin + '/results?search_query=' + Util.encodeURIWithPlus(search);
+					let url = `${location.origin}/results?search_query=${Util.encodeURIWithPlus(search)}`;
 					if (e.button === 1) {
 						GM_openInTab(url, true);
 					} else if (e.button === 0) {

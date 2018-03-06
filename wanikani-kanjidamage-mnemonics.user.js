@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1
+// @version      1.1.1
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
@@ -37,16 +37,16 @@
 	const App = {
 		getKanjiDamageInfo(kanji, inLesson, callback) {
 			if (cachedKanji[kanji]) {
-				Util.log(kanji + ' cached');
+				Util.log(`${kanji} cached`);
 				callback(cachedKanji[kanji]);
 			} else {
-				Util.log('Loading Kanjidamage information for ' + kanji);
+				Util.log(`Loading Kanjidamage information for ${kanji}`);
 
 				GM_xmlhttpRequest({
 					method: 'GET',
-					url: 'http://www.kanjidamage.com/kanji/search?q=' + kanji,
+					url: `http://www.kanjidamage.com/kanji/search?q=${kanji}`,
 					onload(response) {
-						Util.log('Found Kanjidamage information for ' + kanji);
+						Util.log(`Found Kanjidamage information for ${kanji}`);
 
 						let tempDiv = document.createElement('div');
 						tempDiv.innerHTML = response.responseText;
@@ -99,7 +99,7 @@
 						callback(cachedKanji[kanji]);
 					},
 					onerror() {
-						Util.log('Could not find Kanjidamage information for ' + kanji);
+						Util.log(`Could not find Kanjidamage information for ${kanji}`);
 					}
 				});
 			}
@@ -263,7 +263,7 @@
 			let section = document.createElement('section');
 
 			let header = document.createElement('h2');
-			header.innerHTML = '<a href="' + kanjiObj.url + '" target="_blank">Kanjidamage</a>';
+			header.innerHTML = `<a href="${kanjiObj.url}" target="_blank">Kanjidamage</a>`;
 			section.appendChild(header);
 
 			if (kanjiObj.reading) {

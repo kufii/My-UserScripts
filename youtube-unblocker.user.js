@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Unblocker
 // @namespace    https://greasyfork.org/users/649
-// @version      3.0.1
+// @version      3.0.2
 // @description  Auto redirects blocked videos to the mirror site hooktube.com
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -106,7 +106,7 @@
 			onmatch(page) {
 				setTimeout(() => {
 					if (!page.innerHTML.trim() || page.querySelector('[player-unavailable]')) {
-						location.replace(location.protocol + '//hooktube.com/watch' + location.search);
+						location.replace(`${location.protocol}//hooktube.com/watch${location.search}`);
 					}
 				}, 0);
 			}

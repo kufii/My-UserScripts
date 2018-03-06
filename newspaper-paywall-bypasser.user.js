@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2
+// @version      1.2.1
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -40,10 +40,9 @@
 		qq(query, context = document) {
 			return Array.from(context.querySelectorAll(query));
 		},
-		getQueryParameter(name, url) {
-			if (!url) url = W.location.href;
+		getQueryParameter(name, url = W.location.href) {
 			name = name.replace(/[[\]]/g, '\\$&');
-			let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+			let regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
 				results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
@@ -52,9 +51,9 @@
 		appendStyle(css) {
 			let out = '';
 			for (let selector in css) {
-				out += selector + '{';
+				out += `${selector}{`;
 				for (let rule in css[selector]) {
-					out += rule + ':' + css[selector][rule] + '!important;';
+					out += `${rule}:${css[selector][rule]}!important;`;
 				}
 				out += '}';
 			}
@@ -272,7 +271,7 @@
 			fn() {
 				let article = Util.getQueryParameter('EXIT_URI');
 				if (article) {
-					W.location.replace('http://mobile.nytimes.com?LOAD_ARTICLE=' + encodeURIComponent(article));
+					W.location.replace(`http://mobile.nytimes.com?LOAD_ARTICLE=${encodeURIComponent(article)}`);
 				}
 			}
 		}, {
@@ -403,7 +402,7 @@
 			if (replaceSelector || replaceUsing || theReferer) {
 				replaceUsing = replaceUsing || W.location.href;
 
-				Util.log('Loading xhr for "' + replaceUsing + '" with referer: ' + theReferer);
+				Util.log(`Loading xhr for "${replaceUsing}" with referer: ${theReferer}`);
 				GM_xmlhttpRequest({
 					method: 'GET',
 					url: replaceUsing,
@@ -467,11 +466,11 @@
 					} else {
 						let menuCommandText;
 						if (!Config.load().blacklist[imp.name]) {
-							menuCommandText = 'Disable ' + SCRIPT_NAME + ' for ' + imp.name;
+							menuCommandText = `Disable ${SCRIPT_NAME} for ${imp.name}`;
 							App.waitAndBypass(imp);
 						} else {
-							menuCommandText = 'Enable ' + SCRIPT_NAME + ' for ' + imp.name;
-							Util.log(imp.name + ' blacklisted');
+							menuCommandText = `Enable ${SCRIPT_NAME} for ${imp.name}`;
+							Util.log(`${imp.name} blacklisted`);
 						}
 						GM_registerMenuCommand(menuCommandText, () => {
 							Config.toggleBlacklist(imp.name);
@@ -483,7 +482,7 @@
 			});
 
 			if (!success) {
-				Util.log('no implementation for ' + W.location.href, 'error');
+				Util.log(`no implementation for ${W.location.href}`, 'error');
 			}
 		}
 	};

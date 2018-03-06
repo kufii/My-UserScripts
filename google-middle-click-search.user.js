@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Google - Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1
+// @version      1.1.1
 // @description  Opens search results in new tab when you middle click
 // @author       Adrien Pyke
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/?(?:\?.*)?$/
@@ -10,27 +10,26 @@
 // @grant        GM_openInTab
 // ==/UserScript==
 
-(function() {
+(() => {
 	'use strict';
 
-	const setQueryParameter = function(key, value, url) {
-		if (!url) url = window.location.href;
-		let re = new RegExp('([?&])' + key + '=.*?(&|#|$)(.*)', 'gi'),
+	const setQueryParameter = function(key, value, url = window.location.href) {
+		let re = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'gi'),
 			hash;
 
 		if (re.test(url)) {
-			if (typeof value !== 'undefined' && value !== null) return url.replace(re, '$1' + key + '=' + value + '$2$3');
+			if (typeof value !== 'undefined' && value !== null) return url.replace(re, `$1${key}=${value}$2$3`);
 			else {
 				hash = url.split('#');
 				url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
-				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += `#${hash[1]}`;
 				return url;
 			}
 		} else if (typeof value !== 'undefined' && value !== null) {
 			let separator = url.indexOf('?') !== -1 ? '&' : '?';
 			hash = url.split('#');
-			url = hash[0] + separator + key + '=' + value;
-			if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+			url = `${hash[0] + separator + key}=${value}`;
+			if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += `#${hash[1]}`;
 			return url;
 		} else return url;
 	};
@@ -39,7 +38,7 @@
 		if (window.location.href.match(/^https?:\/\/www\.google\.[a-zA-Z]+\/search\/?\?.*$/)) {
 			return setQueryParameter('q', encodeURIComponent(value));
 		} else {
-			return location.protocol + '//' + location.host + '/search?q=' + encodeURIComponent(value);
+			return `${location.protocol}//${location.host}/search?q=${encodeURIComponent(value)}`;
 		}
 	};
 
@@ -84,4 +83,4 @@
 			elem.onauxclick = elem.onclick;
 		}
 	});
-}());
+})();
