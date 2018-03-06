@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GCPedia Ace Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2
+// @version      1.2.1
 // @description  Use the Ace Editor when editing things on GCPedia
 // @author       Adrien Pyke
 // @match        http://www.gcpedia.gc.ca/*
@@ -70,13 +70,11 @@
 			if (!cfg) return defaults;
 
 			cfg = JSON.parse(cfg);
-			for (let property in defaults) {
-				if (defaults.hasOwnProperty(property)) {
-					if (!cfg[property]) {
-						cfg[property] = defaults[property];
-					}
+			Object.entries(defaults).forEach(([key, value]) => {
+				if (typeof cfg[key] === 'undefined') {
+					cfg[key] = value;
 				}
-			}
+			});
 
 			return cfg;
 		},
