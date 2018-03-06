@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Imgur Mirror
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.16
+// @version      1.1
 // @description  Switches all imgur links to the mirror site http://kageurufu.net/imgur
 // @author       Adrien Pyke
 // @include      http*
@@ -9,17 +9,17 @@
 // @grant        none
 // ==/UserScript==
 
-(function() {
+(() => {
 	'use strict';
 
-	var regex = /imgur\.com\/(?!a\/|gallery\/)(?:r\/[a-z0-9_]+\/)?([a-z0-9]+)(\.+[a-z0-9]+)?/i;
-	var extensions = ['.jpg', '.jpeg', '.png', '.gif', '.gifv', '.webm', '.mp4'];
+	let regex = /imgur\.com\/(?!a\/|gallery\/)(?:r\/[a-z0-9_]+\/)?([a-z0-9]+)(\.+[a-z0-9]+)?/i;
+	let extensions = ['.jpg', '.jpeg', '.png', '.gif', '.gifv', '.webm', '.mp4'];
 
-	var getNewLink = function(imgurLink, useGif) {
-		var match = imgurLink.match(regex);
+	const getNewLink = function(imgurLink, useGif) {
+		let match = imgurLink.match(regex);
 		if (match) {
-			var file = match[1];
-			var extension = match[2].toLowerCase();
+			let file = match[1];
+			let extension = match[2].toLowerCase();
 			if (!extension || !extensions.includes(extension)) {
 				extension = '.png';
 			} else if (extension === '.gifv' || extension === '.gif' || extension === '.webm') {
@@ -36,11 +36,11 @@
 
 	waitForElems({
 		sel: 'img,a',
-		onmatch: function(node) {
-			var isImg = node.nodeName === 'IMG';
-			var prop = isImg ? 'src' : 'href';
-			var newLink = getNewLink(node[prop], isImg);
-			if(newLink) {
+		onmatch(node) {
+			let isImg = node.nodeName === 'IMG';
+			let prop = isImg ? 'src' : 'href';
+			let newLink = getNewLink(node[prop], isImg);
+			if (newLink) {
 				node[prop] = newLink;
 				if (node.dataset.hrefUrl) {
 					node.dataset.hrefUrl = newLink;

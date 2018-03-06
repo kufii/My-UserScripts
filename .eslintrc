@@ -4,6 +4,7 @@
 		"greasemonkey": true
 	},
 	"globals": {
-		"waitForElems": true
+		"waitForElems": true,
+		"waitForUrl": true
 	}
 }

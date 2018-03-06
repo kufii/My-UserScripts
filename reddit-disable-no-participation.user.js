@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Disable No Participation
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.2
+// @version      1.0.3
 // @description  Disables No Participation on Reddit
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
@@ -10,11 +10,11 @@
 // @grant        none
 // ==/UserScript==
 
-(function() {
+(() => {
 	'use strict';
 
-	var MATCH = /^https?:\/\/np\.reddit\.com/i;
-	var REPLACE = {
+	const MATCH = /^https?:\/\/np\.reddit\.com/i;
+	const REPLACE = {
 		regex: /^(https?:\/\/)np(.+)/i,
 		replaceWith: '$1www$2'
 	};
@@ -23,10 +23,10 @@
 		location.replace(location.href.replace(REPLACE.regex, REPLACE.replaceWith));
 	}
 
-	document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('DOMContentLoaded', () => {
 		waitForElems({
 			sel: 'a',
-			onmatch: function(link) {
+			onmatch(link) {
 				if (link.href.match(MATCH)) {
 					link.href = link.href.replace(REPLACE.regex, REPLACE.replaceWith);
 				}

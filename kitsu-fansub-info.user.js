@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.2
+// @version      2.1
 // @description  Show MAL fansub info on Kitsu anime pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -44,15 +44,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-(function() {
+(() => {
 	'use strict';
 
-	var SCRIPT_NAME = 'Kitsu Fansub Info';
-	var API = 'https://kitsu.io/api/edge';
-	var REGEX = /^https?:\/\/kitsu\.io\/anime\/([^\/]+)\/?(?:\?.*)?$/;
-	var SECTION_ID = 'kitsu-fansubs';
+	const SCRIPT_NAME = 'Kitsu Fansub Info';
+	const API = 'https://kitsu.io/api/edge';
+	const REGEX = /^https?:\/\/kitsu\.io\/anime\/([^/]+)\/?(?:\?.*)?$/;
+	const SECTION_ID = 'kitsu-fansubs';
 
-	var Icon = {
+	const Icon = {
 		extLink: '<path d="M38.288 10.297l1.414 1.415-14.99 14.99-1.414-1.414z"/><path d="M40 20h-2v-8h-8v-2h10z"/><path d="M35 38H15c-1.7 0-3-1.3-3-3V15c0-1.7 1.3-3 3-3h11v2H15c-.6 0-1 .4-1 1v20c0 .6.4 1 1 1h20c.6 0 1-.4 1-1V24h2v11c0 1.7-1.3 3-3 3z"/>',
 		link: '<path d="M24 30.2c0 .2.1.5.1.8 0 1.4-.5 2.6-1.5 3.6l-2 2c-1 1-2.2 1.5-3.6 1.5-2.8 0-5.1-2.3-5.1-5.1 0-1.4.5-2.6 1.5-3.6l2-2c1-1 2.2-1.5 3.6-1.5.3 0 .5 0 .8.1l1.5-1.5c-.7-.3-1.5-.4-2.3-.4-1.9 0-3.6.7-4.9 2l-2 2c-1.3 1.3-2 3-2 4.9 0 3.8 3.1 6.9 6.9 6.9 1.9 0 3.6-.7 4.9-2l2-2c1.3-1.3 2-3 2-4.9 0-.8-.1-1.6-.4-2.3L24 30.2z"/><path d="M33 10.1c-1.9 0-3.6.7-4.9 2l-2 2c-1.3 1.3-2 3-2 4.9 0 .8.1 1.6.4 2.3l1.5-1.5c0-.2-.1-.5-.1-.8 0-1.4.5-2.6 1.5-3.6l2-2c1-1 2.2-1.5 3.6-1.5 2.8 0 5.1 2.3 5.1 5.1 0 1.4-.5 2.6-1.5 3.6l-2 2c-1 1-2.2 1.5-3.6 1.5-.3 0-.5 0-.8-.1l-1.5 1.5c.7.3 1.5.4 2.3.4 1.9 0 3.6-.7 4.9-2l2-2c1.3-1.3 2-3 2-4.9 0-3.8-3.1-6.9-6.9-6.9z"/><path d="M20 31c-.3 0-.5-.1-.7-.3-.4-.4-.4-1 0-1.4l10-10c.4-.4 1-.4 1.4 0s.4 1 0 1.4l-10 10c-.2.2-.4.3-.7.3z"/>',
 		minus: '<path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"/><path d="M16 24h18v2H16z"/>',
@@ -60,62 +60,53 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		thumbsUp: '<path d="M40 23.2c0-2.1-1.7-3.2-4-3.2h-6.7c.5-1.8.7-3.5.7-5 0-5.8-1.6-7-3-7-.9 0-1.6.1-2.5.6-.3.2-.4.4-.5.7l-1 5.4c-1.1 2.8-3.8 5.3-6 7V36c.8 0 1.6.4 2.6.9 1.1.5 2.2 1.1 3.4 1.1h9.5c2 0 3.5-1.6 3.5-3 0-.3 0-.5-.1-.7 1.2-.5 2.1-1.5 2.1-2.8 0-.6-.1-1.1-.3-1.6.8-.5 1.5-1.4 1.5-2.4 0-.6-.3-1.2-.6-1.7.8-.6 1.4-1.6 1.4-2.6zm-2.1 0c0 1.3-1.3 1.4-1.5 2-.2.7.8.9.8 2.1 0 1.2-1.5 1.2-1.7 1.9-.2.8.5 1 .5 2.2v.2c-.2 1-1.7 1.1-2 1.5-.3.5 0 .7 0 1.8 0 .6-.7 1-1.5 1H23c-.8 0-1.6-.4-2.6-.9-.8-.4-1.6-.8-2.4-1V23.5c2.5-1.9 5.7-4.7 6.9-8.2v-.2l.9-5c.4-.1.7-.1 1.2-.1.2 0 1 1.2 1 5 0 1.5-.3 3.1-.8 5H27c-.6 0-1 .4-1 1s.4 1 1 1h9c1 0 1.9.5 1.9 1.2z"/><path d="M16 38h-6c-1.1 0-2-.9-2-2V22c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2zm-6-16v14h6V22h-6z"/>'
 	};
 
-	var Util = {
-		log: function() {
-			var args = [].slice.call(arguments);
-			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
-			console.log.apply(console, args);
+	const Util = {
+		log(...args) {
+			args.unshift(`%c${SCRIPT_NAME}:`, 'font-weight: bold;color: #233c7b;');
+			console.log(...args);
 		},
-		q: function(query, context) {
-			return (context || document).querySelector(query);
+		q(query, context = document) {
+			return context.querySelector(query);
 		},
-		qq: function(query, context) {
-			return [].slice.call((context || document).querySelectorAll(query));
+		qq(query, context = document) {
+			return Array.from(context.querySelectorAll(query));
 		},
-		getQueryParameter: function(name, url) {
+		getQueryParameter(name, url) {
 			if (!url) url = location.href;
-			name = name.replace(/[\[\]]/g, "\\$&");
-			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			name = name.replace(/[[\]]/g, '\\$&');
+			let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
 				results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
-			return decodeURIComponent(results[2].replace(/\+/g, " "));
+			return decodeURIComponent(results[2].replace(/\+/g, ' '));
 		},
-		setQueryParameter: function(key, value, url) {
+		setQueryParameter(key, value, url) {
 			if (!url) url = window.location.href;
-			var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
+			let re = new RegExp('([?&])' + key + '=.*?(&|#|$)(.*)', 'gi'),
 				hash;
 
 			if (re.test(url)) {
-				if (typeof value !== 'undefined' && value !== null)
-					return url.replace(re, '$1' + key + "=" + value + '$2$3');
+				if (typeof value !== 'undefined' && value !== null) return url.replace(re, '$1' + key + '=' + value + '$2$3');
 				else {
 					hash = url.split('#');
 					url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
-					if (typeof hash[1] !== 'undefined' && hash[1] !== null)
-						url += '#' + hash[1];
+					if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
 					return url;
 				}
-			}
-			else {
-				if (typeof value !== 'undefined' && value !== null) {
-					var separator = url.indexOf('?') !== -1 ? '&' : '?';
-					hash = url.split('#');
-					url = hash[0] + separator + key + '=' + value;
-					if (typeof hash[1] !== 'undefined' && hash[1] !== null)
-						url += '#' + hash[1];
-					return url;
-				}
-				else
-					return url;
-			}
+			} else if (typeof value !== 'undefined' && value !== null) {
+				let separator = url.indexOf('?') !== -1 ? '&' : '?';
+				hash = url.split('#');
+				url = hash[0] + separator + key + '=' + value;
+				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+				return url;
+			} else return url;
 		},
-		setNewTab: function(node) {
+		setNewTab(node) {
 			node.setAttribute('target', '_blank');
 			node.setAttribute('rel', 'noopener noreferrer');
 		},
-		icon: function(name, color, size, scale) {
-			var newIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		icon(name, color, size, scale) {
+			let newIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 			newIcon.innerHTML = Icon[name];
 			newIcon.setAttribute('viewBox', '0 0 50 50');
 			newIcon.setAttribute('width', '20');
@@ -125,40 +116,40 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			if (scale) newIcon.setAttribute('transform', 'scale(' + scale[0] + ', ' + scale[1] + ')');
 			return newIcon;
 		},
-		createModal: function(title, bodyDiv) {
-			var div = document.createElement('div');
-			var modal = document.createElement('div');
+		createModal(title, bodyDiv) {
+			let div = document.createElement('div');
+			let modal = document.createElement('div');
 			modal.classList.add('modal');
 			modal.style.display = 'block';
 			modal.style.overflowY = 'auto';
 			div.appendChild(modal);
-			var backdrop = document.createElement('div');
+			let backdrop = document.createElement('div');
 			backdrop.classList.add('modal-backdrop', 'fade', 'in');
 			div.appendChild(backdrop);
-			var dialog = document.createElement('div');
+			let dialog = document.createElement('div');
 			dialog.classList.add('modal-dialog');
 			modal.appendChild(dialog);
-			var content = document.createElement('div');
+			let content = document.createElement('div');
 			content.classList.add('modal-content');
 			dialog.appendChild(content);
-			var header = document.createElement('div');
+			let header = document.createElement('div');
 			header.classList.add('modal-header');
 			content.appendChild(header);
-			var body = document.createElement('div');
+			let body = document.createElement('div');
 			body.classList.add('modal-body');
 			content.appendChild(body);
-			var wrapper = document.createElement('div');
+			let wrapper = document.createElement('div');
 			wrapper.classList.add('modal-wrapper');
 			body.appendChild(wrapper);
 
-			var h4 = document.createElement('h4');
+			let h4 = document.createElement('h4');
 			h4.classList.add('modal-title');
 			h4.textContent = title;
 			header.appendChild(h4);
 
 			wrapper.appendChild(bodyDiv);
 
-			div.onclick = function(e) {
+			div.onclick = e => {
 				if (e.target === modal || e.target === backdrop) {
 					div.remove();
 				}
@@ -168,17 +159,17 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	};
 
 	if (location.hostname === 'kitsu.io') {
-		var Config = {
-			load: function() {
-				var defaults = {
+		const Config = {
+			load() {
+				let defaults = {
 					lang: null
 				};
 
-				var cfg = GM_getValue('cfg');
+				let cfg = GM_getValue('cfg');
 				if (!cfg) return defaults;
 
 				cfg = JSON.parse(cfg);
-				for (var property in defaults) {
+				for (let property in defaults) {
 					if (defaults.hasOwnProperty(property)) {
 						if (!cfg[property]) {
 							cfg[property] = defaults[property];
@@ -189,13 +180,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				return cfg;
 			},
 
-			save: function(cfg) {
+			save(cfg) {
 				GM_setValue('cfg', JSON.stringify(cfg));
 			},
 
-			setup: function() {
-				var createContainer = function() {
-					var div = document.createElement('div');
+			setup() {
+				const createContainer = function() {
+					let div = document.createElement('div');
 					div.style.backgroundColor = 'white';
 					div.style.padding = '5px';
 					div.style.border = '1px solid black';
@@ -206,16 +197,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					return div;
 				};
 
-				var createButton = function(text, onclick) {
-					var button = document.createElement('button');
+				const createButton = function(text, onclick) {
+					let button = document.createElement('button');
 					button.style.margin = '2px';
 					button.textContent = text;
 					button.onclick = onclick;
 					return button;
 				};
 
-				var createTextbox = function(value, placeholder) {
-					var input = document.createElement('input');
+				const createTextbox = function(value, placeholder) {
+					let input = document.createElement('input');
 					input.value = value;
 					if (placeholder) {
 						input.setAttribute('placeholder', placeholder);
@@ -223,33 +214,33 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					return input;
 				};
 
-				var createLabel = function(label) {
-					var lbl = document.createElement('span');
+				const createLabel = function(label) {
+					let lbl = document.createElement('span');
 					lbl.textContent = label;
 					return lbl;
 				};
 
-				var createLineBreak = function() {
+				const createLineBreak = function() {
 					return document.createElement('br');
 				};
 
-				var init = function(cfg) {
-					var div = createContainer();
+				const init = function(cfg) {
+					let div = createContainer();
 
-					var lang = createTextbox(cfg.lang, 'Languages (Comma Seperated)');
+					let lang = createTextbox(cfg.lang, 'Languages (Comma Seperated)');
 					div.appendChild(createLabel('Languages: '));
 					div.appendChild(lang);
 					div.appendChild(createLineBreak());
 
-					div.appendChild(createButton('Save', function(e) {
-						var settings = {
+					div.appendChild(createButton('Save', () => {
+						let settings = {
 							lang: lang.value
 						};
 						Config.save(settings);
 						div.remove();
 					}));
 
-					div.appendChild(createButton('Cancel', function(e) {
+					div.appendChild(createButton('Cancel', () => {
 						div.remove();
 					}));
 
@@ -260,63 +251,63 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		};
 		GM_registerMenuCommand('Kitsu Fansub Info Settings', Config.setup);
 
-		var App = {
+		const App = {
 			fansubCache: {},
 			websiteCache: {},
 			votingTabs: {},
-			getKitsuInfo: function(id, cb) {
-				//Util.log('Loading Kitsu info...');
+			getKitsuInfo(id, cb) {
+				// Util.log('Loading Kitsu info...');
 				GM_xmlhttpRequest({
 					method: 'GET',
 					url: API + '/anime?filter[slug]=' + id + '&include=mappings',
 					headers: {
 						'Accept': 'application/vnd.api+json'
 					},
-					onload: function(response) {
+					onload(response) {
 						Util.log('Loaded Kitsu info.');
 						cb(JSON.parse(response.responseText));
 					},
-					onerror: function(err) {
+					onerror() {
 						Util.log('Error loading Kitsu info.');
 					}
 				});
 			},
-			getMALFansubInfo: function(malid, cb) {
-				//Util.log('Loading MAL info...');
-				var url = 'https://myanimelist.net/anime/' + malid;
+			getMALFansubInfo(malid, cb) {
+				// Util.log('Loading MAL info...');
+				let url = 'https://myanimelist.net/anime/' + malid;
 				GM_xmlhttpRequest({
 					method: 'GET',
-					url: url,
-					onload: function(response) {
+					url,
+					onload(response) {
 						Util.log('Loaded MAL info.');
-						var tempDiv = document.createElement('div');
+						let tempDiv = document.createElement('div');
 						tempDiv.innerHTML = response.responseText;
 
-						var fansubDiv = Util.q('#inlineContent', tempDiv);
+						let fansubDiv = Util.q('#inlineContent', tempDiv);
 						if (fansubDiv) {
 							fansubDiv = fansubDiv.parentNode;
-							var fansubs = Util.qq('.spaceit_pad', fansubDiv).filter(function(node) {
+							let fansubs = Util.qq('.spaceit_pad', fansubDiv).filter(node => {
 								// only return nodes without an id
 								return !node.id;
-							}).map(function(node) {
-								var id = Util.q('a:nth-of-type(1)', node).dataset.groupId;
-								var link = Util.q('a:nth-of-type(4)', node);
-								var tagNode = Util.q('small:nth-of-type(1)', node);
-								var tag = (tagNode && tagNode.textContent !== '[]') ? tagNode.textContent : null;
-								var langNode = Util.q('small:nth-of-type(2)', node);
-								var lang = (langNode) ? langNode.textContent.substring(1, langNode.textContent.length - 1) : null;
-								var voteUpButton = Util.q('#good' + id, node);
-								var voteDownButton = Util.q('#bad' + id, node);
-								var approvalNode = Util.q('a:nth-of-type(5) > small', node);
-								var totalApproved = 0;
-								var totalVotes = 0;
-								var comments = [];
+							}).map(node => {
+								let id = Util.q('a:nth-of-type(1)', node).dataset.groupId;
+								let link = Util.q('a:nth-of-type(4)', node);
+								let tagNode = Util.q('small:nth-of-type(1)', node);
+								let tag = (tagNode && tagNode.textContent !== '[]') ? tagNode.textContent : null;
+								let langNode = Util.q('small:nth-of-type(2)', node);
+								let lang = (langNode) ? langNode.textContent.substring(1, langNode.textContent.length - 1) : null;
+								let voteUpButton = Util.q('#good' + id, node);
+								let voteDownButton = Util.q('#bad' + id, node);
+								let approvalNode = Util.q('a:nth-of-type(5) > small', node);
+								let totalApproved = 0;
+								let totalVotes = 0;
+								let comments = [];
 								if (approvalNode) {
-									var match = approvalNode.textContent.match(/([0-9]+)[^0-9]*([0-9]+)/);
+									let match = approvalNode.textContent.match(/([0-9]+)[^0-9]*([0-9]+)/);
 									if (match) {
 										totalApproved = match[1];
 										totalVotes = match[2];
-										comments = Util.qq('#fsgComments' + id + ' > .spaceit', node).map(function(comment) {
+										comments = Util.qq('#fsgComments' + id + ' > .spaceit', node).map(comment => {
 											return {
 												text: comment.textContent,
 												approves: !comment.hasAttribute('style')
@@ -324,69 +315,69 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 										});
 									}
 								}
-								var value = 3;
-								if (voteUpButton.src.match('good\-on\.gif$')) {
+								let value = 3;
+								if (voteUpButton.src.match('good-on.gif$')) {
 									value = 1;
-								} else if (voteDownButton.src.match('bad\-on\.gif$')) {
+								} else if (voteDownButton.src.match('bad-on.gif$')) {
 									value = 2;
 								}
 								return {
-									id: id,
-									malid: malid,
+									id,
+									malid,
 									name: link.textContent,
 									url: 'https://myanimelist.net' + link.pathname + link.search,
-									tag: tag,
-									lang: lang,
-									totalVotes: totalVotes,
-									totalApproved: totalApproved,
-									value: value,
-									comments: comments
+									tag,
+									lang,
+									totalVotes,
+									totalApproved,
+									value,
+									comments
 								};
 							});
 							cb({
 								url: url + '#inlineContent',
-								fansubs: fansubs
+								fansubs
 							});
 						} else {
 							alert('Failed to get MAL Fansub info. Please make sure you\'re logged into myanimelist.net.');
 						}
 					},
-					onerror: function(err) {
+					onerror() {
 						Util.log('Error loading MAL info.');
 					}
 				});
 			},
-			getFansubs: function(id, cb) {
-				var self = this;
+			getFansubs(id, cb) {
+				let self = this;
 				if (self.fansubCache[id]) {
 					cb(self.fansubCache[id]);
 					return;
 				}
-				self.getKitsuInfo(id, function(anime) {
-					var mal_id;
+				self.getKitsuInfo(id, anime => {
+					let mal_id;
 					if (anime.included) {
-						for (var i = 0; i < anime.included.length; i++) {
-							if (anime.included[i].attributes.externalSite == 'myanimelist/anime') {
+						for (let i = 0; i < anime.included.length; i++) {
+							if (anime.included[i].attributes.externalSite === 'myanimelist/anime') {
 								mal_id = anime.included[i].attributes.externalId;
 							}
 						}
 					}
 					if (mal_id) {
-						self.getMALFansubInfo(mal_id, function(fansubs) {
+						self.getMALFansubInfo(mal_id, fansubs => {
 							self.fansubCache[id] = fansubs;
 							cb(fansubs);
 						});
 					} else {
 						Util.log('MAL ID not found');
-						var section = Util.q('#' + SECTION_ID);
+						let section = Util.q('#' + SECTION_ID);
 						if (section) section.remove();
-						return;
+
 					}
 				});
 			},
-			getWebsite: function(id, cb) {
-				//Util.log('Getting website for ' + id);
-				var self = this;
+			getWebsite(id, cb) {
+				// Util.log('Getting website for ' + id);
+				let self = this;
 				if (self.websiteCache[id]) {
 					cb(self.websiteCache[id]);
 					return;
@@ -394,99 +385,99 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				GM_xmlhttpRequest({
 					method: 'GET',
 					url: 'https://myanimelist.net/fansub-groups.php?id=' + id,
-					onload: function(response) {
-						var tempDiv = document.createElement('div');
+					onload(response) {
+						let tempDiv = document.createElement('div');
 						tempDiv.innerHTML = response.responseText;
-						var link = Util.q('td.borderClass > a:first-of-type', tempDiv);
+						let link = Util.q('td.borderClass > a:first-of-type', tempDiv);
 						if (link && link.getAttribute('href')) {
-							//Util.log('Found website for id');
+							// Util.log('Found website for id');
 							self.websiteCache[id] = link.href;
 							cb(link.href);
 						}
 					}
 				});
 			},
-			getFansubSection: function() {
-				var container = document.createElement('section');
+			getFansubSection() {
+				let container = document.createElement('section');
 				container.classList.add('m-b-1');
 				container.id = SECTION_ID;
 
-				var title = document.createElement('h5');
+				let title = document.createElement('h5');
 				title.id = 'fansubs-title';
 				title.textContent = 'Fansubs';
 				container.appendChild(title);
 
-				var list = document.createElement('ul');
+				let list = document.createElement('ul');
 				list.classList.add('media-list');
 				list.classList.add('w-100');
 				container.appendChild(list);
 
 				return container;
 			},
-			vote: function(malid, groupid, value, comment) {
+			vote(malid, groupid, value, comment) {
 				if (App.votingTabs.malid) {
 					App.votingTabs.malid.close();
 					App.votingTabs.malid = null;
 				}
-				var url = 'https://myanimelist.net/anime/' + malid;
+				let url = 'https://myanimelist.net/anime/' + malid;
 				url = Util.setQueryParameter('US_VOTE', true, url);
 				url = Util.setQueryParameter('groupid', groupid, url);
 				url = Util.setQueryParameter('value', value, url);
 				url = Util.setQueryParameter('comment', comment, url);
 				App.votingTabs.malid = GM_openInTab(url, true);
-				App.votingTabs.malid.onbeforeunload = function(e) {
+				App.votingTabs.malid.onbeforeunload = () => {
 					App.votingTabs.malid = null;
 				};
 			},
-			getFansubOutput: function(fansub) {
-				var fansubDiv = document.createElement('div');
+			getFansubOutput(fansub) {
+				let fansubDiv = document.createElement('div');
 				fansubDiv.classList.add('stream-item');
 				fansubDiv.classList.add('row');
 
-				var streamWrap = document.createElement('div');
+				let streamWrap = document.createElement('div');
 				streamWrap.classList.add('stream-item-wrapper');
 				streamWrap.classList.add('stream-review-wrapper');
 				streamWrap.classList.add('col-sm-12');
 				fansubDiv.appendChild(streamWrap);
 
-				var streamReview = document.createElement('div');
+				let streamReview = document.createElement('div');
 				streamReview.classList.add('stream-review');
 				streamReview.classList.add('row');
 				streamWrap.appendChild(streamReview);
 
-				var streamActivity = document.createElement('div');
+				let streamActivity = document.createElement('div');
 				streamActivity.classList.add('stream-item-activity');
 				streamWrap.appendChild(streamActivity);
 
-				var streamOptions = document.createElement('div');
+				let streamOptions = document.createElement('div');
 				streamOptions.classList.add('stream-item-options');
 				streamWrap.appendChild(streamOptions);
 
-				var streamContent = document.createElement('div');
+				let streamContent = document.createElement('div');
 				streamContent.classList.add('stream-review-content');
 				streamReview.appendChild(streamContent);
 
-				var heading = document.createElement('small');
+				let heading = document.createElement('small');
 				heading.classList.add('media-heading');
 				streamContent.appendChild(heading);
 
-				var name = document.createElement('h6');
+				let name = document.createElement('h6');
 				heading.appendChild(name);
 
-				var nameLink = document.createElement('a');
+				let nameLink = document.createElement('a');
 				nameLink.textContent = fansub.name;
 				nameLink.href = fansub.url;
 				Util.setNewTab(nameLink);
 				name.appendChild(nameLink);
 
 				if (fansub.lang) {
-					var lang = document.createElement('small');
+					let lang = document.createElement('small');
 					lang.textContent = ' ' + fansub.lang;
 					name.appendChild(lang);
 				}
 
-				App.getWebsite(fansub.id, function(href) {
-					var webLink = document.createElement('a');
+				App.getWebsite(fansub.id, href => {
+					let webLink = document.createElement('a');
 					webLink.href = href;
 					Util.setNewTab(webLink);
 					webLink.appendChild(document.createTextNode(' '));
@@ -494,10 +485,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					name.appendChild(webLink);
 				});
 
-				var votingButtons = document.createElement('div');
+				let votingButtons = document.createElement('div');
 				votingButtons.setAttribute('style', 'display:inline-block;float:left;padding:2px 0 4px;position:relative;');
-				var voteUp = document.createElement('a');
-				var voteDown = document.createElement('a');
+				let voteUp = document.createElement('a');
+				let voteDown = document.createElement('a');
 				votingButtons.appendChild(voteUp);
 				votingButtons.appendChild(voteDown);
 				streamActivity.appendChild(votingButtons);
@@ -511,21 +502,21 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
 				} else if (fansub.value === 2) {
 					voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
-					voteDown.appendChild(Util.icon('thumbsUp','#DB2409', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
+					voteDown.appendChild(Util.icon('thumbsUp', '#DB2409', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
 				} else {
 					voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
 					voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
 				}
 
-				var voteHandler = function(e) {
+				let voteHandler = e => {
 					e.preventDefault();
-					var clickedNode = e.target;
+					let clickedNode = e.target;
 					if (clickedNode.nodeName === 'svg') {
 						clickedNode = clickedNode.parentNode;
 					} else if (clickedNode.nodeName === 'path') {
 						clickedNode = clickedNode.parentNode.parentNode;
 					}
-					var value = parseInt(clickedNode.dataset.value);
+					let value = parseInt(clickedNode.dataset.value);
 					if (value === fansub.value) {
 						value = 3;
 					}
@@ -538,7 +529,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 						voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
 					} else if (fansub.value === 2) {
 						voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
-						voteDown.appendChild(Util.icon('thumbsUp','#DB2409', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
+						voteDown.appendChild(Util.icon('thumbsUp', '#DB2409', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
 					} else {
 						voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
 						voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
@@ -547,38 +538,38 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				voteUp.onclick = voteHandler;
 				voteDown.onclick = voteHandler;
 
-				var approvals = document.createElement('div');
+				let approvals = document.createElement('div');
 				approvals.classList.add('comment-body');
 				approvals.textContent = fansub.totalApproved + ' of ' + fansub.totalVotes + ' users approve.';
 				streamContent.appendChild(approvals);
 
 				if (fansub.comments && fansub.comments.length > 0) {
-					var commentsWrap = document.createElement('span');
+					let commentsWrap = document.createElement('span');
 					commentsWrap.classList.add('more-wrapper');
 					streamOptions.appendChild(commentsWrap);
-					var commentsLink = document.createElement('a');
+					let commentsLink = document.createElement('a');
 					commentsLink.classList.add('more-drop');
 					commentsLink.href = '#';
 					commentsLink.textContent = 'Comments...';
 					commentsWrap.appendChild(commentsLink);
-					commentsLink.onclick = function(e) {
+					commentsLink.onclick = e => {
 						e.preventDefault();
-						var commentsDiv = document.createElement('div');
-						fansub.comments.forEach(function(comment) {
-							var div = document.createElement('div');
+						let commentsDiv = document.createElement('div');
+						fansub.comments.forEach(comment => {
+							let div = document.createElement('div');
 							div.classList.add('author-header');
 
-							var smileContainer = document.createElement('div');
+							let smileContainer = document.createElement('div');
 							smileContainer.classList.add('review-avatar');
 							smileContainer.setAttribute('style', 'margin-right: 0');
 							div.appendChild(smileContainer);
 							smileContainer.appendChild(comment.approves ? Util.icon('plus', '#16A085', 25) : Util.icon('minus', '#DB2409', 25));
 
-							var commentContainer = document.createElement('div');
+							let commentContainer = document.createElement('div');
 							commentContainer.classList.add('comment-body');
 							commentContainer.setAttribute('style', 'margin-left: 40px');
 							div.appendChild(commentContainer);
-							var commentText = document.createElement('p');
+							let commentText = document.createElement('p');
 							commentText.textContent = comment.text;
 							commentContainer.appendChild(commentText);
 
@@ -592,55 +583,54 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 				return fansubDiv;
 			},
-			filterFansubs: function(fansubs, lang) {
-				var langs = lang.split(',').map(function(lang) {
+			filterFansubs(fansubs, lang) {
+				let langs = lang.split(',').map(lang => {
 					return lang.trim().toLowerCase();
 				});
-				return fansubs.filter(function(fansub) {
-					var lang = fansub.lang || 'english';
+				return fansubs.filter(({ lang = 'english' }) => {
 					lang = lang.trim().toLowerCase();
 					return langs.includes(lang);
 				});
 			}
 		};
 
-		var cfg = Config.load();
-		waitForUrl(REGEX, function() {
+		let cfg = Config.load();
+		waitForUrl(REGEX, () => {
 			waitForElems({
 				sel: '.media-container > .row > .col-sm-8',
 				stop: true,
-				onmatch: function(container) {
-					var reviews = Util.qq('section.m-b-1', container)[1];
+				onmatch(container) {
+					let reviews = Util.qq('section.m-b-1', container)[1];
 
-					var section = Util.q('#' + SECTION_ID, container);
+					let section = Util.q('#' + SECTION_ID, container);
 					if (section) section.remove();
 					section = App.getFansubSection();
 					reviews.parentNode.insertBefore(section, reviews.nextSibling);
 
-					var slug = location.href.match(REGEX)[1];
-					var url = location.href;
-					App.getFansubs(slug, function(response) {
+					let slug = location.href.match(REGEX)[1];
+					let url = location.href;
+					App.getFansubs(slug, response => {
 						if (location.href === url) {
 							if (cfg.lang) {
 								response.fansubs = App.filterFansubs(response.fansubs, cfg.lang);
 							}
 
-							var extLink = Util.q('h5#fansubs-title', section);
-							var malLink = document.createElement('a');
+							let extLink = Util.q('h5#fansubs-title', section);
+							let malLink = document.createElement('a');
 							malLink.href = response.url;
 							Util.setNewTab(malLink);
 							extLink.appendChild(malLink);
 							malLink.appendChild(Util.icon('extLink')).setAttribute('style', 'vertical-align: sub');
 
-							var list = Util.q('.media-list', section);
+							let list = Util.q('.media-list', section);
 
 							if (response.fansubs.length > 0) {
-								var hiddenSpan = document.createElement('span');
+								let hiddenSpan = document.createElement('span');
 								hiddenSpan.style.display = 'none';
-								var addViewMore = false;
+								let addViewMore = false;
 
-								response.fansubs.forEach(function(fansub, i) {
-									var fansubDiv = App.getFansubOutput(fansub);
+								response.fansubs.forEach((fansub, i) => {
+									let fansubDiv = App.getFansubOutput(fansub);
 									if (i < 4) {
 										list.appendChild(fansubDiv);
 									} else {
@@ -651,11 +641,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 								if (addViewMore) {
 									list.appendChild(hiddenSpan);
-									var viewMoreDiv = document.createElement('div');
+									let viewMoreDiv = document.createElement('div');
 									viewMoreDiv.classList.add('text-xs-center');
 									viewMoreDiv.classList.add('w-100');
 
-									var viewMore = document.createElement('a');
+									let viewMore = document.createElement('a');
 									viewMore.classList.add('button');
 									viewMore.classList.add('button--secondary');
 									viewMore.setAttribute('style', 'color: #FFF;');
@@ -663,7 +653,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 									viewMore.textContent = 'View More Fansubs';
 									viewMoreDiv.appendChild(viewMore);
 
-									viewMore.onclick = function(e) {
+									viewMore.onclick = e => {
 										e.preventDefault();
 										if (hiddenSpan.style.display === 'none') {
 											hiddenSpan.style.display = 'inline';
@@ -678,7 +668,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 									list.appendChild(viewMoreDiv);
 								}
 							} else {
-								var p = document.createElement('p');
+								let p = document.createElement('p');
 								p.textContent = 'No fansubs found.';
 								p.style.textAlign = 'center';
 								p.style.marginTop = '5px';
@@ -690,10 +680,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			});
 		});
 	} else if (Util.getQueryParameter('US_VOTE')) {
-		var groupid = Util.getQueryParameter('groupid');
-		var value = Util.getQueryParameter('value');
-		var comment = Util.getQueryParameter('comment');
-		var button = Util.q('.js-fansub-set-vote-button[data-type="' + value +'"][data-group-id="' + groupid + '"]');
+		let groupid = Util.getQueryParameter('groupid');
+		let value = Util.getQueryParameter('value');
+		let comment = Util.getQueryParameter('comment');
+		let button = Util.q('.js-fansub-set-vote-button[data-type="' + value +'"][data-group-id="' + groupid + '"]');
 		button.click();
 		if (value === '3') {
 			setTimeout(window.close, 0);
@@ -701,11 +691,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			waitForElems({
 				sel: '#fancybox-inner',
 				stop: true,
-				onmatch: function(node) {
-					var commentBox = Util.q('#fsgcomm', node);
-					var submit = Util.q('.js-fansub-comment-button', node);
+				onmatch(node) {
+					let commentBox = Util.q('#fsgcomm', node);
+					let submit = Util.q('.js-fansub-comment-button', node);
 					commentBox.value = comment;
-					setTimeout(function() {
+					setTimeout(() => {
 						Util.log(submit);
 						submit.click();
 						setTimeout(window.close, 0);

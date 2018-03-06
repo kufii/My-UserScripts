@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Google - Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.9
+// @version      1.1
 // @description  Opens search results in new tab when you middle click
 // @author       Adrien Pyke
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/?(?:\?.*)?$/
@@ -13,37 +13,29 @@
 (function() {
 	'use strict';
 
-	var setQueryParameter = function(key, value, url) {
+	const setQueryParameter = function(key, value, url) {
 		if (!url) url = window.location.href;
-		var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
+		let re = new RegExp('([?&])' + key + '=.*?(&|#|$)(.*)', 'gi'),
 			hash;
 
 		if (re.test(url)) {
-			if (typeof value !== 'undefined' && value !== null)
-				return url.replace(re, '$1' + key + "=" + value + '$2$3');
+			if (typeof value !== 'undefined' && value !== null) return url.replace(re, '$1' + key + '=' + value + '$2$3');
 			else {
 				hash = url.split('#');
 				url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
-				if (typeof hash[1] !== 'undefined' && hash[1] !== null)
-					url += '#' + hash[1];
+				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
 				return url;
 			}
-		}
-		else {
-			if (typeof value !== 'undefined' && value !== null) {
-				var separator = url.indexOf('?') !== -1 ? '&' : '?';
-				hash = url.split('#');
-				url = hash[0] + separator + key + '=' + value;
-				if (typeof hash[1] !== 'undefined' && hash[1] !== null)
-					url += '#' + hash[1];
-				return url;
-			}
-			else
-				return url;
-		}
+		} else if (typeof value !== 'undefined' && value !== null) {
+			let separator = url.indexOf('?') !== -1 ? '&' : '?';
+			hash = url.split('#');
+			url = hash[0] + separator + key + '=' + value;
+			if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+			return url;
+		} else return url;
 	};
 
-	var getUrl = function(value) {
+	const getUrl = function(value) {
 		if (window.location.href.match(/^https?:\/\/www\.google\.[a-zA-Z]+\/search\/?\?.*$/)) {
 			return setQueryParameter('q', encodeURIComponent(value));
 		} else {
@@ -53,20 +45,20 @@
 
 	waitForElems({
 		sel: '#_fZl',
-		onmatch: function(btn) {
-			var input = document.querySelector('#lst-ib');
+		onmatch(btn) {
+			let input = document.querySelector('#lst-ib');
 
-			btn.onmousedown = function(e) {
+			btn.onmousedown = e => {
 				if (e.button === 1) {
 					e.preventDefault();
 				}
 			};
 
-			btn.onclick = function(e) {
+			btn.onclick = e => {
 				if (e.button === 1 && input.value.trim()) {
 					e.preventDefault();
 					e.stopImmediatePropagation();
-					var url = getUrl(input.value);
+					let url = getUrl(input.value);
 					GM_openInTab(url, true);
 					return false;
 				}
@@ -78,13 +70,13 @@
 
 	waitForElems({
 		sel: '.sbsb_b li .sbqs_c, .sbsb_b li .sbpqs_d',
-		onmatch: function(elem) {
-			elem.onclick = function(e) {
+		onmatch(elem) {
+			elem.onclick = e => {
 				if (e.button === 1) {
 					e.preventDefault();
 					e.stopImmediatePropagation();
-					var text = elem.classList.contains('sbpqs_d') ? elem.querySelector('span').textContent : elem.textContent;
-					var url = getUrl(text);
+					let text = elem.classList.contains('sbpqs_d') ? elem.querySelector('span').textContent : elem.textContent;
+					let url = getUrl(text);
 					GM_openInTab(url, true);
 					return false;
 				}
@@ -92,4 +84,4 @@
 			elem.onauxclick = elem.onclick;
 		}
 	});
-})();
+}());

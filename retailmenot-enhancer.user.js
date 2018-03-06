@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RetailMeNot Enhancer
 // @namespace    https://greasyfork.org/users/649
-// @version      3.0.2
+// @version      3.1
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
@@ -14,78 +14,66 @@
 // @grant        GM_openInTab
 // ==/UserScript==
 
-/*jshint scripturl:true*/
-
-(function() {
+(() => {
 	'use strict';
 
-	var SCRIPT_NAME = 'RetailMeNot Auto Show Coupons';
+	const SCRIPT_NAME = 'RetailMeNot Auto Show Coupons';
 
-	var Util = {
-		log: function() {
-			var args = [].slice.call(arguments);
-			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
-			console.log.apply(console, args);
+	const Util = {
+		log(...args) {
+			args.unshift(`%c${SCRIPT_NAME}:`, 'font-weight: bold;color: #233c7b;');
+			console.log(...args);
 		},
-		q: function(query, context) {
-			return (context || document).querySelector(query);
+		q(query, context = document) {
+			return context.querySelector(query);
 		},
-		qq: function(query, context) {
-			return [].slice.call((context || document).querySelectorAll(query));
+		qq(query, context = document) {
+			return Array.from(context.querySelectorAll(query));
 		},
-		getQueryParameter: function(name, url) {
+		getQueryParameter(name, url) {
 			if (!url) url = window.location.href;
-			name = name.replace(/[\[\]]/g, "\\$&");
-			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			name = name.replace(/[[\]]/g, '\\$&');
+			let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
 				results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
-			return decodeURIComponent(results[2].replace(/\+/g, " "));
+			return decodeURIComponent(results[2].replace(/\+/g, ' '));
 		},
-		setQueryParameter: function(key, value, url) {
+		setQueryParameter(key, value, url) {
 			if (!url) url = window.location.href;
-			var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
+			let re = new RegExp('([?&])' + key + '=.*?(&|#|$)(.*)', 'gi'),
 				hash;
 
 			if (re.test(url)) {
-				if (typeof value !== 'undefined' && value !== null)
-					return url.replace(re, '$1' + key + "=" + value + '$2$3');
+				if (typeof value !== 'undefined' && value !== null) return url.replace(re, '$1' + key + '=' + value + '$2$3');
 				else {
 					hash = url.split('#');
 					url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
-					if (typeof hash[1] !== 'undefined' && hash[1] !== null)
-						url += '#' + hash[1];
+					if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
 					return url;
 				}
-			}
-			else {
-				if (typeof value !== 'undefined' && value !== null) {
-					var separator = url.indexOf('?') !== -1 ? '&' : '?';
-					hash = url.split('#');
-					url = hash[0] + separator + key + '=' + value;
-					if (typeof hash[1] !== 'undefined' && hash[1] !== null)
-						url += '#' + hash[1];
-					return url;
-				}
-				else
-					return url;
-			}
+			} else if (typeof value !== 'undefined' && value !== null) {
+				let separator = url.indexOf('?') !== -1 ? '&' : '?';
+				hash = url.split('#');
+				url = hash[0] + separator + key + '=' + value;
+				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+				return url;
+			} else return url;
 		},
-		removeQueryParameter: function(key, url) {
+		removeQueryParameter(key, url) {
 			return Util.setQueryParameter(key, null, url);
 		},
-		changeUrl: function(url) {
+		changeUrl(url) {
 			window.history.replaceState({ path: url }, '', url);
 		},
-		createCookie: function(name, value, days) {
-			var expires;
+		createCookie(name, value, days) {
+			let expires;
 			if (days) {
-				var date = new Date();
+				let date = new Date();
 				date.setTime(date.getTime()+(days*24*60*60*1000));
-				expires = "; expires="+date.toGMTString();
-			}
-			else expires = "";
-			document.cookie = name+"="+value+expires+"; path=/";
+				expires = '; expires='+date.toGMTString();
+			} else expires = '';
+			document.cookie = name+'='+value+expires+'; path=/';
 		}
 	};
 
@@ -99,30 +87,28 @@
 		// Disable pop unders
 		waitForElems({
 			sel: '.js-outclick, .js-title > a, .js-triggers-outclick, .js-coupon-square, .offer-item-in-list',
-			onmatch: function(button) {
-				var path = button.dataset.newTab && !button.dataset.newTab.match(/^\/out/i) ? button.dataset.newTab : button.dataset.mainTab;
-				var href = window.location.protocol + "//" + window.location.host + path;
+			onmatch(button) {
+				let path = button.dataset.newTab && !button.dataset.newTab.match(/^\/out/i) ? button.dataset.newTab : button.dataset.mainTab;
+				let href = window.location.protocol + '//' + window.location.host + path;
 				if (path) {
-					var handler = function(e) {
+					let handler = e => {
 						e.preventDefault();
 						e.stopImmediatePropagation();
 						if (e.button === 1) {
 							GM_openInTab(href, true);
+						} else if (window.location.pathname === path) {
+							window.location.replace(href);
 						} else {
-							if (window.location.pathname === path) {
-								window.location.replace(href);
-							} else {
-								window.location.href = href;
-							}
+							window.location.href = href;
 						}
 						return false;
 					};
 					if (button.classList.contains('offer-item-in-list')) {
-						var offerButton = Util.q('.offer-button', button);
+						let offerButton = Util.q('.offer-button', button);
 						if (offerButton) {
 							offerButton.onclick = handler;
 						}
-						var offerTitle = Util.q('.offer-title', button);
+						let offerTitle = Util.q('.offer-title', button);
 						if (offerTitle) {
 							offerTitle.href = href;
 							offerTitle.onclick = handler;
@@ -132,7 +118,7 @@
 							button.href = href;
 						}
 						button.onclick = handler;
-						Util.qq('*', button).forEach(function(elem) {
+						Util.qq('*', button).forEach(elem => {
 							elem.onclick = handler;
 						});
 					}
@@ -142,18 +128,19 @@
 	} else if (window.location.href.match(/^https?:\/\/www\.retailmenot\.ca/i)) { // CANADA
 		Util.log('Enhancing Canadian site');
 		// Show Coupons
-		Util.qq('.crux > .cover').forEach(function(cover) {
+		Util.qq('.crux > .cover').forEach(cover => {
 			cover.remove();
 		});
 
 		// Disable Pop Unders
 		waitForElems({
 			sel: '.offer, .stage .coupon',
-			onmatch: function(offer) {
-				var clickHandler = function(e) {
+			onmatch(offer) {
+				let href = window.location.protocol + '//' + window.location.host + window.location.pathname + '?c=' + offer.dataset.offerid;
+
+				let clickHandler = e => {
 					e.preventDefault();
 					e.stopImmediatePropagation();
-					var href = window.location.protocol + "//" + window.location.host + window.location.pathname + '?c=' + offer.dataset.offerid;
 					if (e.button === 1) {
 						GM_openInTab(href, true);
 					} else {
@@ -167,22 +154,22 @@
 						context: offer,
 						sel: 'a.offer-title',
 						stop: true,
-						onmatch: function(title) {
+						onmatch(title) {
 							title.href = href;
 							title.onclick = clickHandler;
 						}
 					});
 				}
 
-				Util.qq('.action-button, .crux, .caterpillar-title, .caterpillar-code', offer).forEach(function(elem){
+				Util.qq('.action-button, .crux, .caterpillar-title, .caterpillar-code', offer).forEach(elem => {
 					elem.onclick = clickHandler;
 				});
 			}
 		});
 
 		// disable pop unders on the exclusive tags
-		Util.qq('.exclusive_icon').forEach(function(tag) {
-			tag.onclick = function(e) {
+		Util.qq('.exclusive_icon').forEach(tag => {
+			tag.onclick = e => {
 				e.preventDefault();
 				e.stopImmediatePropagation();
 			};
@@ -194,7 +181,7 @@
 			waitForElems({
 				sel: '#modal-coupon',
 				stop: true,
-				onmatch: function() {
+				onmatch() {
 					Util.changeUrl(window.location.href.split('#')[0]);
 				}
 			});
@@ -202,10 +189,10 @@
 		// disable pop unders
 		waitForElems({
 			sel: '.coupon',
-			onmatch: function(coupon) {
-				var id = coupon.dataset.suffix;
-				var href = window.location.protocol + "//" + window.location.host + window.location.pathname + '?r=1#' + id;
-				var clickHandler = function(e) {
+			onmatch(coupon) {
+				let id = coupon.dataset.suffix;
+				let href = window.location.protocol + '//' + window.location.host + window.location.pathname + '?r=1#' + id;
+				let clickHandler = e => {
 					e.preventDefault();
 					e.stopImmediatePropagation();
 					Util.createCookie('click_' + id, true);
@@ -216,7 +203,7 @@
 					}
 					return false;
 				};
-				Util.qq('.outclickable', coupon).forEach(function(elem) {
+				Util.qq('.outclickable', coupon).forEach(elem => {
 					if (elem.tagName === 'A') {
 						elem.href = href;
 					}
@@ -226,13 +213,13 @@
 		});
 	}
 	// human checks
-	var regex = /^https?:\/\/www\.retailmenot\.[^\/]+\/humanCheck\.php/i;
-	Util.qq('a').filter(function(link) {
+	let regex = /^https?:\/\/www\.retailmenot\.[^/]+\/humanCheck\.php/i;
+	Util.qq('a').filter(link => {
 		return link.href.match(regex);
-	}).forEach(function(link) {
-		var url = Util.getQueryParameter('url', link.href);
+	}).forEach(link => {
+		let url = Util.getQueryParameter('url', link.href);
 		if (url) {
-			link.href = window.location.protocol + "//" + window.location.host + url;
+			link.href = window.location.protocol + '//' + window.location.host + url;
 		}
 	});
 

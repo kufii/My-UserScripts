@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Flair Linkifier
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.5
+// @version      1.1.6
 // @description  Turns the text in various subreddits' flair into links
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
@@ -9,15 +9,15 @@
 // @grant        none
 // ==/UserScript==
 
-(function() {
+(() => {
 	'use strict';
 
 	waitForElems({
 		sel: 'span.flair',
-		onmatch: function(flair) {
-			flair.innerHTML = flair.textContent.split(' ').map(function(segment) {
+		onmatch(flair) {
+			flair.innerHTML = flair.textContent.split(' ').map(segment => {
 				if (segment.match(/^https?:\/\//)) {
-					return '<a href="' + segment + '" target="_blank" rel="noopener noreferrer">' + segment + '</a>';
+					return `<a href="${segment}" target="_blank" rel="noopener noreferrer">${segment}</a>`;
 				} else {
 					return segment;
 				}

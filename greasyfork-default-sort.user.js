@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Greasy Fork - Change Default Script Sort
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.3
+// @version      1.2
 // @description  Change default script sort on GreasyFork
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/*/users/*
@@ -12,64 +12,56 @@
 // @run-at       document-start
 // ==/UserScript==
 
-(function() {
+(() => {
 	'use strict';
 
-	var Util = {
-		getQueryParameter: function(name, url) {
+	const Util = {
+		getQueryParameter(name, url) {
 			if (!url) url = window.location.href;
-			name = name.replace(/[\[\]]/g, "\\$&");
-			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			name = name.replace(/[[\]]/g, '\\$&');
+			let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
 				results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
-			return decodeURIComponent(results[2].replace(/\+/g, " "));
+			return decodeURIComponent(results[2].replace(/\+/g, ' '));
 		},
 
-		setQueryParameter: function(key, value, url) {
+		setQueryParameter(key, value, url) {
 			if (!url) url = window.location.href;
-			var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
+			let re = new RegExp('([?&])' + key + '=.*?(&|#|$)(.*)', 'gi'),
 				hash;
 
 			if (re.test(url)) {
-				if (typeof value !== 'undefined' && value !== null)
-					return url.replace(re, '$1' + key + "=" + value + '$2$3');
+				if (typeof value !== 'undefined' && value !== null) return url.replace(re, '$1' + key + '=' + value + '$2$3');
 				else {
 					hash = url.split('#');
 					url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
-					if (typeof hash[1] !== 'undefined' && hash[1] !== null)
-						url += '#' + hash[1];
+					if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
 					return url;
 				}
-			}
-			else {
-				if (typeof value !== 'undefined' && value !== null) {
-					var separator = url.indexOf('?') !== -1 ? '&' : '?';
-					hash = url.split('#');
-					url = hash[0] + separator + key + '=' + value;
-					if (typeof hash[1] !== 'undefined' && hash[1] !== null)
-						url += '#' + hash[1];
-					return url;
-				}
-				else
-					return url;
-			}
+			} else if (typeof value !== 'undefined' && value !== null) {
+				let separator = url.indexOf('?') !== -1 ? '&' : '?';
+				hash = url.split('#');
+				url = hash[0] + separator + key + '=' + value;
+				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += '#' + hash[1];
+				return url;
+			} else return url;
 		}
 	};
 
-	var Config = {
-		load: function() {
-			var defaults = {
+	const Config = {
+		load() {
+			let defaults = {
 				all: 'daily-installs',
 				search: 'relevance',
 				user: 'daily-installs'
 			};
 
-			var cfg = GM_getValue('cfg');
+			let cfg = GM_getValue('cfg');
 			if (!cfg) return defaults;
 
 			cfg = JSON.parse(cfg);
-			for (var property in defaults) {
+			for (let property in defaults) {
 				if (defaults.hasOwnProperty(property)) {
 					if (!cfg[property]) {
 						cfg[property] = defaults[property];
@@ -80,13 +72,13 @@
 			return cfg;
 		},
 
-		save: function(cfg) {
+		save(cfg) {
 			GM_setValue('cfg', JSON.stringify(cfg));
 		},
 
-		setup: function() {
-			var createContainer = function() {
-				var div = document.createElement('div');
+		setup() {
+			const createContainer = function() {
+				let div = document.createElement('div');
 				div.style.backgroundColor = 'white';
 				div.style.padding = '5px';
 				div.style.border = '1px solid black';
@@ -97,16 +89,16 @@
 				return div;
 			};
 
-			var createSelect = function(label, options, value) {
-				var select = document.createElement('select');
+			const createSelect = function(label, options, value) {
+				let select = document.createElement('select');
 				select.style.margin = '2px';
-				var optgroup = document.createElement('optgroup');
+				let optgroup = document.createElement('optgroup');
 				if (label) {
 					optgroup.setAttribute('label', label);
 				}
 				select.appendChild(optgroup);
-				options.forEach(function(opt) {
-					var option = document.createElement('option');
+				options.forEach(opt => {
+					let option = document.createElement('option');
 					option.setAttribute('value', opt.value);
 					option.textContent = opt.text;
 					optgroup.appendChild(option);
@@ -115,28 +107,28 @@
 				return select;
 			};
 
-			var createButton = function(text, onclick) {
-				var button = document.createElement('button');
+			const createButton = function(text, onclick) {
+				let button = document.createElement('button');
 				button.style.margin = '2px';
 				button.textContent = text;
 				button.onclick = onclick;
 				return button;
 			};
 
-			var createLabel = function(label) {
-				var lbl = document.createElement('span');
+			const createLabel = function(label) {
+				let lbl = document.createElement('span');
 				lbl.textContent = label;
 				return lbl;
 			};
 
-			var createLineBreak = function() {
+			const createLineBreak = function() {
 				return document.createElement('br');
 			};
 
-			var init = function(cfg) {
-				var div = createContainer();
+			const init = function(cfg) {
+				let div = createContainer();
 
-				var all = createSelect('All Scripts Sort', [
+				let all = createSelect('All Scripts Sort', [
 					{ value: 'daily-installs', text: 'Daily installs' },
 					{ value: 'total_installs', text: 'Total installs' },
 					{ value: 'ratings', text: 'Ratings' },
@@ -148,7 +140,7 @@
 				div.appendChild(all);
 				div.appendChild(createLineBreak());
 
-				var search = createSelect('Search Sort', [
+				let search = createSelect('Search Sort', [
 					{ value: 'relevance', text: 'Relevance' },
 					{ value: 'daily_installs', text: 'Daily installs' },
 					{ value: 'total_installs', text: 'Total installs' },
@@ -161,7 +153,7 @@
 				div.appendChild(search);
 				div.appendChild(createLineBreak());
 
-				var user = createSelect('User Profile Sort', [
+				let user = createSelect('User Profile Sort', [
 					{ value: 'daily-installs', text: 'Daily installs' },
 					{ value: 'total_installs', text: 'Total installs' },
 					{ value: 'ratings', text: 'Ratings' },
@@ -173,8 +165,8 @@
 				div.appendChild(user);
 				div.appendChild(createLineBreak());
 
-				div.appendChild(createButton('Save', function(e) {
-					var settings = {
+				div.appendChild(createButton('Save', () => {
+					let settings = {
 						all: all.value,
 						search: search.value,
 						user: user.value
@@ -183,7 +175,7 @@
 					div.remove();
 				}));
 
-				div.appendChild(createButton('Cancel', function(e) {
+				div.appendChild(createButton('Cancel', () => {
 					div.remove();
 				}));
 
@@ -195,12 +187,12 @@
 
 	GM_registerMenuCommand('GreasyFork Sort Settings', Config.setup);
 
-	var onScripts = location.href.match(/^https?:\/\/greasyfork\.org\/[^\/]+\/scripts\/?(?:\?.*)?$/i);
-	var onSearch = location.href.match(/^https?:\/\/greasyfork\.org\/[^\/]+\/scripts\/search?(?:\?.*)?$/i);
-	var onProfile = location.href.match(/^https?:\/\/greasyfork\.org\/[^\/]+\/users\/[^\/]+?(?:\?.*)?$/i);
+	let onScripts = location.href.match(/^https?:\/\/greasyfork\.org\/[^/]+\/scripts\/?(?:\?.*)?$/i);
+	let onSearch = location.href.match(/^https?:\/\/greasyfork\.org\/[^/]+\/scripts\/search?(?:\?.*)?$/i);
+	let onProfile = location.href.match(/^https?:\/\/greasyfork\.org\/[^/]+\/users\/[^/]+?(?:\?.*)?$/i);
 
-	document.addEventListener('DOMContentLoaded', function(e) {
-		var defaultSort = document.querySelector('#script-list-sort > ul > li:nth-child(1) > a');
+	document.addEventListener('DOMContentLoaded', () => {
+		let defaultSort = document.querySelector('#script-list-sort > ul > li:nth-child(1) > a');
 		if (defaultSort) {
 			if (onSearch) {
 				defaultSort.href = Util.setQueryParameter('sort', 'relevance', defaultSort.href);
@@ -210,10 +202,10 @@
 		}
 	});
 
-	var sort = Util.getQueryParameter('sort');
+	let sort = Util.getQueryParameter('sort');
 	if (!sort) {
-		var cfg = Config.load();
-		var cfgSort;
+		let cfg = Config.load();
+		let cfgSort;
 		if (onScripts) {
 			cfgSort = cfg.all;
 		} else if (onSearch) {

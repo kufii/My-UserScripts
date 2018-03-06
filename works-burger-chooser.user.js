@@ -1,61 +1,60 @@
 // ==UserScript==
 // @name         The Works Burger Chooser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1
+// @version      1.2
 // @description  Choose a random burger on the works menu
 // @author       Adrien Pyke
 // @match        *://worksburger.com/menu/burger-menu/*
 // @grant        unsafeWindow
 // ==/UserScript==
 
-(function() {
+(() => {
 	'use strict';
 
-	var W = (typeof unsafeWindow === 'undefined') ? window : unsafeWindow;
+	let W = (typeof unsafeWindow === 'undefined') ? window : unsafeWindow;
 
-	var SCRIPT_NAME = 'The Works Burger Chooser';
+	const SCRIPT_NAME = 'The Works Burger Chooser';
 
-	var Util = {
-		log: function() {
-			var args = [].slice.call(arguments);
-			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
-			console.log.apply(console, args);
+	const Util = {
+		log(...args) {
+			args.unshift(`%c${SCRIPT_NAME}:`, 'font-weight: bold;color: #233c7b;');
+			console.log(...args);
 		},
-		q: function(query, context) {
-			return (context || document).querySelector(query);
+		q(query, context = document) {
+			return context.querySelector(query);
 		},
-		qq: function(query, context) {
-			return [].slice.call((context || document).querySelectorAll(query));
+		qq(query, context = document) {
+			return Array.from(context.querySelectorAll(query));
 		},
-		css: function(css) {
-			var out = '';
-			for (var rule in css) {
+		css(css) {
+			let out = '';
+			for (let rule in css) {
 				out += rule + ':' + css[rule] + '!important;';
 			}
 			return out;
 		},
-		prepend: function(parent, child) {
+		prepend(parent, child) {
 			parent.insertBefore(child, parent.firstChild);
 		},
-		randomColor: function() {
-			var letters = '0123456789ABCDEF'.split('');
-			var color = '#';
-			for (var i = 0; i < 6; i++) {
+		randomColor() {
+			let letters = '0123456789ABCDEF'.split('');
+			let color = '#';
+			for (let i = 0; i < 6; i++) {
 				color += letters[Math.floor(Math.random() * letters.length)];
 			}
 			return color;
 		}
 	};
 
-	var selectBurger = function() {
+	const selectBurger = function() {
 		Util.log('Choosing Random Burger...');
 
-		var burgers = Util.qq('.vc_grid-item-mini');
-		burgers.forEach(function(burger) {
+		let burgers = Util.qq('.vc_grid-item-mini');
+		burgers.forEach(burger => {
 			burger.removeAttribute('style');
 		});
 
-		var burger = burgers[Math.floor(Math.random() * burgers.length)];
+		let burger = burgers[Math.floor(Math.random() * burgers.length)];
 
 		Util.log(burger);
 
@@ -66,7 +65,7 @@
 			'border-radius': '20px'
 		}));
 
-		setTimeout(function() {
+		setTimeout(() => {
 			burger.style.transform = 'scale(1, 1)';
 		}, 500);
 
@@ -77,7 +76,7 @@
 		selectBurger();
 	} else {
 		Util.log('Adding Button...');
-		var button = document.createElement('button');
+		let button = document.createElement('button');
 		button.textContent = 'Choose Random Burger';
 		button.setAttribute('style', Util.css({
 			'position': 'fixed',
@@ -86,7 +85,7 @@
 			'padding': '5px',
 			'z-index': 99999
 		}));
-		button.onclick = function(e) {
+		button.onclick = e => {
 			e.stopImmediatePropagation();
 			e.preventDefault();
 			selectBurger();

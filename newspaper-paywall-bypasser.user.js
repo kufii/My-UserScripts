@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.5.11
+// @version      1.2
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -22,57 +22,56 @@
 // @noframes
 // ==/UserScript==
 
-(function() {
+(() => {
 	'use strict';
 
 	// short reference to unsafeWindow (or window if unsafeWindow is unavailable e.g. bookmarklet)
-	var W = (typeof unsafeWindow === 'undefined') ? window : unsafeWindow;
-	var SCRIPT_NAME = 'Newspaper Paywall Bypasser';
+	let W = (typeof unsafeWindow === 'undefined') ? window : unsafeWindow;
+	const SCRIPT_NAME = 'Newspaper Paywall Bypasser';
 
-	var Util = {
-		log: function() {
-			var args = [].slice.call(arguments);
-			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
-			console.log.apply(console, args);
+	const Util = {
+		log(...args) {
+			args.unshift(`%c${SCRIPT_NAME}:`, 'font-weight: bold;color: #233c7b;');
+			console.log(...args);
 		},
-		q: function(query, context) {
-			return (context || document).querySelector(query);
+		q(query, context = document) {
+			return context.querySelector(query);
 		},
-		qq: function(query, context) {
-			return [].slice.call((context || document).querySelectorAll(query));
+		qq(query, context = document) {
+			return Array.from(context.querySelectorAll(query));
 		},
-		getQueryParameter: function(name, url) {
+		getQueryParameter(name, url) {
 			if (!url) url = W.location.href;
-			name = name.replace(/[\[\]]/g, "\\$&");
-			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			name = name.replace(/[[\]]/g, '\\$&');
+			let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
 				results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
-			return decodeURIComponent(results[2].replace(/\+/g, " "));
+			return decodeURIComponent(results[2].replace(/\+/g, ' '));
 		},
-		appendStyle: function(css) {
-			var out = '';
-			for (var selector in css) {
+		appendStyle(css) {
+			let out = '';
+			for (let selector in css) {
 				out += selector + '{';
-				for (var rule in css[selector]) {
+				for (let rule in css[selector]) {
 					out += rule + ':' + css[selector][rule] + '!important;';
 				}
 				out += '}';
 			}
 
-			var style = document.createElement('style');
+			let style = document.createElement('style');
 			style.type = 'text/css';
 			style.appendChild(document.createTextNode(out));
 			document.head.appendChild(style);
 		},
-		clearAllIntervals: function() {
-			var interval_id = window.setInterval(null, 9999);
-			for (var i = 1; i <= interval_id; i++) {
+		clearAllIntervals() {
+			let interval_id = window.setInterval(null, 9999);
+			for (let i = 1; i <= interval_id; i++) {
 				window.clearInterval(i);
 			}
 		},
-		hijackScrollEvent: function(cb) {
-			document.onscroll = function(e) {
+		hijackScrollEvent(cb) {
+			document.onscroll = e => {
 				if (cb) {
 					cb(e);
 				}
@@ -81,13 +80,13 @@
 				return false;
 			};
 		},
-		addScript: function(src, onload) {
-			var s = document.createElement('script');
+		addScript(src, onload) {
+			let s = document.createElement('script');
 			s.onload = onload;
 			s.src = src;
 			document.body.appendChild(s);
 		},
-		prepend: function(parent, child) {
+		prepend(parent, child) {
 			parent.insertBefore(child, parent.firstChild);
 		}
 	};
@@ -96,10 +95,10 @@
 	if (typeof GM_xmlhttpRequest === 'undefined') {
 		Util.log('Adding GM_xmlhttpRequest polyfill');
 		W.GM_xmlhttpRequest = function(config) {
-			var xhr = new XMLHttpRequest();
+			let xhr = new XMLHttpRequest();
 			xhr.open(config.method || 'GET', config.url);
 			if (config.headers) {
-				for (var header in config.headers) {
+				for (let header in config.headers) {
 					xhr.setRequestHeader(header, config.headers[header]);
 				}
 			}
@@ -139,213 +138,215 @@
 	* Any of the CSS selectors can be functions instead that return the desired value.
 	*/
 
-	var implementations = [{
-		name: 'The Nation',
-		match: '^https?://www\.thenation\.com/article/.*',
-		remove: '#paywall',
-		wait: '#paywall',
-		bmmode: function() { Paywall.hide(); }
-	}, {
-		name: 'Wall Street Journal',
-		match: '^https?://.*\.wsj\.com/.*',
-		wait: '.wsj-snippet-login',
-		referer: 'https://t.co/T1323aaaa',
-		afterReplace: function() {
-			W.loadCSS('//asset.wsj.net/public/extra.production-2a7a40d6.css');
-			var scripts = Util.qq('script');
-			var add = function(regex, onload) {
-				var matching = scripts.filter(function(script) {
-					return script.src.match(regex);
-				});
-				if (matching.length > 0) {
-					Util.addScript(matching[0].src, onload);
-				} else {
-					onload();
-				}
-			};
-			add(/\/common\.js$/i, function() {
-				add(/\/article\.js$/i, function() {
-					add(/\/snippet\.js$/i);
-				});
-			});
-		}
-	}, {
-		name: 'Boston Globe',
-		match: '^https?://www\.bostonglobe\.com/.*',
-		css: {
-			'html, body, #contain': {
-				overflow: 'visible'
-			},
-			'.mfp-wrap, .mfp-ready': {
-				display: 'none'
-			}
-		}
-	}, {
-		name: 'NY Times',
-		match: '^https?://www\.nytimes\.com/.*',
-		css: {
-			'html, body': {
-				overflow: 'visible'
-			},
-			'#Gateway_optly, #overlay': {
-				display: 'none'
-			},
-			'.media .image': {
-				'margin-bottom': '7px'
-			},
-			'.new-story-body-text': {
-				'font-size': '1.0625rem',
-				'line-height': '1.625rem'
-			}
-		},
-		cleanupStory: function(story) {
-			if (story) {
-				// prevent payywall from finding the elements to remove
-				Util.qq('figure', story).forEach(function(figure) {
-					figure.outerHTML = figure.outerHTML.replace(/<figure/, '<div').replace(/<\/figure/, '</div');
-				});
-				Util.qq('.story-body-text', story).forEach(function(paragraph) {
-					paragraph.classList.remove('story-body-text');
-					paragraph.classList.add('new-story-body-text');
-				});
-			}
-			return story;
-		},
-		bmmode: function() {
-			var self = this;
-			Util.clearAllIntervals();
-			GM_xmlhttpRequest({
-				url: W.location.href,
-				method: 'GET',
-				onload: function(response) {
-					var tempDiv = document.createElement('div');
-					tempDiv.innerHTML = response.responseText;
-					var story = self.cleanupStory(Util.q('#story', tempDiv));
-					if (story) {
-						Util.q('#story').innerHTML = story.innerHTML;
+	const implementations = [
+		{
+			name: 'The Nation',
+			match: '^https?://www\\.thenation\\.com/article/.*',
+			remove: '#paywall',
+			wait: '#paywall',
+			bmmode() { W.Paywall.hide(); }
+		}, {
+			name: 'Wall Street Journal',
+			match: '^https?://.*\\.wsj\\.com/.*',
+			wait: '.wsj-snippet-login',
+			referer: 'https://t.co/T1323aaaa',
+			afterReplace() {
+				W.loadCSS('//asset.wsj.net/public/extra.production-2a7a40d6.css');
+				let scripts = Util.qq('script');
+				let add = function(regex, onload) {
+					let matching = scripts.filter(script => {
+						return script.src.match(regex);
+					});
+					if (matching.length > 0) {
+						Util.addScript(matching[0].src, onload);
+					} else {
+						onload();
 					}
+				};
+				add(/\/common\\.js$/i, () => {
+					add(/\/article\\.js$/i, () => {
+						add(/\/snippet\\.js$/i);
+					});
+				});
+			}
+		}, {
+			name: 'Boston Globe',
+			match: '^https?://www\\.bostonglobe\\.com/.*',
+			css: {
+				'html, body, #contain': {
+					overflow: 'visible'
+				},
+				'.mfp-wrap, .mfp-ready': {
+					display: 'none'
 				}
-			});
-		},
-		fn: function() {
+			}
+		}, {
+			name: 'NY Times',
+			match: '^https?://www\\.nytimes\\.com/.*',
+			css: {
+				'html, body': {
+					overflow: 'visible'
+				},
+				'#Gateway_optly, #overlay': {
+					display: 'none'
+				},
+				'.media .image': {
+					'margin-bottom': '7px'
+				},
+				'.new-story-body-text': {
+					'font-size': '1.0625rem',
+					'line-height': '1.625rem'
+				}
+			},
+			cleanupStory(story) {
+				if (story) {
+				// prevent payywall from finding the elements to remove
+					Util.qq('figure', story).forEach(figure => {
+						figure.outerHTML = figure.outerHTML.replace(/<figure/, '<div').replace(/<\/figure/, '</div');
+					});
+					Util.qq('.story-body-text', story).forEach(paragraph => {
+						paragraph.classList.remove('story-body-text');
+						paragraph.classList.add('new-story-body-text');
+					});
+				}
+				return story;
+			},
+			bmmode() {
+				let self = this;
+				Util.clearAllIntervals();
+				GM_xmlhttpRequest({
+					url: W.location.href,
+					method: 'GET',
+					onload(response) {
+						let tempDiv = document.createElement('div');
+						tempDiv.innerHTML = response.responseText;
+						let story = self.cleanupStory(Util.q('#story', tempDiv));
+						if (story) {
+							Util.q('#story').innerHTML = story.innerHTML;
+						}
+					}
+				});
+			},
+			fn() {
 			// clear intervals once the paywall comes up to prevent changes afterward
-			waitForElems({
-				sel: '#Gateway_optly',
-				stop: true,
-				onmatch: Util.clearAllIntervals
-			});
+				waitForElems({
+					sel: '#Gateway_optly',
+					stop: true,
+					onmatch: Util.clearAllIntervals
+				});
 
-			this.cleanupStory(Util.q('#story'));
-			setTimeout(function() {
-				require(['jquery/nyt'], function($) {
-					require(['vhs'], function (vhs) {
-						Util.qq('.video').forEach(function(video) {
-							video.setAttribute('style', 'position: relative');
-							var bind = document.createElement('div');
-							bind.classList.add('video-bind');
-							var div = document.createElement('div');
-							div.setAttribute('style', 'padding-bottom: 56.25%; position: relative; overflow: hidden;');
-							bind.appendChild(div);
-							Util.prepend(video, bind);
-							vhs.player({
-								id: video.dataset.videoid,
-								container: $(div),
-								width: '100%',
-								height: '100%',
-								mode: 'html5',
-								controlsOverlay: {
-									mode: 'article'
-								},
-								cover: {
-									mode: "article"
-								},
-								newControls: true
+				this.cleanupStory(Util.q('#story'));
+				setTimeout(() => {
+					W.require(['jquery/nyt'], $ => {
+						W.require(['vhs'], vhs => {
+							Util.qq('.video').forEach(video => {
+								video.setAttribute('style', 'position: relative');
+								let bind = document.createElement('div');
+								bind.classList.add('video-bind');
+								let div = document.createElement('div');
+								div.setAttribute('style', 'padding-bottom: 56.25%; position: relative; overflow: hidden;');
+								bind.appendChild(div);
+								Util.prepend(video, bind);
+								vhs.player({
+									id: video.dataset.videoid,
+									container: $(div),
+									width: '100%',
+									height: '100%',
+									mode: 'html5',
+									controlsOverlay: {
+										mode: 'article'
+									},
+									cover: {
+										mode: 'article'
+									},
+									newControls: true
+								});
 							});
 						});
 					});
-				});
-			}, 0);
-		}
-	}, {
-		name: 'NY Times Mobile Redirect',
-		match: '^https?://myaccount\.nytimes\.com/mobile/wall/smart/.*',
-		fn: function() {
-			var article = Util.getQueryParameter('EXIT_URI');
-			if (article) {
-				W.location.replace('http://mobile.nytimes.com?LOAD_ARTICLE=' + encodeURIComponent(article));
+				}, 0);
 			}
-		}
-	}, {
-		name: 'NY Times Mobile Loader',
-		match: '^https?://mobile\.nytimes\.com',
-		css: {
-			'.full-art': {
-				'font-family': 'Georgia,serif',
-				color: '#333'
+		}, {
+			name: 'NY Times Mobile Redirect',
+			match: '^https?://myaccount\\.nytimes\\.com/mobile/wall/smart/.*',
+			fn() {
+				let article = Util.getQueryParameter('EXIT_URI');
+				if (article) {
+					W.location.replace('http://mobile.nytimes.com?LOAD_ARTICLE=' + encodeURIComponent(article));
+				}
+			}
+		}, {
+			name: 'NY Times Mobile Loader',
+			match: '^https?://mobile\\.nytimes\\.com',
+			css: {
+				'.full-art': {
+					'font-family': 'Georgia,serif',
+					color: '#333'
+				},
+				'.full-art .article-body': {
+					'margin-bottom': '26px',
+					'font-size': '1.6em',
+					'line-height': '1.4em'
+				}
 			},
-			'.full-art .article-body': {
-				'margin-bottom': '26px',
-				'font-size': '1.6em',
-				'line-height': '1.4em'
-			}
-		},
-		replaceUsing: Util.getQueryParameter('LOAD_ARTICLE'),
-		replace: function() {
-			if (this.repalceUsing) {
-				return '.sect';
-			}
-			return null;
-		},
-		replaceWith: function() {
-			if (this.repalceUsing) {
-				return 'article';
-			}
-			return null;
-		}
-	}, {
-		name: 'LA Times',
-		match: '^https?://www\.latimes\.com/.*',
-		css: {
-			'div#reg-overlay': {
-				display: 'none'
+			replaceUsing: Util.getQueryParameter('LOAD_ARTICLE'),
+			replace() {
+				if (this.repalceUsing) {
+					return '.sect';
+				}
+				return null;
 			},
-			'html, body': {
-				overflow: 'visible'
+			replaceWith() {
+				if (this.repalceUsing) {
+					return 'article';
+				}
+				return null;
 			}
-		},
-		fn: Util.hijackScrollEvent
-	}, {
-		name: 'Washington Post',
-		match: '^https?://www\.washingtonpost\.com/.*',
-		css: {
-			'.wp_signin, #wp_Signin': {
-				display: 'none'
+		}, {
+			name: 'LA Times',
+			match: '^https?://www\\.latimes\\.com/.*',
+			css: {
+				'div#reg-overlay': {
+					display: 'none'
+				},
+				'html, body': {
+					overflow: 'visible'
+				}
 			},
-			'html, body': {
-				overflow: 'visible'
+			fn: Util.hijackScrollEvent
+		}, {
+			name: 'Washington Post',
+			match: '^https?://www\\.washingtonpost\\.com/.*',
+			css: {
+				'.wp_signin, #wp_Signin': {
+					display: 'none'
+				},
+				'html, body': {
+					overflow: 'visible'
+				}
+			},
+			fn() {
+				let handler = e => {
+					e.stopImmediatePropagation();
+				};
+				document.addEventListener('keydown', handler, true);
+				document.addEventListener('mousewheel', handler, true);
 			}
-		},
-		fn: function() {
-			var handler = function(e) {
-				e.stopImmediatePropagation();
-			};
-			document.addEventListener('keydown', handler, true);
-			document.addEventListener('mousewheel', handler, true);
 		}
-	}];
+	];
 	// END OF IMPLEMENTATIONS
 
-	var Config = {
-		load: function() {
-			var defaults = {
+	const Config = {
+		load() {
+			let defaults = {
 				blacklist: {}
 			};
 
-			var cfg = GM_getValue('cfg');
+			let cfg = GM_getValue('cfg');
 			if (!cfg) return defaults;
 
 			cfg = JSON.parse(cfg);
-			for (var property in defaults) {
+			for (let property in defaults) {
 				if (defaults.hasOwnProperty(property)) {
 					if (!cfg[property]) {
 						cfg[property] = defaults[property];
@@ -356,12 +357,12 @@
 			return cfg;
 		},
 
-		save: function(cfg) {
+		save(cfg) {
 			GM_setValue('cfg', JSON.stringify(cfg));
 		},
 
-		toggleBlacklist: function(imp) {
-			var cfg = Config.load();
+		toggleBlacklist(imp) {
+			let cfg = Config.load();
 			if (cfg.blacklist[imp]) {
 				cfg.blacklist[imp] = false;
 			} else {
@@ -371,10 +372,10 @@
 		}
 	};
 
-	var App = {
+	const App = {
 		currentImpName: null,
 
-		bypass: function(imp) {
+		bypass(imp) {
 			if (W.BM_MODE && imp.bmmode) {
 				Util.log('Running bookmarkelet specific function');
 				imp.bmmode();
@@ -385,37 +386,37 @@
 			}
 			if (imp.css) {
 				Util.log('Adding style');
-				var cssObj = typeof imp.css === 'function' ? imp.css() : imp.css;
+				let cssObj = typeof imp.css === 'function' ? imp.css() : imp.css;
 				Util.appendStyle(cssObj);
 			}
 			if (imp.remove) {
 				Util.log('Removing elements');
-				var elemsToRemove = typeof imp.remove === 'function' ? imp.remove() : Util.qq(imp.remove);
-				elemsToRemove.forEach(function(elem) {
+				let elemsToRemove = typeof imp.remove === 'function' ? imp.remove() : Util.qq(imp.remove);
+				elemsToRemove.forEach(elem => {
 					elem.remove();
 				});
 			}
 
-			var replaceSelector = typeof imp.replace === 'function' ? imp.replace() : imp.replace;
-			var replaceUsing = typeof imp.replaceUsing === 'function' ? imp.replaceUsing() : imp.replaceUsing;
-			var theReferer = typeof imp.referer === 'function' ? imp.referer() : imp.referer;
+			let replaceSelector = typeof imp.replace === 'function' ? imp.replace() : imp.replace;
+			let replaceUsing = typeof imp.replaceUsing === 'function' ? imp.replaceUsing() : imp.replaceUsing;
+			let theReferer = typeof imp.referer === 'function' ? imp.referer() : imp.referer;
 			if (replaceSelector || replaceUsing || theReferer) {
 				replaceUsing = replaceUsing || W.location.href;
 
 				Util.log('Loading xhr for "' + replaceUsing + '" with referer: ' + theReferer);
-				GM_xmlhttpRequest ({
+				GM_xmlhttpRequest({
 					method: 'GET',
 					url: replaceUsing,
 					headers: {
 						referer: theReferer
 					},
 					anonymous: true,
-					onload: function(response) {
+					onload(response) {
 						if (replaceSelector) {
-							var replaceWithSelector = typeof imp.replaceWith === 'function' ? imp.replaceWith() : imp.replaceWith;
+							let replaceWithSelector = typeof imp.replaceWith === 'function' ? imp.replaceWith() : imp.replaceWith;
 							replaceWithSelector = replaceWithSelector || replaceSelector;
 
-							var tempDiv = document.createElement('div');
+							let tempDiv = document.createElement('div');
 							tempDiv.innerHTML = response.responseText;
 
 							Util.q(replaceSelector).innerHTML = Util.q(replaceWithSelector, tempDiv).innerHTML;
@@ -427,7 +428,7 @@
 							imp.afterReplace();
 						}
 					},
-					onerror: function(error) {
+					onerror() {
 						Util.log('error occured when loading xhr');
 					}
 				});
@@ -435,17 +436,17 @@
 			Util.log('Paywall Bypassed.');
 		},
 
-		waitAndBypass: function(imp) {
+		waitAndBypass(imp) {
 			if (imp.wait) {
-				var waitType = typeof imp.wait;
-				if(waitType === 'number') {
+				let waitType = typeof imp.wait;
+				if (waitType === 'number') {
 					setTimeout(App.bypass(imp), imp.wait || 0);
 				} else {
-					var wait = waitType === 'function' ? imp.wait() : imp.wait;
+					let wait = waitType === 'function' ? imp.wait() : imp.wait;
 					waitForElems({
 						sel: wait,
 						stop: true,
-						onmatch: function() {
+						onmatch() {
 							Util.log('Condition fulfilled, bypassing');
 							App.bypass(imp);
 						}
@@ -456,15 +457,15 @@
 			}
 		},
 
-		start: function(imps) {
+		start(imps) {
 			Util.log('starting...');
-			var success = imps.some(function(imp) {
+			let success = imps.some(imp => {
 				if (imp.match && (new RegExp(imp.match, 'i')).test(W.location.href)) {
 					App.currentImpName = imp.name;
 					if (W.BM_MODE) {
 						App.waitAndBypass(imp);
 					} else {
-						var menuCommandText;
+						let menuCommandText;
 						if (!Config.load().blacklist[imp.name]) {
 							menuCommandText = 'Disable ' + SCRIPT_NAME + ' for ' + imp.name;
 							App.waitAndBypass(imp);
@@ -472,7 +473,7 @@
 							menuCommandText = 'Enable ' + SCRIPT_NAME + ' for ' + imp.name;
 							Util.log(imp.name + ' blacklisted');
 						}
-						GM_registerMenuCommand(menuCommandText, function() {
+						GM_registerMenuCommand(menuCommandText, () => {
 							Config.toggleBlacklist(imp.name);
 							location.reload();
 						});

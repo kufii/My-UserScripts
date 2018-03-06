@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SoundCloud Toggle Continuous Play and Autoplay
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.9
+// @version      1.1
 // @description  Adds options to toggle continuous play and autoplay in SoundCloud
 // @author       Adrien Pyke
 // @match        *://soundcloud.com/*
@@ -11,26 +11,25 @@
 // @grant        GM_setValue
 // ==/UserScript==
 
-(function() {
+(() => {
 	'use strict';
 
-	var SCRIPT_NAME = 'SoundCloud Toggle Continuous Play and Autoplay';
+	let SCRIPT_NAME = 'SoundCloud Toggle Continuous Play and Autoplay';
 
-	var Util = {
-		log: function() {
-			var args = [].slice.call(arguments);
-			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
-			console.log.apply(console, args);
+	const Util = {
+		log(...args) {
+			args.unshift(`%c${SCRIPT_NAME}:`, 'font-weight: bold;color: #233c7b;');
+			console.log(...args);
 		},
-		q: function(query, context) {
-			return (context || document).querySelector(query);
+		q(query, context = document) {
+			return context.querySelector(query);
 		},
-		qq: function(query, context) {
-			return [].slice.call((context || document).querySelectorAll(query));
+		qq(query, context = document) {
+			return Array.from(context.querySelectorAll(query));
 		},
-		createCheckbox: function(lbl) {
-			var label = document.createElement('label');
-			var checkbox = document.createElement('input');
+		createCheckbox(lbl) {
+			let label = document.createElement('label');
+			let checkbox = document.createElement('input');
 			checkbox.setAttribute('type', 'checkbox');
 			label.appendChild(checkbox);
 			label.appendChild(document.createTextNode(lbl));
@@ -38,18 +37,18 @@
 		}
 	};
 
-	var Config = {
-		load: function() {
-			var defaults = {
+	const Config = {
+		load() {
+			let defaults = {
 				autoplay: false,
 				continuousPlay: false
 			};
 
-			var cfg = GM_getValue('cfg');
+			let cfg = GM_getValue('cfg');
 			if (!cfg) return defaults;
 
 			cfg = JSON.parse(cfg);
-			for (var property in defaults) {
+			for (let property in defaults) {
 				if (defaults.hasOwnProperty(property)) {
 					if (!cfg[property]) {
 						cfg[property] = defaults[property];
@@ -60,13 +59,13 @@
 			return cfg;
 		},
 
-		save: function(cfg) {
+		save(cfg) {
 			GM_setValue('cfg', JSON.stringify(cfg));
 		},
 
-		setup: function() {
-			var createContainer = function() {
-				var div = document.createElement('div');
+		setup() {
+			const createContainer = function() {
+				let div = document.createElement('div');
 				div.style.backgroundColor = 'white';
 				div.style.padding = '5px';
 				div.style.border = '1px solid black';
@@ -77,40 +76,40 @@
 				return div;
 			};
 
-			var createButton = function(text, onclick) {
-				var button = document.createElement('button');
+			const createButton = function(text, onclick) {
+				let button = document.createElement('button');
 				button.style.margin = '2px';
 				button.textContent = text;
 				button.onclick = onclick;
 				return button;
 			};
 
-			var createCheckbox = function(lbl, checked) {
-				var label = Util.createCheckbox(lbl);
-				var check = Util.q('input', label);
+			const createCheckbox = function(lbl, checked) {
+				let label = Util.createCheckbox(lbl);
+				let check = Util.q('input', label);
 				check.checked = checked;
 				return label;
 			};
 
-			var createLineBreak = function() {
+			const createLineBreak = function() {
 				return document.createElement('br');
 			};
 
-			var init = function(cfg) {
-				var div = createContainer();
+			const init = function(cfg) {
+				let div = createContainer();
 
-				var autoplay = createCheckbox('Autoplay', cfg.autoplay);
+				let autoplay = createCheckbox('Autoplay', cfg.autoplay);
 				div.appendChild(autoplay);
 				div.appendChild(createLineBreak());
 
-				div.appendChild(createButton('Save', function(e) {
+				div.appendChild(createButton('Save', () => {
 					cfg = Config.load();
 					cfg.autoplay = Util.q('input', autoplay).checked;
 					Config.save(cfg);
 					div.remove();
 				}));
 
-				div.appendChild(createButton('Cancel', function(e) {
+				div.appendChild(createButton('Cancel', () => {
 					div.remove();
 				}));
 
@@ -122,37 +121,37 @@
 	GM_registerMenuCommand('SoundCloud Autoplay', Config.setup);
 
 
-	var App = {
+	const App = {
 		playButton: Util.q('.playControl'),
-		isPlaying: function(e) {
+		isPlaying() {
 			return App.playButton.classList.contains('playing');
 		},
-		pause: function() {
+		pause() {
 			if (App.isPlaying()) {
 				App.playButton.click();
 			}
 		},
-		play: function() {
+		play() {
 			if (!App.isPlaying()) {
 				App.playButton.click();
 			}
 		},
-		getPlaying: function() {
-			var link = Util.q('a.playbackSoundBadge__title');
+		getPlaying() {
+			let link = Util.q('a.playbackSoundBadge__title');
 			if (link) {
 				return link.href;
 			}
 			return null;
 		},
-		addAutoplayControl: function() {
-			var container = Util.q('.playControls__inner');
-			var label = Util.createCheckbox('Autoplay');
+		addAutoplayControl() {
+			let container = Util.q('.playControls__inner');
+			let label = Util.createCheckbox('Autoplay');
 			label.setAttribute('style', 'position: absolute; bottom: 0; right: 0; z-index: 1;');
 			container.appendChild(label);
-			var check = Util.q('input', label);
+			let check = Util.q('input', label);
 			check.checked = Config.load().continuousPlay;
-			check.onchange = function(e) {
-				var cfg = Config.load();
+			check.onchange = () => {
+				let cfg = Config.load();
 				cfg.continuousPlay = check.checked;
 				Config.save(cfg);
 			};
@@ -165,16 +164,16 @@
 		App.pause();
 	}
 
-	var autoplayControl = App.addAutoplayControl();
-	var current = App.getPlaying();
-	var timeout;
+	let autoplayControl = App.addAutoplayControl();
+	let current = App.getPlaying();
+	let timeout;
 	// every time the song changes
 	waitForElems({
 		context: Util.q('.playControls__soundBadge'),
-		onchange: function() {
-			var next = App.getPlaying();
+		onchange() {
+			let next = App.getPlaying();
 			if (!autoplayControl.checked && current && next !== current) {
-				timeout = setTimeout(function() {
+				timeout = setTimeout(() => {
 					Util.log('Pausing...');
 					App.pause();
 				}, 0);
@@ -186,8 +185,8 @@
 	// override the click event for elements that shouldn't trigger a pause
 	waitForElems({
 		sel: '.skipControl, .playButton, .compactTrackList__item, .fullListenHero__foreground',
-		onmatch: function(elem) {
-			elem.addEventListener('click', function(e) {
+		onmatch(elem) {
+			elem.addEventListener('click', () => {
 				if (timeout) {
 					clearTimeout(timeout);
 					timeout = null;
@@ -199,9 +198,9 @@
 	// waveforms need to be handled differently
 	waitForElems({
 		sel: '.waveform__layer',
-		onmatch: function(elem) {
-			elem.addEventListener('click', function(e) {
-				setTimeout(function() {
+		onmatch(elem) {
+			elem.addEventListener('click', () => {
+				setTimeout(() => {
 					if (!App.isPlaying()) {
 						Util.log('Playing via Waveform');
 						App.play();
@@ -214,7 +213,7 @@
 	// fix for buttons constantly showing buffering
 	waitForElems({
 		sel: '.sc-button-buffering',
-		onmatch: function(button) {
+		onmatch(button) {
 			if (!App.isPlaying()) {
 				button.classList.remove('sc-button-buffering');
 				button.setAttribute('title', 'Play');

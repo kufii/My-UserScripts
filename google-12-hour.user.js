@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Google, 12 hour date-time picker
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.1
+// @version      1.1
 // @description  Switches the date time picker on google searches to a 12 hour clock
 // @author       Adrien Pyke
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/.*$/
@@ -12,20 +12,20 @@
 (function() {
 	'use strict';
 
-	var Util = {
-		q: function(query, context) {
-			return (context || document).querySelector(query);
+	const Util = {
+		q(query, context = document) {
+			return context.querySelector(query);
 		},
-		qq: function(query, context) {
-			return [].slice.call((context || document).querySelectorAll(query));
+		qq(query, context = document) {
+			return Array.from(context.querySelectorAll(query));
 		}
 	};
 
 	waitForElems({
 		sel: '.tdu-datetime-picker > div.tdu-t > div:nth-child(1) > div > ul',
-		onmatch: function(hourSelector) {
-			Util.qq('li', hourSelector).forEach(function(hour) {
-				var value = parseInt(hour.dataset.value);
+		onmatch(hourSelector) {
+			Util.qq('li', hourSelector).forEach(hour => {
+				let value = parseInt(hour.dataset.value);
 				if (value === 0) {
 					hour.textContent = 'AM 12';
 				} else if (value === 12) {
@@ -36,4 +36,4 @@
 			});
 		}
 	});
-})();
+}());
