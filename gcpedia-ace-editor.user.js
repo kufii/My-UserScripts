@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GCPedia Ace Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.9
+// @version      1.2
 // @description  Use the Ace Editor when editing things on GCPedia
 // @author       Adrien Pyke
 // @match        http://www.gcpedia.gc.ca/*
@@ -12,66 +12,65 @@
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
-(function() {
+(() => {
 	'use strict';
 
-	var SCRIPT_NAME = 'GCPedia Ace Editor';
+	const SCRIPT_NAME = 'GCPedia Ace Editor';
 
-	var Util = {
-		log: function() {
-			var args = [].slice.call(arguments);
-			args.unshift('%c' + SCRIPT_NAME + ':', 'font-weight: bold;color: #233c7b;');
-			console.log.apply(console, args);
+	const Util = {
+		log(...args) {
+			args.unshift(`%c${SCRIPT_NAME}:`, 'font-weight: bold;color: #233c7b;');
+			console.log(...args);
 		},
-		q: function(query, context) {
-			return (context || document).querySelector(query);
+		q(query, context = document) {
+			return context.querySelector(query);
 		},
-		qq: function(query, context) {
-			return [].slice.call((context || document).querySelectorAll(query));
+		qq(query, context = document) {
+			return Array.from(context.querySelectorAll(query));
 		},
-		addScript: function(src, onload) {
-			var s = document.createElement('script');
+		addScript(src, onload) {
+			let s = document.createElement('script');
 			s.onload = onload;
 			s.src = src;
 			document.body.appendChild(s);
 		},
-		addScriptText: function(code, onload) {
-			var s = document.createElement('script');
+		addScriptText(code, onload) {
+			let s = document.createElement('script');
 			s.onload = onload;
 			s.textContent = code;
 			document.body.appendChild(s);
 		},
-		appendStyle: function(css) {
-			var out = '';
-			for (var selector in css) {
-				out += selector + '{';
-				for (var rule in css[selector]) {
-					out += rule + ':' + css[selector][rule] + '!important;';
+		appendStyle(css) {
+			let out = '';
+			for (let selector in css) {
+				out += `${selector}{`;
+				for (let rule in css[selector]) {
+					out += `${rule}:${css[selector][rule]}!important;`;
 				}
 				out += '}';
 			}
 
-			var style = document.createElement('style');
+			let style = document.createElement('style');
 			style.type = 'text/css';
 			style.appendChild(document.createTextNode(out));
 			document.head.appendChild(style);
 		},
-		appendAfter: function(elem, elemToAppend) {
+		appendAfter(elem, elemToAppend) {
 			elem.parentNode.insertBefore(elemToAppend, elem.nextElementSibling);
 		}
 	};
 
-	var Config = {
-		load: function() {
-			var defaults = {
+	const Config = {
+		load() {
+			let defaults = {
 				theme: 'monokai'
 			};
 
-			var cfg = GM_getValue('cfg');
+			let cfg = GM_getValue('cfg');
 			if (!cfg) return defaults;
 
 			cfg = JSON.parse(cfg);
-			for (var property in defaults) {
+			for (let property in defaults) {
 				if (defaults.hasOwnProperty(property)) {
 					if (!cfg[property]) {
 						cfg[property] = defaults[property];
@@ -82,13 +81,13 @@
 			return cfg;
 		},
 
-		save: function(cfg) {
+		save(cfg) {
 			GM_setValue('cfg', JSON.stringify(cfg));
 		},
 
-		setup: function(editor) {
-			var createContainer = function() {
-				var div = document.createElement('div');
+		setup(editor) {
+			const createContainer = function() {
+				let div = document.createElement('div');
 				div.style.backgroundColor = 'white';
 				div.style.padding = '5px';
 				div.style.border = '1px solid black';
@@ -99,16 +98,16 @@
 				return div;
 			};
 
-			var createSelect = function(label, options, value) {
-				var select = document.createElement('select');
+			const createSelect = function(label, options, value) {
+				let select = document.createElement('select');
 				select.style.margin = '2px';
-				var optgroup = document.createElement('optgroup');
+				let optgroup = document.createElement('optgroup');
 				if (label) {
 					optgroup.setAttribute('label', label);
 				}
 				select.appendChild(optgroup);
-				options.forEach(function(opt) {
-					var option = document.createElement('option');
+				options.forEach(opt => {
+					let option = document.createElement('option');
 					option.setAttribute('value', opt);
 					option.textContent = opt;
 					optgroup.appendChild(option);
@@ -117,83 +116,83 @@
 				return select;
 			};
 
-			var createButton = function(text, onclick) {
-				var button = document.createElement('button');
+			const createButton = function(text, onclick) {
+				let button = document.createElement('button');
 				button.style.margin = '2px';
 				button.textContent = text;
 				button.onclick = onclick;
 				return button;
 			};
 
-			var createLabel = function(label) {
-				var lbl = document.createElement('span');
+			const createLabel = function(label) {
+				let lbl = document.createElement('span');
 				lbl.textContent = label;
 				return lbl;
 			};
 
-			var createLineBreak = function() {
+			const createLineBreak = function() {
 				return document.createElement('br');
 			};
 
-			var init = function(cfg) {
-				var div = createContainer();
+			const init = function(cfg) {
+				let div = createContainer();
 
-				var theme = createSelect('Theme', [
-						'ambiance',
-						'chaos',
-						'chrome',
-						'clouds',
-						'clouds_midnight',
-						'cobalt',
-						'crimson_editor',
-						'dawn',
-						'dreamweaver',
-						'eclipse',
-						'github',
-						'gob',
-						'gruvbox',
-						'idle_fingers',
-						'iplastic',
-						'katzenmilch',
-						'kr_theme',
-						'kuroir',
-						'merbivore',
-						'merbivore_soft',
-						'mono_industrial',
-						'monokai',
-						'pastel_on_dark',
-						'solarized_dark',
-						'solarized_light',
-						'sqlserver',
-						'terminal',
-						'textmate',
-						'tomorrow',
-						'tomorrow_night',
-						'tomorrow_night_blue',
-						'tomorrow_night_bright',
-						'tomorrow_night_eighties',
-						'twilight',
-						'vibrant_ink',
-						'xcode'
-					], cfg.theme);
+				let theme = createSelect('Theme', [
+					'ambiance',
+					'chaos',
+					'chrome',
+					'clouds',
+					'clouds_midnight',
+					'cobalt',
+					'crimson_editor',
+					'dawn',
+					'dreamweaver',
+					'eclipse',
+					'github',
+					'gob',
+					'gruvbox',
+					'idle_fingers',
+					'iplastic',
+					'katzenmilch',
+					'kr_theme',
+					'kuroir',
+					'merbivore',
+					'merbivore_soft',
+					'mono_industrial',
+					'monokai',
+					'pastel_on_dark',
+					'solarized_dark',
+					'solarized_light',
+					'sqlserver',
+					'terminal',
+					'textmate',
+					'tomorrow',
+					'tomorrow_night',
+					'tomorrow_night_blue',
+					'tomorrow_night_bright',
+					'tomorrow_night_eighties',
+					'twilight',
+					'vibrant_ink',
+					'xcode'
+				], cfg.theme);
 				div.appendChild(createLabel('Theme: '));
 				div.appendChild(theme);
 				div.appendChild(createLineBreak());
 
-				theme.onchange = function() {
-					editor.setTheme('ace/theme/' + theme.value);
+				theme.onchange = () => {
+					editor.setTheme(`ace/theme/${theme.value}`);
 				};
 
-				div.appendChild(createButton('Save', function(e) {
-					var settings = {
+				div.appendChild(createButton('Save', () => {
+					let settings = {
 						theme: theme.value
 					};
 					Config.save(settings);
 					div.remove();
 				}));
 
-				div.appendChild(createButton('Cancel', function(e) {
-					editor.setTheme('ace/theme/' + cfg.theme);
+				div.appendChild(createButton('Cancel', () => {
+					editor.setTheme(`ace/theme/${cfg.theme}`);
 					div.remove();
 				}));
 
@@ -206,8 +205,8 @@
 	waitForElems({
 		sel: '#wpTextbox1',
 		stop: true,
-		onmatch: function(textArea) {
-			var wrapper = document.createElement('div');
+		onmatch(textArea) {
+			let wrapper = document.createElement('div');
 			wrapper.id = 'ace';
 			wrapper.textContent = textArea.value;
 
@@ -221,21 +220,21 @@
 					display: 'none'
 				}
 			});
-			Util.addScript('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js', function() {
-				var editor = unsafeWindow.ace.edit('ace');
-				editor.setTheme('ace/theme/' + Config.load().theme);
+			Util.addScript('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js', () => {
+				let editor = unsafeWindow.ace.edit('ace');
+				editor.setTheme(`ace/theme/${Config.load().theme}`);
 				editor.getSession().setMode('ace/mode/html');
 				editor.resize();
 
 				unsafeWindow.aceEditor = editor;
 				unsafeWindow.originalTextArea = textArea;
 
-				Util.addScriptText("aceEditor.getSession().on('change', function(){originalTextArea.value = aceEditor.getValue()})");
+				Util.addScriptText('aceEditor.getSession().on(\'change\', function(){originalTextArea.value = aceEditor.getValue()})');
 
-				GM_registerMenuCommand('GCPedia Ace Editor Settings', function() {
+				GM_registerMenuCommand('GCPedia Ace Editor Settings', () => {
 					Config.setup(editor);
 				});
 			});
 		}
 	});
-}());
+})();
