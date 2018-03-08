@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Greasy Fork - Change Default Script Sort
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.2
+// @version      1.2.3
 // @description  Change default script sort on GreasyFork
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/*/users/*
@@ -16,6 +16,9 @@
 	'use strict';
 
 	const Util = {
+		q(query, context = document) {
+			return context.querySelector(query);
+		},
 		getQueryParameter(name, url = window.location.href) {
 			name = name.replace(/[[\]]/g, '\\$&');
 			let regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
@@ -24,7 +27,6 @@
 			if (!results[2]) return '';
 			return decodeURIComponent(results[2].replace(/\+/g, ' '));
 		},
-
 		setQueryParameter(key, value, url = window.location.href) {
 			let re = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'gi'),
 				hash;
@@ -48,12 +50,41 @@
 	};
 
 	const Config = {
+		commonValues: [
+			{ value: 'daily-installs', text: 'Daily installs' },
+			{ value: 'total_installs', text: 'Total installs' },
+			{ value: 'ratings', text: 'Ratings' },
+			{ value: 'created', text: 'Created date' },
+			{ value: 'updated', text: 'Updated date' },
+			{ value: 'name', text: 'Name' }
+		],
+		get settings() {
+			return [
+				{
+					key: 'all',
+					label: 'All Scripts Sort',
+					default: 'daily-installs',
+					values: Config.commonValues
+				},
+				{
+					key: 'search',
+					label: 'Search Sort',
+					default: 'relevance',
+					values: [{ value: 'relevance', text: 'Relevance' }].concat(Config.commonValues)
+				},
+				{
+					key: 'user',
+					label: 'User Profile Sort',
+					default: 'daily-installs',
+					values: Config.commonValues
+				}
+			];
+		},
 		load() {
-			let defaults = {
-				all: 'daily-installs',
-				search: 'relevance',
-				user: 'daily-installs'
-			};
+			let defaults = {};
+			Config.settings.forEach(setting => {
+				defaults[setting.key] = setting.default;
+			});
 
 			let cfg = GM_getValue('cfg');
 			if (!cfg) return defaults;
@@ -85,12 +116,12 @@
 				return div;
 			};
 
-			const createSelect = function(label, options, value) {
+			const createSelect = function(lbl, options, value) {
 				let select = document.createElement('select');
 				select.style.margin = '2px';
 				let optgroup = document.createElement('optgroup');
-				if (label) {
-					optgroup.setAttribute('label', label);
+				if (lbl) {
+					optgroup.setAttribute('label', lbl);
 				}
 				select.appendChild(optgroup);
 				options.forEach(opt => {
@@ -122,51 +153,26 @@
 			};
 
 			const init = function(cfg) {
+				let controls = {};
+
 				let div = createContainer();
+				Config.settings.forEach(setting => {
+					let value = cfg[setting.key];
 
-				let all = createSelect('All Scripts Sort', [
-					{ value: 'daily-installs', text: 'Daily installs' },
-					{ value: 'total_installs', text: 'Total installs' },
-					{ value: 'ratings', text: 'Ratings' },
-					{ value: 'created', text: 'Created date' },
-					{ value: 'updated', text: 'Updated date' },
-					{ value: 'name', text: 'Name' }
-				], cfg.all);
-				div.appendChild(createLabel('All Scripts Sort: '));
-				div.appendChild(all);
-				div.appendChild(createLineBreak());
+					let control = createSelect(setting.label, setting.values, value);
+					controls[setting.key] = control;
 
-				let search = createSelect('Search Sort', [
-					{ value: 'relevance', text: 'Relevance' },
-					{ value: 'daily_installs', text: 'Daily installs' },
-					{ value: 'total_installs', text: 'Total installs' },
-					{ value: 'ratings', text: 'Ratings' },
-					{ value: 'created', text: 'Created date' },
-					{ value: 'updated', text: 'Updated date' },
-					{ value: 'name', text: 'Name' }
-				], cfg.search);
-				div.appendChild(createLabel('Search Sort: '));
-				div.appendChild(search);
-				div.appendChild(createLineBreak());
-
-				let user = createSelect('User Profile Sort', [
-					{ value: 'daily-installs', text: 'Daily installs' },
-					{ value: 'total_installs', text: 'Total installs' },
-					{ value: 'ratings', text: 'Ratings' },
-					{ value: 'created', text: 'Created date' },
-					{ value: 'updated', text: 'Updated date' },
-					{ value: 'name', text: 'Name' }
-				], cfg.user);
-				div.appendChild(createLabel('User Profile Sort: '));
-				div.appendChild(user);
-				div.appendChild(createLineBreak());
+					div.appendChild(createLabel(`${setting.label}: `));
+					div.appendChild(control);
+					div.appendChild(createLineBreak());
+				});
 
 				div.appendChild(createButton('Save', () => {
-					let settings = {
-						all: all.value,
-						search: search.value,
-						user: user.value
-					};
+					let settings = {};
+					Config.settings.forEach(setting => {
+						let control = controls[setting.key];
+						settings[setting.key] = control.value;
+					});
 					Config.save(settings);
 					div.remove();
 				}));
@@ -188,7 +194,7 @@
 	let onProfile = location.href.match(/^https?:\/\/greasyfork\.org\/[^/]+\/users\/[^/]+?(?:\?.*)?$/i);
 
 	document.addEventListener('DOMContentLoaded', () => {
-		let defaultSort = document.querySelector('#script-list-sort > ul > li:nth-child(1) > a');
+		let defaultSort = Util.q('#script-list-sort > ul > li:nth-child(1) > a');
 		if (defaultSort) {
 			if (onSearch) {
 				defaultSort.href = Util.setQueryParameter('sort', 'relevance', defaultSort.href);
