@@ -134,7 +134,7 @@
 						if (ret.onchange) {
 							let control = controls[setting.key];
 							let value = setting.type === 'bool' ? control.checked : control.value;
-							onchange(setting.key, value);
+							ret.onchange(setting.key, value);
 						}
 					});
 
