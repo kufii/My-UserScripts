@@ -2,6 +2,19 @@
 	'use strict';
 
 	window.GM_config = function(settings, storage = 'cfg') {
+		settings = settings.forEach(setting => {
+			if (setting.type === 'dropdown') {
+				setting.values = setting.values.map(val => {
+					if (typeof val.text === 'undefined') {
+						let value = val.value;
+						if (typeof value === 'undefined') value = val;
+						return { value, text: value };
+					}
+					return val;
+				});
+			}
+		});
+
 		const load = function() {
 			let defaults = {};
 			settings.forEach(setting => {
