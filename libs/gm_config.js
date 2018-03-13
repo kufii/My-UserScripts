@@ -113,12 +113,12 @@
 				});
 
 				div.appendChild(createButton('Save', () => {
-					let settings = {};
+					let newSettings = {};
 					settings.forEach(setting => {
 						let control = controls[setting.key];
-						settings[setting.key] = setting.type === 'bool' ? control.checked : control.value;
+						newSettings[setting.key] = setting.type === 'bool' ? control.checked : control.value;
 					});
-					save(settings);
+					save(newSettings);
 					div.remove();
 				}));
 

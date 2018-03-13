@@ -9,6 +9,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/ade78c40d34a8abccfe94906d85938b8f07b3c76/libs/gm_config.js
 // @run-at       document-start
 // ==/UserScript==
 
@@ -49,144 +50,37 @@
 		}
 	};
 
-	const Config = {
-		commonValues: [
-			{ value: 'daily-installs', text: 'Daily installs' },
-			{ value: 'total_installs', text: 'Total installs' },
-			{ value: 'ratings', text: 'Ratings' },
-			{ value: 'created', text: 'Created date' },
-			{ value: 'updated', text: 'Updated date' },
-			{ value: 'name', text: 'Name' }
-		],
-		get settings() {
-			return [
-				{
-					key: 'all',
-					label: 'All Scripts Sort',
-					default: 'daily-installs',
-					values: Config.commonValues
-				},
-				{
-					key: 'search',
-					label: 'Search Sort',
-					default: 'relevance',
-					values: [{ value: 'relevance', text: 'Relevance' }].concat(Config.commonValues)
-				},
-				{
-					key: 'user',
-					label: 'User Profile Sort',
-					default: 'daily-installs',
-					values: Config.commonValues
-				}
-			];
+	const commonValues = [
+		{ value: 'daily-installs', text: 'Daily installs' },
+		{ value: 'total_installs', text: 'Total installs' },
+		{ value: 'ratings', text: 'Ratings' },
+		{ value: 'created', text: 'Created date' },
+		{ value: 'updated', text: 'Updated date' },
+		{ value: 'name', text: 'Name' }
+	];
+	const Config = GM_config([
+		{
+			key: 'all',
+			label: 'All Scripts Sort',
+			default: 'daily-installs',
+			type: 'dropdown',
+			values: commonValues
 		},
-		load() {
-			let defaults = {};
-			Config.settings.forEach(setting => {
-				defaults[setting.key] = setting.default;
-			});
-
-			let cfg = GM_getValue('cfg');
-			if (!cfg) return defaults;
-
-			cfg = JSON.parse(cfg);
-			Object.entries(defaults).forEach(([key, value]) => {
-				if (typeof cfg[key] === 'undefined') {
-					cfg[key] = value;
-				}
-			});
-
-			return cfg;
+		{
+			key: 'search',
+			label: 'Search Sort',
+			default: 'relevance',
+			type: 'dropdown',
+			values: [{ value: 'relevance', text: 'Relevance' }].concat(commonValues)
 		},
-
-		save(cfg) {
-			GM_setValue('cfg', JSON.stringify(cfg));
-		},
-
-		setup() {
-			const createContainer = function() {
-				let div = document.createElement('div');
-				div.style.backgroundColor = 'white';
-				div.style.padding = '5px';
-				div.style.border = '1px solid black';
-				div.style.position = 'fixed';
-				div.style.top = '0';
-				div.style.right = '0';
-				div.style.zIndex = 99999;
-				return div;
-			};
-
-			const createSelect = function(lbl, options, value) {
-				let select = document.createElement('select');
-				select.style.margin = '2px';
-				let optgroup = document.createElement('optgroup');
-				if (lbl) {
-					optgroup.setAttribute('label', lbl);
-				}
-				select.appendChild(optgroup);
-				options.forEach(opt => {
-					let option = document.createElement('option');
-					option.setAttribute('value', opt.value);
-					option.textContent = opt.text;
-					optgroup.appendChild(option);
-				});
-				select.value = value;
-				return select;
-			};
-
-			const createButton = function(text, onclick) {
-				let button = document.createElement('button');
-				button.style.margin = '2px';
-				button.textContent = text;
-				button.onclick = onclick;
-				return button;
-			};
-
-			const createLabel = function(label) {
-				let lbl = document.createElement('span');
-				lbl.textContent = label;
-				return lbl;
-			};
-
-			const createLineBreak = function() {
-				return document.createElement('br');
-			};
-
-			const init = function(cfg) {
-				let controls = {};
-
-				let div = createContainer();
-				Config.settings.forEach(setting => {
-					let value = cfg[setting.key];
-
-					let control = createSelect(setting.label, setting.values, value);
-					controls[setting.key] = control;
-
-					div.appendChild(createLabel(`${setting.label}: `));
-					div.appendChild(control);
-					div.appendChild(createLineBreak());
-				});
-
-				div.appendChild(createButton('Save', () => {
-					let settings = {};
-					Config.settings.forEach(setting => {
-						let control = controls[setting.key];
-						settings[setting.key] = control.value;
-					});
-					Config.save(settings);
-					div.remove();
-				}));
-
-				div.appendChild(createButton('Cancel', () => {
-					div.remove();
-				}));
-
-				document.body.appendChild(div);
-			};
-			init(Config.load());
+		{
+			key: 'user',
+			label: 'User Profile Sort',
+			default: 'daily-installs',
+			type: 'dropdown',
+			values: commonValues
 		}
-	};
-
+	]);
 	GM_registerMenuCommand('GreasyFork Sort Settings', Config.setup);
 
 	let onScripts = location.href.match(/^https?:\/\/greasyfork\.org\/[^/]+\/scripts\/?(?:\?.*)?$/i);
