@@ -43,7 +43,7 @@ const Config = GM_config([
 ### Parameters:
 
 **`settings`**: An array of settings objects  
-**`storage`**: Optional. Defines what variable the settings will be storeg under. Default is `cfg`.
+**`storage`**: Optional. Defines what variable the settings will be stored under. Default is `cfg`.
 
 ### Settings Objects:
 
