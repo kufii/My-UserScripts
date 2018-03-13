@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         GCPedia Ace Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.3
+// @version      1.2.4
 // @description  Use the Ace Editor when editing things on GCPedia
 // @author       Adrien Pyke
 // @match        http://www.gcpedia.gc.ca/*
 // @grant        unsafeWindow
+// @grant        GM_addStyle
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
@@ -50,11 +51,7 @@
 				}
 				out += '}';
 			}
-
-			let style = document.createElement('style');
-			style.type = 'text/css';
-			style.appendChild(document.createTextNode(out));
-			document.head.appendChild(style);
+			GM_addStyle(out);
 		},
 		appendAfter(elem, elemToAppend) {
 			elem.parentNode.insertBefore(elemToAppend, elem.nextElementSibling);
