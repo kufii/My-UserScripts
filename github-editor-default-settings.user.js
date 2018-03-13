@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Editor - Change Default Settings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.1
+// @version      1.1.2
 // @description  change default settings for the github editor
 // @author       Adrien Pyke
 // @match        *://github.com/*/new/*
@@ -9,112 +9,40 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/44e3f88422a23c7eef2f7bf46f609eaf7c4019c2/libs/gm_config.js
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
 (() => {
 	'use strict';
 
-	const loadConfig = function() {
-		let defaults = {
-			indentMode: 'tab',
-			indentWidth: 4,
-			wrapMode: 'off'
-		};
-
-		let cfg = GM_getValue('cfg');
-		if (!cfg) return defaults;
-
-		return JSON.parse(cfg);
-	};
-
-	const saveConfig = function(cfg) {
-		GM_setValue('cfg', JSON.stringify(cfg));
-	};
-
-	const setup = function() {
-		const createContainer = function() {
-			let div = document.createElement('div');
-			div.style.backgroundColor = 'white';
-			div.style.padding = '5px';
-			div.style.border = '1px solid black';
-			div.style.position = 'fixed';
-			div.style.top = '0';
-			div.style.right = '0';
-			div.style.zIndex = 99999;
-			return div;
-		};
-
-		const createSelect = function(label, options, value) {
-			let select = document.createElement('select');
-			select.style.margin = '2px';
-			let optgroup = document.createElement('optgroup');
-			if (label) {
-				optgroup.setAttribute('label', label);
-			}
-			select.appendChild(optgroup);
-			options.forEach(opt => {
-				let option = document.createElement('option');
-				option.setAttribute('value', opt.value);
-				option.textContent = opt.text;
-				optgroup.appendChild(option);
-			});
-			select.value = value;
-			return select;
-		};
-
-		const createButton = function(text, onclick) {
-			let button = document.createElement('button');
-			button.style.margin = '2px';
-			button.textContent = text;
-			button.onclick = onclick;
-			return button;
-		};
-
-		const createLineBreak = function() {
-			return document.createElement('br');
-		};
-
-		const init = function(cfg) {
-			let div = createContainer();
-
-			let indentMode = createSelect('Indent mode', [
+	const Config = GM_config([
+		{
+			key: 'indentMode',
+			label: 'Indent mode',
+			default: 'tab',
+			type: 'dropdown',
+			values: [
 				{ value: 'space', text: 'Spaces' },
 				{ value: 'tab', text: 'Tabs' }
-			], cfg.indentMode);
-			div.appendChild(indentMode);
-
-			let indentWidth = createSelect('Indent size', [
-				{ value: 2, text: 2 },
-				{ value: 4, text: 4 },
-				{ value: 8, text: 8 }
-			], cfg.indentWidth);
-			div.appendChild(indentWidth);
-
-			let wrapMode = createSelect('Line wrap mode', [
+			]
+		}, {
+			key: 'indentWidth',
+			label: 'Indent size',
+			default: 4,
+			type: 'dropdown',
+			values: [2, 4, 8]
+		}, {
+			key: 'wrapMode',
+			label: 'Line wrap mode',
+			default: 'off',
+			type: 'dropdown',
+			values: [
 				{ value: 'off', text: 'No wrap' },
 				{ value: 'on', text: 'Soft wrap' }
-			], cfg.wrapMode);
-			div.appendChild(wrapMode);
-
-			div.appendChild(createLineBreak());
-
-			div.appendChild(createButton('Save', () => {
-				let settings = {
-					indentMode: indentMode.value,
-					indentWidth: indentWidth.value,
-					wrapMode: wrapMode.value
-				};
-				saveConfig(settings);
-				div.remove();
-			}));
-
-			div.appendChild(createButton('Cancel', () => div.remove()));
-
-			document.body.appendChild(div);
-		};
-		init(loadConfig());
-	};
+			]
+		}
+	]);
 
 	const updateDropdown = function(dropdown, value) {
 		dropdown.value = value;
@@ -143,8 +71,8 @@
 		}
 	};
 
-	GM_registerMenuCommand('GitHub Editor Settings', setup);
-	let settings = loadConfig();
+	GM_registerMenuCommand('GitHub Editor Settings', Config.setup);
+	let settings = Config.load();
 
 	waitForElems({
 		sel: '.CodeMirror-code',

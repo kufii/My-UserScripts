@@ -1,17 +1,18 @@
 // ==UserScript==
 // @name         Kitsu Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.2
+// @version      2.1.3
 // @description  Show MAL fansub info on Kitsu anime pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
 // @match        *://myanimelist.net/anime/*
-// @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // @grant        GM_xmlhttpRequest
-// @grant        GM_registerMenuCommand
+// @grant        GM_openInTab
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @grant        GM_openInTab
+// @grant        GM_registerMenuCommand
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/44e3f88422a23c7eef2f7bf46f609eaf7c4019c2/libs/gm_config.js
+// @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
 /*
@@ -156,342 +157,278 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		}
 	};
 
-	if (location.hostname === 'kitsu.io') {
-		const Config = {
-			load() {
-				let defaults = {
-					lang: null
-				};
-
-				let cfg = GM_getValue('cfg');
-				if (!cfg) return defaults;
-
-				cfg = JSON.parse(cfg);
-				Object.entries(defaults).forEach(([key, value]) => {
-					if (typeof cfg[key] === 'undefined') {
-						cfg[key] = value;
-					}
-				});
-
-				return cfg;
-			},
-
-			save(cfg) {
-				GM_setValue('cfg', JSON.stringify(cfg));
-			},
-
-			setup() {
-				const createContainer = function() {
-					let div = document.createElement('div');
-					div.style.backgroundColor = 'white';
-					div.style.padding = '5px';
-					div.style.border = '1px solid black';
-					div.style.position = 'fixed';
-					div.style.top = '0';
-					div.style.right = '0';
-					div.style.zIndex = 99999;
-					return div;
-				};
-
-				const createButton = function(text, onclick) {
-					let button = document.createElement('button');
-					button.style.margin = '2px';
-					button.textContent = text;
-					button.onclick = onclick;
-					return button;
-				};
-
-				const createTextbox = function(value, placeholder) {
-					let input = document.createElement('input');
-					input.value = value;
-					if (placeholder) {
-						input.setAttribute('placeholder', placeholder);
-					}
-					return input;
-				};
-
-				const createLabel = function(label) {
-					let lbl = document.createElement('span');
-					lbl.textContent = label;
-					return lbl;
-				};
-
-				const createLineBreak = function() {
-					return document.createElement('br');
-				};
-
-				const init = function(cfg) {
-					let div = createContainer();
-
-					let lang = createTextbox(cfg.lang, 'Languages (Comma Seperated)');
-					div.appendChild(createLabel('Languages: '));
-					div.appendChild(lang);
-					div.appendChild(createLineBreak());
-
-					div.appendChild(createButton('Save', () => {
-						let settings = {
-							lang: lang.value
-						};
-						Config.save(settings);
-						div.remove();
-					}));
-
-					div.appendChild(createButton('Cancel', () => {
-						div.remove();
-					}));
-
-					document.body.appendChild(div);
-				};
-				init(Config.load());
-			}
-		};
-		GM_registerMenuCommand('Kitsu Fansub Info Settings', Config.setup);
-
-		const App = {
-			fansubCache: {},
-			websiteCache: {},
-			votingTabs: {},
-			getKitsuInfo(id, cb) {
-				// Util.log('Loading Kitsu info...');
-				GM_xmlhttpRequest({
-					method: 'GET',
-					url: `${API}/anime?filter[slug]=${id}&include=mappings`,
-					headers: {
-						'Accept': 'application/vnd.api+json'
-					},
-					onload(response) {
-						Util.log('Loaded Kitsu info.');
-						cb(JSON.parse(response.responseText));
-					},
-					onerror() {
-						Util.log('Error loading Kitsu info.');
-					}
-				});
-			},
-			getMALFansubInfo(malid, cb) {
-				// Util.log('Loading MAL info...');
-				let url = `https://myanimelist.net/anime/${malid}`;
-				GM_xmlhttpRequest({
-					method: 'GET',
-					url,
-					onload(response) {
-						Util.log('Loaded MAL info.');
-						let tempDiv = document.createElement('div');
-						tempDiv.innerHTML = response.responseText;
-
-						let fansubDiv = Util.q('#inlineContent', tempDiv);
-						if (fansubDiv) {
-							fansubDiv = fansubDiv.parentNode;
-							let fansubs = Util.qq('.spaceit_pad', fansubDiv).filter(node => {
-								// only return nodes without an id
-								return !node.id;
-							}).map(node => {
-								let id = Util.q('a:nth-of-type(1)', node).dataset.groupId;
-								let link = Util.q('a:nth-of-type(4)', node);
-								let tagNode = Util.q('small:nth-of-type(1)', node);
-								let tag = (tagNode && tagNode.textContent !== '[]') ? tagNode.textContent : null;
-								let langNode = Util.q('small:nth-of-type(2)', node);
-								let lang = (langNode) ? langNode.textContent.substring(1, langNode.textContent.length - 1) : null;
-								let voteUpButton = Util.q(`#good${id}`, node);
-								let voteDownButton = Util.q(`#bad${id}`, node);
-								let approvalNode = Util.q('a:nth-of-type(5) > small', node);
-								let totalApproved = 0;
-								let totalVotes = 0;
-								let comments = [];
-								if (approvalNode) {
-									let match = approvalNode.textContent.match(/([0-9]+)[^0-9]*([0-9]+)/);
-									if (match) {
-										totalApproved = match[1];
-										totalVotes = match[2];
-										comments = Util.qq(`#fsgComments${id} > .spaceit`, node).map(comment => {
-											return {
-												text: comment.textContent,
-												approves: !comment.hasAttribute('style')
-											};
-										});
-									}
-								}
-								let value = 3;
-								if (voteUpButton.src.match('good-on.gif$')) {
-									value = 1;
-								} else if (voteDownButton.src.match('bad-on.gif$')) {
-									value = 2;
-								}
-								return {
-									id,
-									malid,
-									name: link.textContent,
-									url: `https://myanimelist.net${link.pathname}${link.search}`,
-									tag,
-									lang,
-									totalVotes,
-									totalApproved,
-									value,
-									comments
-								};
-							});
-							cb({
-								url: `${url}#inlineContent`,
-								fansubs
-							});
-						} else {
-							alert('Failed to get MAL Fansub info. Please make sure you\'re logged into myanimelist.net.');
-						}
-					},
-					onerror() {
-						Util.log('Error loading MAL info.');
-					}
-				});
-			},
-			getFansubs(id, cb) {
-				let self = this;
-				if (self.fansubCache[id]) {
-					cb(self.fansubCache[id]);
-					return;
+	const App = {
+		fansubCache: {},
+		websiteCache: {},
+		votingTabs: {},
+		getKitsuInfo(id, cb) {
+			// Util.log('Loading Kitsu info...');
+			GM_xmlhttpRequest({
+				method: 'GET',
+				url: `${API}/anime?filter[slug]=${id}&include=mappings`,
+				headers: {
+					'Accept': 'application/vnd.api+json'
+				},
+				onload(response) {
+					Util.log('Loaded Kitsu info.');
+					cb(JSON.parse(response.responseText));
+				},
+				onerror() {
+					Util.log('Error loading Kitsu info.');
 				}
-				self.getKitsuInfo(id, anime => {
-					let mal_id;
-					if (anime.included) {
-						for (let i = 0; i < anime.included.length; i++) {
-							if (anime.included[i].attributes.externalSite === 'myanimelist/anime') {
-								mal_id = anime.included[i].attributes.externalId;
+			});
+		},
+		getMALFansubInfo(malid, cb) {
+			// Util.log('Loading MAL info...');
+			let url = `https://myanimelist.net/anime/${malid}`;
+			GM_xmlhttpRequest({
+				method: 'GET',
+				url,
+				onload(response) {
+					Util.log('Loaded MAL info.');
+					let tempDiv = document.createElement('div');
+					tempDiv.innerHTML = response.responseText;
+
+					let fansubDiv = Util.q('#inlineContent', tempDiv);
+					if (fansubDiv) {
+						fansubDiv = fansubDiv.parentNode;
+						let fansubs = Util.qq('.spaceit_pad', fansubDiv).filter(node => {
+							// only return nodes without an id
+							return !node.id;
+						}).map(node => {
+							let id = Util.q('a:nth-of-type(1)', node).dataset.groupId;
+							let link = Util.q('a:nth-of-type(4)', node);
+							let tagNode = Util.q('small:nth-of-type(1)', node);
+							let tag = (tagNode && tagNode.textContent !== '[]') ? tagNode.textContent : null;
+							let langNode = Util.q('small:nth-of-type(2)', node);
+							let lang = (langNode) ? langNode.textContent.substring(1, langNode.textContent.length - 1) : null;
+							let voteUpButton = Util.q(`#good${id}`, node);
+							let voteDownButton = Util.q(`#bad${id}`, node);
+							let approvalNode = Util.q('a:nth-of-type(5) > small', node);
+							let totalApproved = 0;
+							let totalVotes = 0;
+							let comments = [];
+							if (approvalNode) {
+								let match = approvalNode.textContent.match(/([0-9]+)[^0-9]*([0-9]+)/);
+								if (match) {
+									totalApproved = match[1];
+									totalVotes = match[2];
+									comments = Util.qq(`#fsgComments${id} > .spaceit`, node).map(comment => {
+										return {
+											text: comment.textContent,
+											approves: !comment.hasAttribute('style')
+										};
+									});
+								}
 							}
-						}
-					}
-					if (mal_id) {
-						self.getMALFansubInfo(mal_id, fansubs => {
-							self.fansubCache[id] = fansubs;
-							cb(fansubs);
+							let value = 3;
+							if (voteUpButton.src.match('good-on.gif$')) {
+								value = 1;
+							} else if (voteDownButton.src.match('bad-on.gif$')) {
+								value = 2;
+							}
+							return {
+								id,
+								malid,
+								name: link.textContent,
+								url: `https://myanimelist.net${link.pathname}${link.search}`,
+								tag,
+								lang,
+								totalVotes,
+								totalApproved,
+								value,
+								comments
+							};
+						});
+						cb({
+							url: `${url}#inlineContent`,
+							fansubs
 						});
 					} else {
-						Util.log('MAL ID not found');
-						let section = Util.q(`#${SECTION_ID}`);
-						if (section) section.remove();
-
+						alert('Failed to get MAL Fansub info. Please make sure you\'re logged into myanimelist.net.');
 					}
-				});
-			},
-			getWebsite(id, cb) {
-				// Util.log('Getting website for ' + id);
-				let self = this;
-				if (self.websiteCache[id]) {
-					cb(self.websiteCache[id]);
-					return;
+				},
+				onerror() {
+					Util.log('Error loading MAL info.');
 				}
-				GM_xmlhttpRequest({
-					method: 'GET',
-					url: `https://myanimelist.net/fansub-groups.php?id=${id}`,
-					onload(response) {
-						let tempDiv = document.createElement('div');
-						tempDiv.innerHTML = response.responseText;
-						let link = Util.q('td.borderClass > a:first-of-type', tempDiv);
-						if (link && link.getAttribute('href')) {
-							// Util.log('Found website for id');
-							self.websiteCache[id] = link.href;
-							cb(link.href);
+			});
+		},
+		getFansubs(id, cb) {
+			let self = this;
+			if (self.fansubCache[id]) {
+				cb(self.fansubCache[id]);
+				return;
+			}
+			self.getKitsuInfo(id, anime => {
+				let mal_id;
+				if (anime.included) {
+					for (let i = 0; i < anime.included.length; i++) {
+						if (anime.included[i].attributes.externalSite === 'myanimelist/anime') {
+							mal_id = anime.included[i].attributes.externalId;
 						}
 					}
-				});
-			},
-			getFansubSection() {
-				let container = document.createElement('section');
-				container.classList.add('m-b-1');
-				container.id = SECTION_ID;
-
-				let title = document.createElement('h5');
-				title.id = 'fansubs-title';
-				title.textContent = 'Fansubs';
-				container.appendChild(title);
-
-				let list = document.createElement('ul');
-				list.classList.add('media-list');
-				list.classList.add('w-100');
-				container.appendChild(list);
-
-				return container;
-			},
-			vote(malid, groupid, value, comment) {
-				if (App.votingTabs.malid) {
-					App.votingTabs.malid.close();
-					App.votingTabs.malid = null;
 				}
-				let url = `https://myanimelist.net/anime/${malid}`;
-				url = Util.setQueryParameter('US_VOTE', true, url);
-				url = Util.setQueryParameter('groupid', groupid, url);
-				url = Util.setQueryParameter('value', value, url);
-				url = Util.setQueryParameter('comment', comment, url);
-				App.votingTabs.malid = GM_openInTab(url, true);
-				App.votingTabs.malid.onbeforeunload = () => {
-					App.votingTabs.malid = null;
-				};
-			},
-			getFansubOutput(fansub) {
-				let fansubDiv = document.createElement('div');
-				fansubDiv.classList.add('stream-item');
-				fansubDiv.classList.add('row');
+				if (mal_id) {
+					self.getMALFansubInfo(mal_id, fansubs => {
+						self.fansubCache[id] = fansubs;
+						cb(fansubs);
+					});
+				} else {
+					Util.log('MAL ID not found');
+					let section = Util.q(`#${SECTION_ID}`);
+					if (section) section.remove();
 
-				let streamWrap = document.createElement('div');
-				streamWrap.classList.add('stream-item-wrapper');
-				streamWrap.classList.add('stream-review-wrapper');
-				streamWrap.classList.add('col-sm-12');
-				fansubDiv.appendChild(streamWrap);
-
-				let streamReview = document.createElement('div');
-				streamReview.classList.add('stream-review');
-				streamReview.classList.add('row');
-				streamWrap.appendChild(streamReview);
-
-				let streamActivity = document.createElement('div');
-				streamActivity.classList.add('stream-item-activity');
-				streamWrap.appendChild(streamActivity);
-
-				let streamOptions = document.createElement('div');
-				streamOptions.classList.add('stream-item-options');
-				streamWrap.appendChild(streamOptions);
-
-				let streamContent = document.createElement('div');
-				streamContent.classList.add('stream-review-content');
-				streamReview.appendChild(streamContent);
-
-				let heading = document.createElement('small');
-				heading.classList.add('media-heading');
-				streamContent.appendChild(heading);
-
-				let name = document.createElement('h6');
-				heading.appendChild(name);
-
-				let nameLink = document.createElement('a');
-				nameLink.textContent = fansub.name;
-				nameLink.href = fansub.url;
-				Util.setNewTab(nameLink);
-				name.appendChild(nameLink);
-
-				if (fansub.lang) {
-					let lang = document.createElement('small');
-					lang.textContent = ` ${fansub.lang}`;
-					name.appendChild(lang);
 				}
+			});
+		},
+		getWebsite(id, cb) {
+			// Util.log('Getting website for ' + id);
+			let self = this;
+			if (self.websiteCache[id]) {
+				cb(self.websiteCache[id]);
+				return;
+			}
+			GM_xmlhttpRequest({
+				method: 'GET',
+				url: `https://myanimelist.net/fansub-groups.php?id=${id}`,
+				onload(response) {
+					let tempDiv = document.createElement('div');
+					tempDiv.innerHTML = response.responseText;
+					let link = Util.q('td.borderClass > a:first-of-type', tempDiv);
+					if (link && link.getAttribute('href')) {
+						// Util.log('Found website for id');
+						self.websiteCache[id] = link.href;
+						cb(link.href);
+					}
+				}
+			});
+		},
+		getFansubSection() {
+			let container = document.createElement('section');
+			container.classList.add('m-b-1');
+			container.id = SECTION_ID;
 
-				App.getWebsite(fansub.id, href => {
-					let webLink = document.createElement('a');
-					webLink.href = href;
-					Util.setNewTab(webLink);
-					webLink.appendChild(document.createTextNode(' '));
-					webLink.appendChild(Util.icon('link')).setAttribute('style', 'vertical-align: sub');
-					name.appendChild(webLink);
-				});
+			let title = document.createElement('h5');
+			title.id = 'fansubs-title';
+			title.textContent = 'Fansubs';
+			container.appendChild(title);
 
-				let votingButtons = document.createElement('div');
-				votingButtons.setAttribute('style', 'display:inline-block;float:left;padding:2px 0 4px;position:relative;');
-				let voteUp = document.createElement('a');
-				let voteDown = document.createElement('a');
-				votingButtons.appendChild(voteUp);
-				votingButtons.appendChild(voteDown);
-				streamActivity.appendChild(votingButtons);
-				voteUp.href = '#';
-				voteDown.href = '#';
-				voteUp.dataset.value = 1;
-				voteDown.dataset.value = 2;
+			let list = document.createElement('ul');
+			list.classList.add('media-list');
+			list.classList.add('w-100');
+			container.appendChild(list);
+
+			return container;
+		},
+		vote(malid, groupid, value, comment) {
+			if (App.votingTabs.malid) {
+				App.votingTabs.malid.close();
+				App.votingTabs.malid = null;
+			}
+			let url = `https://myanimelist.net/anime/${malid}`;
+			url = Util.setQueryParameter('US_VOTE', true, url);
+			url = Util.setQueryParameter('groupid', groupid, url);
+			url = Util.setQueryParameter('value', value, url);
+			url = Util.setQueryParameter('comment', comment, url);
+			App.votingTabs.malid = GM_openInTab(url, true);
+			App.votingTabs.malid.onbeforeunload = () => {
+				App.votingTabs.malid = null;
+			};
+		},
+		getFansubOutput(fansub) {
+			let fansubDiv = document.createElement('div');
+			fansubDiv.classList.add('stream-item');
+			fansubDiv.classList.add('row');
+
+			let streamWrap = document.createElement('div');
+			streamWrap.classList.add('stream-item-wrapper');
+			streamWrap.classList.add('stream-review-wrapper');
+			streamWrap.classList.add('col-sm-12');
+			fansubDiv.appendChild(streamWrap);
+
+			let streamReview = document.createElement('div');
+			streamReview.classList.add('stream-review');
+			streamReview.classList.add('row');
+			streamWrap.appendChild(streamReview);
+
+			let streamActivity = document.createElement('div');
+			streamActivity.classList.add('stream-item-activity');
+			streamWrap.appendChild(streamActivity);
+
+			let streamOptions = document.createElement('div');
+			streamOptions.classList.add('stream-item-options');
+			streamWrap.appendChild(streamOptions);
+
+			let streamContent = document.createElement('div');
+			streamContent.classList.add('stream-review-content');
+			streamReview.appendChild(streamContent);
+
+			let heading = document.createElement('small');
+			heading.classList.add('media-heading');
+			streamContent.appendChild(heading);
+
+			let name = document.createElement('h6');
+			heading.appendChild(name);
+
+			let nameLink = document.createElement('a');
+			nameLink.textContent = fansub.name;
+			nameLink.href = fansub.url;
+			Util.setNewTab(nameLink);
+			name.appendChild(nameLink);
+
+			if (fansub.lang) {
+				let lang = document.createElement('small');
+				lang.textContent = ` ${fansub.lang}`;
+				name.appendChild(lang);
+			}
+
+			App.getWebsite(fansub.id, href => {
+				let webLink = document.createElement('a');
+				webLink.href = href;
+				Util.setNewTab(webLink);
+				webLink.appendChild(document.createTextNode(' '));
+				webLink.appendChild(Util.icon('link')).setAttribute('style', 'vertical-align: sub');
+				name.appendChild(webLink);
+			});
+
+			let votingButtons = document.createElement('div');
+			votingButtons.setAttribute('style', 'display:inline-block;float:left;padding:2px 0 4px;position:relative;');
+			let voteUp = document.createElement('a');
+			let voteDown = document.createElement('a');
+			votingButtons.appendChild(voteUp);
+			votingButtons.appendChild(voteDown);
+			streamActivity.appendChild(votingButtons);
+			voteUp.href = '#';
+			voteDown.href = '#';
+			voteUp.dataset.value = 1;
+			voteDown.dataset.value = 2;
+
+			if (fansub.value === 1) {
+				voteUp.appendChild(Util.icon('thumbsUp', '#16A085')).setAttribute('style', 'width:23px;height:auto;float:left;');
+				voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
+			} else if (fansub.value === 2) {
+				voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
+				voteDown.appendChild(Util.icon('thumbsUp', '#DB2409', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
+			} else {
+				voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
+				voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
+			}
+
+			let voteHandler = e => {
+				e.preventDefault();
+				let clickedNode = e.target;
+				if (clickedNode.nodeName === 'svg') {
+					clickedNode = clickedNode.parentNode;
+				} else if (clickedNode.nodeName === 'path') {
+					clickedNode = clickedNode.parentNode.parentNode;
+				}
+				let value = parseInt(clickedNode.dataset.value);
+				if (value === fansub.value) {
+					value = 3;
+				}
+				App.vote(fansub.malid, fansub.id, value);
+				fansub.value = value;
+				voteUp.innerHTML = voteDown.innerHTML = '';
 
 				if (fansub.value === 1) {
 					voteUp.appendChild(Util.icon('thumbsUp', '#16A085')).setAttribute('style', 'width:23px;height:auto;float:left;');
@@ -503,92 +440,76 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
 					voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
 				}
+			};
+			voteUp.onclick = voteHandler;
+			voteDown.onclick = voteHandler;
 
-				let voteHandler = e => {
+			let approvals = document.createElement('div');
+			approvals.classList.add('comment-body');
+			approvals.textContent = `${fansub.totalApproved} of ${fansub.totalVotes} users approve.`;
+			streamContent.appendChild(approvals);
+
+			if (fansub.comments && fansub.comments.length > 0) {
+				let commentsWrap = document.createElement('span');
+				commentsWrap.classList.add('more-wrapper');
+				streamOptions.appendChild(commentsWrap);
+				let commentsLink = document.createElement('a');
+				commentsLink.classList.add('more-drop');
+				commentsLink.href = '#';
+				commentsLink.textContent = 'Comments...';
+				commentsWrap.appendChild(commentsLink);
+				commentsLink.onclick = e => {
 					e.preventDefault();
-					let clickedNode = e.target;
-					if (clickedNode.nodeName === 'svg') {
-						clickedNode = clickedNode.parentNode;
-					} else if (clickedNode.nodeName === 'path') {
-						clickedNode = clickedNode.parentNode.parentNode;
-					}
-					let value = parseInt(clickedNode.dataset.value);
-					if (value === fansub.value) {
-						value = 3;
-					}
-					App.vote(fansub.malid, fansub.id, value);
-					fansub.value = value;
-					voteUp.innerHTML = voteDown.innerHTML = '';
+					let commentsDiv = document.createElement('div');
+					fansub.comments.forEach(comment => {
+						let div = document.createElement('div');
+						div.classList.add('author-header');
 
-					if (fansub.value === 1) {
-						voteUp.appendChild(Util.icon('thumbsUp', '#16A085')).setAttribute('style', 'width:23px;height:auto;float:left;');
-						voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
-					} else if (fansub.value === 2) {
-						voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
-						voteDown.appendChild(Util.icon('thumbsUp', '#DB2409', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
-					} else {
-						voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
-						voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
-					}
+						let smileContainer = document.createElement('div');
+						smileContainer.classList.add('review-avatar');
+						smileContainer.setAttribute('style', 'margin-right: 0');
+						div.appendChild(smileContainer);
+						smileContainer.appendChild(comment.approves ? Util.icon('plus', '#16A085', 25) : Util.icon('minus', '#DB2409', 25));
+
+						let commentContainer = document.createElement('div');
+						commentContainer.classList.add('comment-body');
+						commentContainer.setAttribute('style', 'margin-left: 40px');
+						div.appendChild(commentContainer);
+						let commentText = document.createElement('p');
+						commentText.textContent = comment.text;
+						commentContainer.appendChild(commentText);
+
+						commentsDiv.appendChild(div);
+					});
+					Util.q('.author-header:last-child', commentsDiv).setAttribute('style', 'border-bottom: none;');
+					Util.createModal(fansub.name, commentsDiv);
+					return false;
 				};
-				voteUp.onclick = voteHandler;
-				voteDown.onclick = voteHandler;
-
-				let approvals = document.createElement('div');
-				approvals.classList.add('comment-body');
-				approvals.textContent = `${fansub.totalApproved} of ${fansub.totalVotes} users approve.`;
-				streamContent.appendChild(approvals);
-
-				if (fansub.comments && fansub.comments.length > 0) {
-					let commentsWrap = document.createElement('span');
-					commentsWrap.classList.add('more-wrapper');
-					streamOptions.appendChild(commentsWrap);
-					let commentsLink = document.createElement('a');
-					commentsLink.classList.add('more-drop');
-					commentsLink.href = '#';
-					commentsLink.textContent = 'Comments...';
-					commentsWrap.appendChild(commentsLink);
-					commentsLink.onclick = e => {
-						e.preventDefault();
-						let commentsDiv = document.createElement('div');
-						fansub.comments.forEach(comment => {
-							let div = document.createElement('div');
-							div.classList.add('author-header');
-
-							let smileContainer = document.createElement('div');
-							smileContainer.classList.add('review-avatar');
-							smileContainer.setAttribute('style', 'margin-right: 0');
-							div.appendChild(smileContainer);
-							smileContainer.appendChild(comment.approves ? Util.icon('plus', '#16A085', 25) : Util.icon('minus', '#DB2409', 25));
-
-							let commentContainer = document.createElement('div');
-							commentContainer.classList.add('comment-body');
-							commentContainer.setAttribute('style', 'margin-left: 40px');
-							div.appendChild(commentContainer);
-							let commentText = document.createElement('p');
-							commentText.textContent = comment.text;
-							commentContainer.appendChild(commentText);
-
-							commentsDiv.appendChild(div);
-						});
-						Util.q('.author-header:last-child', commentsDiv).setAttribute('style', 'border-bottom: none;');
-						Util.createModal(fansub.name, commentsDiv);
-						return false;
-					};
-				}
-
-				return fansubDiv;
-			},
-			filterFansubs(fansubs, lang) {
-				let langs = lang.split(',').map(lang => {
-					return lang.trim().toLowerCase();
-				});
-				return fansubs.filter(({ lang = 'english' }) => {
-					lang = lang.trim().toLowerCase();
-					return langs.includes(lang);
-				});
 			}
-		};
+
+			return fansubDiv;
+		},
+		filterFansubs(fansubs, langs) {
+			langs = langs.split(',').map(lang => {
+				return lang.trim().toLowerCase();
+			});
+			return fansubs.filter(({ lang }) => {
+				lang = (lang || 'english').trim().toLowerCase();
+				return langs.includes(lang);
+			});
+		}
+	};
+
+	const Config = GM_config([
+		{
+			key: 'lang',
+			label: 'Languages (Comma Seperated)',
+			type: 'text'
+		}
+	]);
+
+	if (location.hostname === 'kitsu.io') {
+		GM_registerMenuCommand('Kitsu Fansub Info Settings', Config.setup);
 
 		let cfg = Config.load();
 		waitForUrl(REGEX, () => {
