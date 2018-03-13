@@ -2,7 +2,7 @@
 	'use strict';
 
 	window.GM_config = function(settings, storage = 'cfg') {
-		settings = settings.forEach(setting => {
+		settings.forEach(setting => {
 			if (setting.type === 'dropdown') {
 				setting.values = setting.values.map(val => {
 					if (typeof val.text === 'undefined') {
