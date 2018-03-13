@@ -2,6 +2,8 @@
 	'use strict';
 
 	window.GM_config = function(settings, storage = 'cfg') {
+		let ret;
+
 		settings.forEach(setting => {
 			if (setting.type === 'dropdown') {
 				setting.values = setting.values.map(val => {
@@ -14,6 +16,12 @@
 				});
 			}
 		});
+
+		const events = {
+			text: 'input',
+			dropdown: 'change',
+			bool: 'click'
+		};
 
 		const load = function() {
 			let defaults = {};
@@ -121,6 +129,15 @@
 						controls[setting.key] = control;
 						div.appendChild(createLabel(`${setting.label}: `));
 					}
+
+					controls[setting.key].addEventListener(events[setting.type], () => {
+						if (ret.onchange) {
+							let control = controls[setting.key];
+							let value = setting.type === 'bool' ? control.checked : control.value;
+							onchange(setting.key, value);
+						}
+					});
+
 					div.appendChild(control);
 					div.appendChild(createLineBreak());
 				});
@@ -132,20 +149,31 @@
 						newSettings[setting.key] = setting.type === 'bool' ? control.checked : control.value;
 					});
 					save(newSettings);
+
+					if (ret.onsave) {
+						ret.onsave(newSettings);
+					}
+
 					div.remove();
 				}));
 
-				div.appendChild(createButton('Cancel', () => div.remove()));
+				div.appendChild(createButton('Cancel', () => {
+					if (ret.oncancel) {
+						ret.oncancel(cfg);
+					}
+					div.remove();
+				}));
 
 				document.body.appendChild(div);
 			};
 			init(load());
 		};
 
-		return {
+		ret = {
 			load,
 			save,
 			setup
 		};
+		return ret;
 	};
 })();
