@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GCPedia Ace Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.4
+// @version      1.2.5
 // @description  Use the Ace Editor when editing things on GCPedia
 // @author       Adrien Pyke
 // @match        http://www.gcpedia.gc.ca/*
@@ -77,7 +77,6 @@
 				'eclipse',
 				'github',
 				'gob',
-				'gruvbox',
 				'idle_fingers',
 				'iplastic',
 				'katzenmilch',
@@ -87,7 +86,6 @@
 				'merbivore_soft',
 				'mono_industrial',
 				'monokai',
-				'pastel_on_dark',
 				'solarized_dark',
 				'solarized_light',
 				'sqlserver',
