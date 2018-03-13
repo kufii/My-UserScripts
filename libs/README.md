@@ -10,7 +10,7 @@ A lib that provides an API to store and retrieve userscript settings, and also p
 GM_config(settings, storage = 'cfg')
 ```
 
-### Usage
+### Usage:
 
 To use this library, require `gm_config.js`. You must also grant `GM_getValue` and `GM_setValue` for it to function. If you want to hook it up to a GreaseMonkey menu command you should also require `GM_registerMenuCommand`.
 
@@ -40,17 +40,19 @@ const Config = GM_config([
 ]);
 ```
 
-**Parameters:**  
+### Parameters:
+
 **`settings`**: An array of settings objects  
 **`storage`**: Optional. Defines what variable the settings will be storeg under. Default is `cfg`.
 
-**Settings Objects:**  
+### Settings Objects:
+
 ```javascript
 {
-	// the key for the setting.
+	// The key for the setting.
 	key: 'mysetting',
 
-	// the label that'll be used for the setting in the UI.
+	// The label that'll be used for the setting in the UI.
 	label: 'Enter Value',
 
 	// Optional. The default value for the setting.
@@ -67,19 +69,20 @@ const Config = GM_config([
 }
 ```
 
-**Functions**  
+### Functions
+
 **`load()`**: Returns an object containing the currently stored settings.  
 **`save(cfg)`**: Takes a configuration object and saves it to storage.  
 **`setup()`**: Initializes a UI for the user to modify the settings.
 
-**Using the UI**  
+### Using the UI
 You can hook the setup to a GreaseMonkey menu command by granting `GM_registerMenuCommand` and doing the following
 
 ```javascript
 GM_registerMenuCommand('Command Text', Config.setup);
 ```
 
-**Events**  
+### Events
 GM_config has the following events:
 
 **`onchange(key, value)`**: Fires when a user changes a setting, but before saving.  
