@@ -72,31 +72,31 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		qq(query, context = document) {
 			return Array.from(context.querySelectorAll(query));
 		},
-		getQueryParameter(name, url = location.href) {
+		getQueryParam(name, url = location.href) {
 			name = name.replace(/[[\]]/g, '\\$&');
-			let regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
-				results = regex.exec(url);
+			const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
+			const results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
 			return decodeURIComponent(results[2].replace(/\+/g, ' '));
 		},
-		setQueryParameter(key, value, url = location.href) {
-			let re = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'gi'),
-				hash;
-
-			if (re.test(url)) {
-				if (typeof value !== 'undefined' && value !== null) return url.replace(re, `$1${key}=${value}$2$3`);
-				else {
-					hash = url.split('#');
-					url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
-					if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += `#${hash[1]}`;
+		setQueryParam(key, value, url = location.href) {
+			const regex = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'gi');
+			const hasValue = (typeof value !== 'undefined' && value !== null && value !== '');
+			if (regex.test(url)) {
+				if (hasValue) {
+					return url.replace(regex, `$1${key}=${value}$2$3`);
+				} else {
+					let [path, hash] = url.split('#');
+					url = path.replace(regex, '$1$3').replace(/(&|\?)$/, '');
+					if (hash) url += `#${hash[1]}`;
 					return url;
 				}
-			} else if (typeof value !== 'undefined' && value !== null) {
-				let separator = url.indexOf('?') !== -1 ? '&' : '?';
-				hash = url.split('#');
-				url = `${hash[0] + separator + key}=${value}`;
-				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += `#${hash[1]}`;
+			} else if (hasValue) {
+				let separator = url.includes('?') ? '&' : '?';
+				let [path, hash] = url.split('#');
+				url = `${path + separator + key}=${value}`;
+				if (hash) url += `#${hash[1]}`;
 				return url;
 			} else return url;
 		},
@@ -326,10 +326,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				App.votingTabs.malid = null;
 			}
 			let url = `https://myanimelist.net/anime/${malid}`;
-			url = Util.setQueryParameter('US_VOTE', true, url);
-			url = Util.setQueryParameter('groupid', groupid, url);
-			url = Util.setQueryParameter('value', value, url);
-			url = Util.setQueryParameter('comment', comment, url);
+			url = Util.setQueryParam('US_VOTE', true, url);
+			url = Util.setQueryParam('groupid', groupid, url);
+			url = Util.setQueryParam('value', value, url);
+			url = Util.setQueryParam('comment', comment, url);
 			App.votingTabs.malid = GM_openInTab(url, true);
 			App.votingTabs.malid.onbeforeunload = () => {
 				App.votingTabs.malid = null;
@@ -596,10 +596,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				}
 			});
 		});
-	} else if (Util.getQueryParameter('US_VOTE')) {
-		let groupid = Util.getQueryParameter('groupid');
-		let value = Util.getQueryParameter('value');
-		let comment = Util.getQueryParameter('comment');
+	} else if (Util.getQueryParam('US_VOTE')) {
+		let groupid = Util.getQueryParam('groupid');
+		let value = Util.getQueryParam('value');
+		let comment = Util.getQueryParam('comment');
 		let button = Util.q(`.js-fansub-set-vote-button[data-type="${value}"][data-group-id="${groupid}"]`);
 		button.click();
 		if (value === '3') {

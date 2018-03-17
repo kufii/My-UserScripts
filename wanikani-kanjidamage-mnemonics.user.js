@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.1
+// @version      1.1.2
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
@@ -69,9 +69,7 @@
 							}
 						};
 
-						let onyomiTable = Util.qq('h2', tempDiv).filter(elem => {
-							return elem.textContent.indexOf('Onyomi') !== -1;
-						});
+						let onyomiTable = Util.qq('h2', tempDiv).filter(elem => elem.textContent.includes('Onyomi'));
 						if (onyomiTable.length > 0) {
 							onyomiTable = onyomiTable[0].nextElementSibling;
 							let readingElem = Util.q('td:nth-child(2)', onyomiTable);
@@ -79,9 +77,7 @@
 							reading = readingElem.innerHTML;
 						}
 
-						let mnemonicTable = Util.qq('h2', tempDiv).filter(elem => {
-							return elem.textContent.indexOf('Mnemonic') !== -1;
-						});
+						let mnemonicTable = Util.qq('h2', tempDiv).filter(elem => elem.textContent.includes('Mnemonic'));
 						if (mnemonicTable.length > 0) {
 							mnemonicTable = mnemonicTable[0].nextElementSibling;
 							let mnemonicElem = Util.q('td:nth-child(2)', mnemonicTable);
@@ -106,8 +102,8 @@
 		}
 	};
 
-	let isReview = (window.location.pathname.indexOf('/review/') > -1);
-	let isLesson = (window.location.pathname.indexOf('/lesson/') > -1);
+	let isReview = (window.location.pathname.includes('/review/'));
+	let isLesson = (window.location.pathname.includes('/lesson/'));
 
 	if (isLesson) {
 		waitForElems({

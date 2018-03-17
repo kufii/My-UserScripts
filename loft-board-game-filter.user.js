@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Loft Lounge Board Game Filters
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1
+// @version      1.1.1
 // @description  Adds Filters to the Loft Lounge board game page
 // @author       Adrien Pyke
 // @match        *://www.theloftlounge.ca/pages/board-games*
@@ -51,9 +51,7 @@
 		    return self.indexOf(value) === index;
 		},
 		toTitleCase(str) {
-			return str.replace(/\w\S*/g, txt => {
-				return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-			});
+			return str.replace(/[a-z0-9]+/gi, word => word.slice(0, 1).toUpperCase() + word.slice(1));
 		},
 		appendStyle(str) {
 			let style = document.createElement('style');
@@ -127,7 +125,7 @@
 		if (value) {
 			rowsFilter = rowsFilter.filter(row => {
 				let name = Util.q('td:nth-of-type(1)', row).textContent.trim().toLowerCase();
-				return name.indexOf(value) !== -1;
+				return name.includes(value);
 			});
 		}
 

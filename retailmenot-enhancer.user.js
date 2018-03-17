@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RetailMeNot Enhancer
 // @namespace    https://greasyfork.org/users/649
-// @version      3.1.1
+// @version      3.1.2
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
@@ -30,37 +30,36 @@
 		qq(query, context = document) {
 			return Array.from(context.querySelectorAll(query));
 		},
-		getQueryParameter(name, url = window.location.href) {
+		getQueryParam(name, url = location.href) {
 			name = name.replace(/[[\]]/g, '\\$&');
-			let regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
-				results = regex.exec(url);
+			const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
+			const results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
 			return decodeURIComponent(results[2].replace(/\+/g, ' '));
 		},
-		setQueryParameter(key, value, url = window.location.href) {
-			if (!url) url = window.location.href;
-			let re = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'gi'),
-				hash;
-
-			if (re.test(url)) {
-				if (typeof value !== 'undefined' && value !== null) return url.replace(re, `$1${key}=${value}$2$3`);
-				else {
-					hash = url.split('#');
-					url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
-					if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += `#${hash[1]}`;
+		setQueryParam(key, value, url = location.href) {
+			const regex = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'gi');
+			const hasValue = (typeof value !== 'undefined' && value !== null && value !== '');
+			if (regex.test(url)) {
+				if (hasValue) {
+					return url.replace(regex, `$1${key}=${value}$2$3`);
+				} else {
+					let [path, hash] = url.split('#');
+					url = path.replace(regex, '$1$3').replace(/(&|\?)$/, '');
+					if (hash) url += `#${hash[1]}`;
 					return url;
 				}
-			} else if (typeof value !== 'undefined' && value !== null) {
-				let separator = url.indexOf('?') !== -1 ? '&' : '?';
-				hash = url.split('#');
-				url = `${hash[0] + separator + key}=${value}`;
-				if (typeof hash[1] !== 'undefined' && hash[1] !== null) url += `#${hash[1]}`;
+			} else if (hasValue) {
+				let separator = url.includes('?') ? '&' : '?';
+				let [path, hash] = url.split('#');
+				url = `${path + separator + key}=${value}`;
+				if (hash) url += `#${hash[1]}`;
 				return url;
 			} else return url;
 		},
-		removeQueryParameter(key, url) {
-			return Util.setQueryParameter(key, null, url);
+		removeQueryParam(key, url) {
+			return Util.setQueryParam(key, null, url);
 		},
 		changeUrl(url) {
 			window.history.replaceState({ path: url }, '', url);
@@ -77,7 +76,7 @@
 	};
 
 	// remove force reload param
-	Util.changeUrl(Util.removeQueryParameter('r'));
+	Util.changeUrl(Util.removeQueryParam('r'));
 	if (window.location.href.match(/^https?:\/\/www\.retailmenot\.com/i)) { // US
 		Util.log('Enhancing US site');
 		// Show Coupons
@@ -216,12 +215,12 @@
 	Util.qq('a').filter(link => {
 		return link.href.match(regex);
 	}).forEach(link => {
-		let url = Util.getQueryParameter('url', link.href);
+		let url = Util.getQueryParam('url', link.href);
 		if (url) {
 			link.href = `${window.location.protocol}//${window.location.host}${url}`;
 		}
 	});
 
 	// remove coupon query param so reloads work properly
-	Util.changeUrl(Util.removeQueryParameter('c'));
+	Util.changeUrl(Util.removeQueryParam('c'));
 })();
