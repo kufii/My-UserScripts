@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Kitsu Batoto Links
+// @name         Kitsu MangaDex Links
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.2
-// @description  Adds Batoto links to Kitsu manga pages
+// @version      3.0.0
+// @description  Adds MangaDex links to Kitsu manga pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
@@ -12,7 +12,7 @@
 (() => {
 	'use strict';
 
-	let SCRIPT_NAME = 'Kitsu Batoto Links';
+	let SCRIPT_NAME = 'Kitsu MangaDex Links';
 	let REGEX = /^https?:\/\/kitsu\.io\/manga\/[^/]+\/?(?:\?.*)?$/;
 
 	const Util = {
