@@ -61,6 +61,9 @@ const Config = GM_config([
 	// What type of setting it is. "text" will show a textbox, "dropdown" will show a dropdown list, "bool" will show a checkbox.
 	type: 'text|dropdown|bool',
 
+	// For use when the type is "text". Placeholder text for the textbox.
+	placeholder: 'Placeholder',
+
 	// For use when the type is "dropdown". Takes an array of values, or an array of objects with a "value" property and "text" property
 	values: [
 		{ value: 1, text: 'Option 1' },
