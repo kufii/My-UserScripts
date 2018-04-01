@@ -13,7 +13,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Greasy Fork - Change Default Script Sort on User Profiles](https://greasyfork.org/en/scripts/22202-greasy-fork-change-default-script-sort-on-user-profiles)
 * [Hummingbird User Compare](https://greasyfork.org/en/scripts/5680-hummingbird-user-compare)
 * [Imgur Mirror](https://greasyfork.org/en/scripts/18806-imgur-mirror)
-* [Kitsu Batoto Links](https://greasyfork.org/en/scripts/22888-hummingbird-batoto-links)
+* [Kitsu MangaDex Links](https://greasyfork.org/en/scripts/22888-kitsu-mangadex-links)
 * [Kitsu Fansub Info](https://greasyfork.org/en/scripts/22500-hummingbird-fansub-info)
 * [Loft Lounge Board Game Filters](https://greasyfork.org/en/scripts/22579-loft-lounge-board-game-filters)
 * [MyAnimeList, External Kitsu Links](https://greasyfork.org/en/scripts/23163-myanimelist-external-hummingbird-links)
