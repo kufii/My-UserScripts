@@ -12,7 +12,7 @@ GM_config(settings, storage = 'cfg')
 
 ### Usage:
 
-To use this library, require `gm_config.js`. You must also grant `GM_getValue` and `GM_setValue` for it to function. If you want to hook it up to a GreaseMonkey menu command you should also require `GM_registerMenuCommand`.
+To use this library, require `gm_config.js`. You must also grant `GM_getValue` and `GM_setValue` for it to function. If you want to hook it up to a GreaseMonkey menu command you should also grant `GM_registerMenuCommand`.
 
 Example:
 
