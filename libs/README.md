@@ -69,20 +69,20 @@ const Config = GM_config([
 }
 ```
 
-### Functions
+### Functions:
 
 **`load()`**: Returns an object containing the currently stored settings.  
 **`save(cfg)`**: Takes a configuration object and saves it to storage.  
 **`setup()`**: Initializes a UI for the user to modify the settings.
 
-### Using the UI
+### Using the UI:
 You can hook the setup to a GreaseMonkey menu command by granting `GM_registerMenuCommand` and doing the following
 
 ```javascript
 GM_registerMenuCommand('Command Text', Config.setup);
 ```
 
-### Events
+### Events:
 GM_config has the following events:
 
 **`onchange(key, value)`**: Fires when a user changes a setting, but before saving.  
