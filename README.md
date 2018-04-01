@@ -23,6 +23,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Reddit Disable No Participation](https://greasyfork.org/en/scripts/23529-reddit-disable-no-participation)
 * [Reddit Flair Linkifier](https://greasyfork.org/en/scripts/706-reddit-flair-linkifier)
 * [RetailMeNot Enhancer](https://greasyfork.org/en/scripts/23203-retailmenot-enhancer)
+* [Rulu.co remove ads](https://greasyfork.org/en/scripts/40136-rulu-co-remove-ads)
 * [SoundCloud Toggle Continuous Play and Autoplay](https://greasyfork.org/en/scripts/22549-soundcloud-toggle-continuous-play-and-autoplay)
 * [Telegram Web Emojione](https://greasyfork.org/en/scripts/38330-telegram-web-emojione)
 * [The Works Burger Chooser](https://greasyfork.org/en/scripts/22582-the-works-burger-chooser)
