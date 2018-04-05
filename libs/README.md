@@ -12,7 +12,7 @@ GM_config(settings, storage = 'cfg')
 
 ### Usage:
 
-To use this library, require `gm_config.js`. You must also grant `GM_getValue` and `GM_setValue` for it to function. If you want to hook it up to a GreaseMonkey menu command you should also require `GM_registerMenuCommand`.
+To use this library, require `gm_config.js`. You must also grant `GM_getValue` and `GM_setValue` for it to function. If you want to hook it up to a GreaseMonkey menu command you should also grant `GM_registerMenuCommand`.
 
 Example:
 
@@ -61,6 +61,9 @@ const Config = GM_config([
 	// What type of setting it is. "text" will show a textbox, "dropdown" will show a dropdown list, "bool" will show a checkbox.
 	type: 'text|dropdown|bool',
 
+	// Optional. For use when the type is "text". Placeholder text for the textbox.
+	placeholder: 'Placeholder',
+
 	// For use when the type is "dropdown". Takes an array of values, or an array of objects with a "value" property and "text" property
 	values: [
 		{ value: 1, text: 'Option 1' },
@@ -69,20 +72,20 @@ const Config = GM_config([
 }
 ```
 
-### Functions
+### Functions:
 
 **`load()`**: Returns an object containing the currently stored settings.  
 **`save(cfg)`**: Takes a configuration object and saves it to storage.  
 **`setup()`**: Initializes a UI for the user to modify the settings.
 
-### Using the UI
+### Using the UI:
 You can hook the setup to a GreaseMonkey menu command by granting `GM_registerMenuCommand` and doing the following
 
 ```javascript
 GM_registerMenuCommand('Command Text', Config.setup);
 ```
 
-### Events
+### Events:
 GM_config has the following events:
 
 **`onchange(key, value)`**: Fires when a user changes a setting, but before saving.  
