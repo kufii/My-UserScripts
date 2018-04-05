@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.3
+// @version      1.1.4
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -46,6 +46,7 @@
 			'\uD83C\uDFF3': '\uD83C\uDFF3\uFE0F', // Flag
 			'\uD83D\uDECF': '\uD83D\uDECF\uFE0F', // Bed
 			'\u2640': '\u2640\uFE0F', // Female Sign
+			'\u2764\uFE0F': '\u2764\uFE0F\u200B', // Red Heart
 			'\uFE0F\uFE0F': '\uFE0F' // Fix for ZWJ
 		},
 		sizes: [
@@ -87,7 +88,7 @@
 			tempDiv.innerHTML = emojione.toImage(EmojiHelper.makeReplacements(text));
 
 			Util.qq('img', tempDiv).forEach(emoji => emoji.outerHTML = emoji.alt);
-			tempDiv.innerHTML = emojione.toImage(tempDiv.textContent);
+			tempDiv.innerHTML = emojione.toImage(EmojiHelper.makeReplacements(tempDiv.textContent));
 
 			Util.qq('img', tempDiv).forEach(emoji => EmojiHelper.buildEmoji(emoji, emoji.src));
 
