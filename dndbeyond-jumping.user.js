@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         D&D Beyond, Jumping Speed
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.1
+// @version      1.0.2
 // @description  Adds a jumping speed section to D&D Beyond
 // @author       Adrien Pyke
 // @match        *://www.dndbeyond.com/profile/*/characters/*
@@ -25,6 +25,24 @@
 		},
 		qq(query, context = document) {
 			return Array.from(context.querySelectorAll(query));
+		}
+	};
+
+	const Character = {
+		get id() {
+			return parseInt(location.pathname.match(/\/[0-9]+$/)[1]);
+		},
+		get strength() {
+			return parseInt(Util.q('.character-ability-strength > .character-ability-score').textContent);
+		},
+		get strengthModifier() {
+			return parseInt(Util.q('.character-ability-strength > .character-ability-modifier > .character-ability-stat-value').textContent);
+		},
+		get longJump() {
+			return parseInt(GM_getValue(`${Character.id}-long-jump`) || Character.strength);
+		},
+		get highJump() {
+			return parseInt(GM_getValue(`${Character.id}-high-jump`) || Character.strengthModifier + 3);
 		}
 	};
 
@@ -61,7 +79,7 @@
 			let value = document.createElement('input');
 			value.setAttribute('type', 'number');
 			value.setAttribute('min', 0);
-			value.setAttribute('value', GM_getValue(key) || '');
+			value.setAttribute('value', GM_getValue(`${Character.id}-${key}`) || '');
 			inputDiv.appendChild(value);
 
 			div.appendChild(inputDiv);
@@ -71,7 +89,7 @@
 
 			let source = document.createElement('input');
 			source.setAttribute('type', 'text');
-			source.setAttribute('value', GM_getValue(`${key}-source`) || '');
+			source.setAttribute('value', GM_getValue(`${Character.id}-${key}-source`) || '');
 			sourceDiv.appendChild(source);
 
 			div.appendChild(sourceDiv);
@@ -82,24 +100,9 @@
 			if (item) {
 				let value = Util.q('.speed-manager-override-item-input > input', item).value;
 				let source = Util.q('.speed-manager-override-item-source > input', item).value;
-				GM_setValue(key, value);
-				GM_setValue(`${key}-source`, source);
+				GM_setValue(`${Character.id}-${key}`, value);
+				GM_setValue(`${Character.id}-${key}-source`, source);
 			}
-		}
-	};
-
-	const Chartacter = {
-		get strength() {
-			return parseInt(Util.q('.character-ability-strength > .character-ability-score').textContent);
-		},
-		get strengthModifier() {
-			return parseInt(Util.q('.character-ability-strength > .character-ability-modifier > .character-ability-stat-value').textContent);
-		},
-		get longJump() {
-			return parseInt(GM_getValue('long-jump') || Chartacter.strength);
-		},
-		get highJump() {
-			return parseInt(GM_getValue('high-jump') || Chartacter.strengthModifier + 3);
 		}
 	};
 
@@ -107,8 +110,8 @@
 		sel: '.speed-manager-view',
 		onmatch(view) {
 			const items = Util.q('.speed-manager-items', view);
-			items.appendChild(App.createSpeedManagerItem('Long Jump', Chartacter.longJump));
-			items.appendChild(App.createSpeedManagerItem('High Jump', Chartacter.highJump));
+			items.appendChild(App.createSpeedManagerItem('Long Jump', Character.longJump));
+			items.appendChild(App.createSpeedManagerItem('High Jump', Character.highJump));
 
 			Util.q('.fullscreen-modal-accept > button').addEventListener('click', () => {
 				App.saveOverrideItem(Util.q('[data-key="long-jump"]'), 'long-jump');
