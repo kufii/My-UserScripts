@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         D&D Beyond, Jumping Speed
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.2
+// @version      1.0.3
 // @description  Adds a jumping speed section to D&D Beyond
 // @author       Adrien Pyke
 // @match        *://www.dndbeyond.com/profile/*/characters/*
@@ -29,9 +29,7 @@
 	};
 
 	const Character = {
-		get id() {
-			return parseInt(location.pathname.match(/\/[0-9]+$/)[1]);
-		},
+		id: parseInt(location.pathname.match(/\/([0-9]+)$/)[1]),
 		get strength() {
 			return parseInt(Util.q('.character-ability-strength > .character-ability-score').textContent);
 		},
