@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         D&D Beyond, Jumping Speed
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Adds a jumping speed section to D&D Beyond
 // @author       Adrien Pyke
 // @match        *://www.dndbeyond.com/profile/*/characters/*
@@ -79,7 +79,6 @@
 			return div;
 		},
 		saveOverrideItem(item, key) {
-			Util.log(item, key);
 			if (item) {
 				let value = Util.q('.speed-manager-override-item-input > input', item).value;
 				let source = Util.q('.speed-manager-override-item-source > input', item).value;
@@ -112,8 +111,8 @@
 			items.appendChild(App.createSpeedManagerItem('High Jump', Chartacter.highJump));
 
 			Util.q('.fullscreen-modal-accept > button').addEventListener('click', () => {
-				App.saveOverrideItem(Util.q('data-key[long-jump]'), 'long-jump');
-				App.saveOverrideItem(Util.q('data-key[high-jump]'), 'high-jump');
+				App.saveOverrideItem(Util.q('[data-key="long-jump"]'), 'long-jump');
+				App.saveOverrideItem(Util.q('[data-key="high-jump"]'), 'high-jump');
 			});
 		}
 	});
