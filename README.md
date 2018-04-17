@@ -5,7 +5,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Auto Select Sun/Moon on PokemonDB](https://greasyfork.org/en/scripts/25060-auto-select-sun-moon-on-pokemondb)
 * [Cubemania - Auto Select Inspection](https://greasyfork.org/en/scripts/27009-cubemania-auto-select-inspection)
 * [Dailymotion disable autoplay](https://greasyfork.org/en/scripts/33276-dailymotion-disable-autoplay)
-* [D&D Beyond, Jumping Speed](https://greasyfork.org/en/scripts/40734-d-d-beyond-jumping-speed)
+* [D&D Beyond - Jumping Distance](https://greasyfork.org/en/scripts/40734-d-d-beyond-jumping-distance)
 * [GCPedia Ace Editor](https://greasyfork.org/en/scripts/31427-gcpedia-ace-editor)
 * [GitHub Editor - Change Default Settings](https://greasyfork.org/en/scripts/21964-github-editor-change-default-settings)
 * [Google, 12 hour date-time picker](https://greasyfork.org/en/scripts/32011-google-12-hour-date-time-picker)

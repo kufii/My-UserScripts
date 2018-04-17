@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         D&D Beyond, Jumping Speed
+// @name         D&D Beyond - Jumping Distance
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.3
-// @description  Adds a jumping speed section to D&D Beyond
+// @version      1.0.4
+// @description  Adds a jumping distance section to D&D Beyond
 // @author       Adrien Pyke
 // @match        *://www.dndbeyond.com/profile/*/characters/*
 // @grant        GM_getValue
@@ -13,7 +13,7 @@
 (() => {
 	'use strict';
 
-	const SCRIPT_NAME = 'D&D Beyond, Jumping Speed';
+	const SCRIPT_NAME = 'D&D Beyond - Jumping Distance';
 
 	const Util = {
 		log(...args) {
@@ -25,22 +25,6 @@
 		},
 		qq(query, context = document) {
 			return Array.from(context.querySelectorAll(query));
-		}
-	};
-
-	const Character = {
-		id: parseInt(location.pathname.match(/\/([0-9]+)$/)[1]),
-		get strength() {
-			return parseInt(Util.q('.character-ability-strength > .character-ability-score').textContent);
-		},
-		get strengthModifier() {
-			return parseInt(Util.q('.character-ability-strength > .character-ability-modifier > .character-ability-stat-value').textContent);
-		},
-		get longJump() {
-			return parseInt(GM_getValue(`${Character.id}-long-jump`) || Character.strength);
-		},
-		get highJump() {
-			return parseInt(GM_getValue(`${Character.id}-high-jump`) || Character.strengthModifier + 3);
 		}
 	};
 
@@ -94,13 +78,30 @@
 
 			return div;
 		},
-		saveOverrideItem(item, key) {
+		saveOverrideItem(item) {
 			if (item) {
+				let key = item.dataset.key;
 				let value = Util.q('.speed-manager-override-item-input > input', item).value;
 				let source = Util.q('.speed-manager-override-item-source > input', item).value;
 				GM_setValue(`${Character.id}-${key}`, value);
 				GM_setValue(`${Character.id}-${key}-source`, source);
 			}
+		}
+	};
+
+	const Character = {
+		id: parseInt(location.pathname.match(/\/([0-9]+)$/)[1]),
+		get strength() {
+			return parseInt(Util.q('.character-ability-strength > .character-ability-score').textContent);
+		},
+		get strengthModifier() {
+			return parseInt(Util.q('.character-ability-strength > .character-ability-modifier > .character-ability-stat-value').textContent);
+		},
+		get longJump() {
+			return parseInt(GM_getValue(`${Character.id}-long-jump`) || Character.strength);
+		},
+		get highJump() {
+			return parseInt(GM_getValue(`${Character.id}-high-jump`) || Math.max(Character.strengthModifier + 3, 0));
 		}
 	};
 
@@ -112,8 +113,7 @@
 			items.appendChild(App.createSpeedManagerItem('High Jump', Character.highJump));
 
 			Util.q('.fullscreen-modal-accept > button').addEventListener('click', () => {
-				App.saveOverrideItem(Util.q('[data-key="long-jump"]'), 'long-jump');
-				App.saveOverrideItem(Util.q('[data-key="high-jump"]'), 'high-jump');
+				Util.qq('.speed-manager-override-item[data-key]').forEach(item => App.saveOverrideItem(item));
 			});
 		}
 	});
@@ -121,10 +121,8 @@
 	waitForElems({
 		sel: '.speed-manager-override-list',
 		onmatch(overrides) {
-			const longJumpOverride = App.createOverrideItem('Long Jump', 'long-jump');
-			const highJumpOverride = App.createOverrideItem('High Jump', 'high-jump');
-			overrides.appendChild(longJumpOverride);
-			overrides.appendChild(highJumpOverride);
+			overrides.appendChild(App.createOverrideItem('Long Jump', 'long-jump'));
+			overrides.appendChild(App.createOverrideItem('High Jump', 'high-jump'));
 		}
 	});
 })();
