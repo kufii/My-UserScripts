@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Flair Linkifier
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0
+// @version      2.0.1
 // @description  Turns the text in various subreddits' flair into links
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
@@ -13,7 +13,29 @@
 	'use strict';
 
 	waitForElems({
-		sel: 'span.flair, .JLlZn > span, .fRhSjf > span',
+		sel: [
+			// old reddit
+			'span.flair',
+
+			// card template
+			'.Post > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(1) > div:nth-of-type(2) > span',
+			// classic template
+			'.Post > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > span',
+			// compact template
+			'.Post > div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > span',
+
+			// comments
+			'.Comment > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > span',
+
+			// moderators
+			'.cIMsMe > div > span',
+
+			// user flair preview
+			'.QAshv > div > span',
+
+			// flair edit
+			'.fhMwuu > div > span'
+		].join(','),
 		onmatch(flair) {
 			flair.innerHTML = flair.textContent.split(' ').map(segment => {
 				if (segment.match(/^https?:\/\//)) {
