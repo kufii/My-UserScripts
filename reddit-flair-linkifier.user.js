@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Flair Linkifier
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.2
+// @version      2.0.3
 // @description  Turns the text in various subreddits' flair into links
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
@@ -27,15 +27,19 @@
 			'span.flair',
 
 			// card template
-			'.Post > div:nth-of-type(2) > div:nth-of-type(1) > div > div:nth-of-type(1) > div:nth-of-type(2) > span',
-			'.Post > div:nth-of-type(2) > article > div:nth-of-type(1) > div:nth-of-type(1) > div > div:nth-of-type(1) > div:nth-of-type(2) > span',
+			'.Post > div:nth-of-type(2) > div:first-of-type > div > div:first-of-type > div:nth-of-type(2) > span',
+			'.Post > div:nth-of-type(2) > article > div:first-of-type > div:first-of-type > div > div:first-of-type > div:nth-of-type(2) > span',
 			// classic template
-			'.Post > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > span',
+			'.Post > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > div:first-of-type > div:nth-of-type(2) > span',
 			// compact template
 			'.Post > div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > span',
 
 			// comments
-			'.Comment > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > span',
+			'.Comment > div:nth-of-type(2) > div:first-of-type > div:nth-of-type(2) > span',
+
+			// user profile comments
+			'.Comment > div > div:last-of-type > div > div:first-of-type > div:first-of-type > div:nth-of-type(2) > span',
+			'.Comment > div > div:last-of-type > div > div:first-of-type > div:nth-of-type(2) > span',
 
 			// moderators
 			'.cIMsMe > div > span',
