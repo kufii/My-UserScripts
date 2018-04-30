@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu MangaDex Links
 // @namespace    https://greasyfork.org/users/649
-// @version      3.0.0
+// @version      3.0.1
 // @description  Adds MangaDex links to Kitsu manga pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -48,7 +48,7 @@
 						let tempDiv = document.createElement('div');
 						tempDiv.innerHTML = response.responseText;
 
-						let manga = Util.q('#search_manga .col-sm-6 .manga_title', tempDiv);
+						let manga = Util.q('#search_manga .manga_title', tempDiv);
 						if (manga) {
 							manga.href = `https://mangadex.org${manga.getAttribute('href')}`;
 							Util.log('Link:', manga.href);
