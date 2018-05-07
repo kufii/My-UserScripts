@@ -47,6 +47,7 @@ const Config = GM_config([
 
 ### Settings Objects:
 
+**Common Options:**  
 ```javascript
 {
 	// The key for the setting.
@@ -58,13 +59,42 @@ const Config = GM_config([
 	// Optional. The default value for the setting.
 	default: 'default',
 
-	// What type of setting it is. "text" will show a textbox, "dropdown" will show a dropdown list, "bool" will show a checkbox.
-	type: 'text|dropdown|bool',
+	// What type of setting it is. "text" will show a textbox, "number" will show a number spinner, "dropdown" will show a dropdown list, "bool" will show a checkbox.
+	type: 'text|number|dropdown|bool'
+}
+```
 
-	// Optional. For use when the type is "text". Placeholder text for the textbox.
+**Type Specific Options:**
+
+**`text:`**  
+```javascript
+{
+	// Optional. Placeholder text for the textbox.
+	placeholder: 'Placeholder'
+}
+```
+
+**`number:`**  
+```javascript
+{
+	// Optional. Placeholder text for the number spinner.
 	placeholder: 'Placeholder',
 
-	// For use when the type is "dropdown". Takes an array of values, or an array of objects with a "value" property and "text" property
+	// Optional. The minimum value.
+	min: 0,
+
+	// Optional. The maximum value.
+	max: 10,
+
+	// Optional. The increment size. Defaults to 1
+	step: 0.01
+}
+```
+
+**`dropdown:`**
+```javascript
+{
+	// The list of possible options for the dropdown. Takes an array of values, or an array of objects with a "value" property and "text" property
 	values: [
 		{ value: 1, text: 'Option 1' },
 		{ value: 2, text: 'Option 2'}

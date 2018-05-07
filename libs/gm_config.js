@@ -19,6 +19,7 @@
 
 		const events = {
 			text: 'input',
+			number: 'input',
 			dropdown: 'change',
 			bool: 'click'
 		};
@@ -60,10 +61,19 @@
 			};
 			const createTextbox = function(value, placeholder) {
 				let input = document.createElement('input');
+				input.setAttribute('type', 'text');
 				input.value = value;
 				if (placeholder) {
 					input.setAttribute('placeholder', placeholder);
 				}
+				return input;
+			};
+			const createNumber = function(value, placeholder, min, max, step) {
+				let input = createTextbox(value, placeholder);
+				input.setAttribute('type', 'number');
+				input.setAttribute('min', min);
+				input.setAttribute('max', max);
+				input.setAttribute('step', step);
 				return input;
 			};
 			const createSelect = function(lbl, options, value) {
@@ -117,6 +127,8 @@
 					let control;
 					if (setting.type === 'text') {
 						control = createTextbox(value, setting.placeholder);
+					} else if (setting.type === 'number') {
+						control = createNumber(value, setting.placeholder, setting.min, setting.max, setting.step);
 					} else if (setting.type === 'dropdown') {
 						control = createSelect(setting.label, setting.values, value);
 					} else if (setting.type === 'bool') {
