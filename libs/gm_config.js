@@ -52,6 +52,7 @@
 				let form = document.createElement('form');
 				form.id = 'gm-config';
 				form.style.display = 'grid';
+				form.style.alignItems = 'center';
 				form.style.gridRowGap = '5px';
 				form.style.gridColumnGap = '10px';
 				form.style.backgroundColor = 'white';
@@ -68,31 +69,27 @@
 				input.type = 'text';
 				input.name = name;
 				input.value = value;
-				if (placeholder) {
-					input.setAttribute('placeholder', placeholder);
-				}
+				input.placeholder = placeholder;
 				input.style.gridColumn = '2/4';
 				return input;
 			};
 			const createNumber = function(name, value, placeholder, min, max, step) {
 				let input = createTextbox(name, value, placeholder);
 				input.type = 'number';
-				input.setAttribute('min', min);
-				input.setAttribute('max', max);
-				input.setAttribute('step', step);
+				input.min = min;
+				input.max = max;
+				input.step = step;
 				return input;
 			};
 			const createSelect = function(name, lbl, options, value) {
 				let select = document.createElement('select');
 				select.name = name;
 				let optgroup = document.createElement('optgroup');
-				if (lbl) {
-					optgroup.setAttribute('label', lbl);
-				}
+				optgroup.label = lbl;
 				select.appendChild(optgroup);
 				options.forEach(opt => {
 					let option = document.createElement('option');
-					option.setAttribute('value', opt.value);
+					option.value = opt.value;
 					option.textContent = opt.text;
 					optgroup.appendChild(option);
 				});
@@ -107,7 +104,6 @@
 				checkbox.name = name;
 				checkbox.checked = checked;
 				checkbox.style.gridColumn = '2/4';
-				checkbox.style.alignSelf = 'center';
 				return checkbox;
 			};
 			const createButton = function(text, onclick, gridColumn) {
@@ -120,7 +116,7 @@
 			};
 			const createLabel = function(name, label) {
 				let lbl = document.createElement('label');
-				lbl.setAttribute('for', name);
+				lbl.htmlFor = name;
 				lbl.textContent = label;
 				lbl.style.textAlign = 'right';
 				lbl.style.gridColumn = '1/2';
