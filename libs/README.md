@@ -19,7 +19,7 @@ Example:
 ```javascript
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/1fa63b68a5d8734d772f0230e8aeb621bd7084a9/libs/gm_config.js
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/4e780237742a29ad4b60f5cb228f267165ff9196/libs/gm_config.js
 
 const Config = GM_config([
 	{

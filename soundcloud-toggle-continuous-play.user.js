@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         SoundCloud Toggle Continuous Play and Autoplay
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.5
+// @version      1.1.6
 // @description  Adds options to toggle continuous play and autoplay in SoundCloud
 // @author       Adrien Pyke
 // @match        *://soundcloud.com/*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/1fa63b68a5d8734d772f0230e8aeb621bd7084a9/libs/gm_config.js
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/4e780237742a29ad4b60f5cb228f267165ff9196/libs/gm_config.js
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
