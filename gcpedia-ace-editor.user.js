@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GCPedia Ace Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.8
+// @version      1.2.9
 // @description  Use the Ace Editor when editing things on GCPedia
 // @author       Adrien Pyke
 // @match        http://www.gcpedia.gc.ca/*
@@ -10,7 +10,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/4e780237742a29ad4b60f5cb228f267165ff9196/libs/gm_config.js
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/58fad26e63177c2d203417ed459168f7ae0163f6/libs/gm_config.js
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 

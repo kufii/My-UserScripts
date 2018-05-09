@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Editor - Change Default Settings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.6
+// @version      1.1.7
 // @description  change default settings for the github editor
 // @author       Adrien Pyke
 // @match        *://github.com/*/new/*
@@ -9,7 +9,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/4e780237742a29ad4b60f5cb228f267165ff9196/libs/gm_config.js
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/58fad26e63177c2d203417ed459168f7ae0163f6/libs/gm_config.js
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
