@@ -35,6 +35,7 @@
 					grid-column-gap: 10px;
 					background-color: white;
 					border: 1px solid black;
+					padding: 5px;
 					position: fixed;
 					top: 0;
 					right: 0;
