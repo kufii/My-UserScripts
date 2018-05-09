@@ -24,13 +24,52 @@
 			bool: 'click'
 		};
 
+		const addStyle = function() {
+			let style = document.createElement('style');
+			style.textContent = `
+				.gm-config {
+					display: grid;
+					align-items: center;
+					grid-row-gap: 5px;
+					grid-column-gap: 10px;
+					background-color: white;
+					border: 1px solid black;
+					position: fixed;
+					top: 0;
+					right: 0;
+					z-index: 2147483647;
+				}
+
+				.gm-config label {
+					grid-column: 1 / 2;
+					color: black;
+					text-align: right;
+					font-size: small;
+				}
+
+				.gm-config input,
+				.gm-config select {
+					grid-column: 2 / 4;
+				}
+
+				.gm-config .gm-config-save {
+					grid-column: 2 / 3;
+				}
+
+				.gm-config .gm-config-cancel {
+					grid-column: 3 / 4;
+				}
+			`;
+			document.head.appendChild(style);
+		};
+
 		const load = function() {
 			let defaults = {};
 			settings.forEach(setting => {
 				defaults[setting.key] = setting.default;
 			});
 
-			let cfg = GM_getValue(storage);
+			let cfg = (typeof GM_getValue !== 'undefined') ? GM_getValue(storage) : localStorage.getItem(storage);
 			if (!cfg) return defaults;
 
 			cfg = JSON.parse(cfg);
@@ -44,24 +83,14 @@
 		};
 
 		const save = function(cfg) {
-			GM_setValue(storage, JSON.stringify(cfg));
+			let data = JSON.stringify(cfg);
+			(typeof GM_setValue !== 'undefined') ? GM_setValue(storage, data) : localStorage.setItem(storage, data);
 		};
 
 		const setup = function() {
 			const createContainer = function() {
 				let form = document.createElement('form');
-				form.id = 'gm-config';
-				form.style.display = 'grid';
-				form.style.alignItems = 'center';
-				form.style.gridRowGap = '5px';
-				form.style.gridColumnGap = '10px';
-				form.style.backgroundColor = 'white';
-				form.style.padding = '5px';
-				form.style.border = '1px solid black';
-				form.style.position = 'fixed';
-				form.style.top = '0';
-				form.style.right = '0';
-				form.style.zIndex = 99999;
+				form.classList.add('gm-config');
 				return form;
 			};
 			const createTextbox = function(name, value, placeholder) {
@@ -70,7 +99,6 @@
 				input.name = name;
 				input.value = value;
 				input.placeholder = placeholder;
-				input.style.gridColumn = '2/4';
 				return input;
 			};
 			const createNumber = function(name, value, placeholder, min, max, step) {
@@ -94,7 +122,6 @@
 					optgroup.appendChild(option);
 				});
 				select.value = value;
-				select.style.gridColumn = '2/4';
 				return select;
 			};
 			const createCheckbox = function(name, lbl, checked) {
@@ -103,23 +130,20 @@
 				checkbox.type = 'checkbox';
 				checkbox.name = name;
 				checkbox.checked = checked;
-				checkbox.style.gridColumn = '2/4';
 				return checkbox;
 			};
-			const createButton = function(text, onclick, gridColumn) {
+			const createButton = function(text, onclick, classname) {
 				let button = document.createElement('button');
+				button.classList.add(`gm-config-${classname}`);
 				button.style.margin = '2px';
 				button.textContent = text;
 				button.onclick = onclick;
-				button.style.gridColumn = gridColumn;
 				return button;
 			};
 			const createLabel = function(name, label) {
 				let lbl = document.createElement('label');
 				lbl.htmlFor = name;
 				lbl.textContent = label;
-				lbl.style.textAlign = 'right';
-				lbl.style.gridColumn = '1/2';
 				return lbl;
 			};
 			const init = function(cfg) {
@@ -166,19 +190,21 @@
 					}
 
 					div.remove();
-				}, '2/3'));
+				}, 'save'));
 
 				div.appendChild(createButton('Cancel', () => {
 					if (ret.oncancel) {
 						ret.oncancel(cfg);
 					}
 					div.remove();
-				}, '3/4'));
+				}, 'cancel'));
 
 				document.body.appendChild(div);
 			};
 			init(load());
 		};
+
+		addStyle();
 
 		ret = {
 			load,
