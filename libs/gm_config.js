@@ -24,10 +24,11 @@
 			bool: 'click'
 		};
 
+		const prefix = 'gm-config';
+
 		const addStyle = function() {
-			let style = document.createElement('style');
-			style.textContent = `
-				.gm-config {
+			const css = `
+				.${prefix} {
 					display: grid;
 					align-items: center;
 					grid-row-gap: 5px;
@@ -40,27 +41,33 @@
 					z-index: 2147483647;
 				}
 
-				.gm-config label {
+				.${prefix} label {
 					grid-column: 1 / 2;
 					color: black;
 					text-align: right;
 					font-size: small;
 				}
 
-				.gm-config input,
-				.gm-config select {
+				.${prefix} input,
+				.${prefix} select {
 					grid-column: 2 / 4;
 				}
 
-				.gm-config .gm-config-save {
+				.${prefix} .${prefix}-save {
 					grid-column: 2 / 3;
 				}
 
-				.gm-config .gm-config-cancel {
+				.${prefix} .${prefix}-cancel {
 					grid-column: 3 / 4;
 				}
 			`;
-			document.head.appendChild(style);
+			if (typeof GM_addStyle === 'undefined') {
+				let style = document.createElement('style');
+				style.textContent = css;
+				document.head.appendChild(style);
+			} else {
+				GM_addStyle(css);
+			}
 		};
 
 		const load = function() {
@@ -90,7 +97,7 @@
 		const setup = function() {
 			const createContainer = function() {
 				let form = document.createElement('form');
-				form.classList.add('gm-config');
+				form.classList.add(prefix);
 				return form;
 			};
 			const createTextbox = function(name, value, placeholder) {
@@ -112,21 +119,24 @@
 			const createSelect = function(name, lbl, options, value) {
 				let select = document.createElement('select');
 				select.name = name;
+
 				let optgroup = document.createElement('optgroup');
 				optgroup.label = lbl;
 				select.appendChild(optgroup);
+
 				options.forEach(opt => {
 					let option = document.createElement('option');
 					option.value = opt.value;
 					option.textContent = opt.text;
 					optgroup.appendChild(option);
 				});
+
 				select.value = value;
 				return select;
 			};
-			const createCheckbox = function(name, lbl, checked) {
+			const createCheckbox = function(name, checked) {
 				let checkbox = document.createElement('input');
-				checkbox.id = `gm-config-${name}`;
+				checkbox.id = `${prefix}-${name}`;
 				checkbox.type = 'checkbox';
 				checkbox.name = name;
 				checkbox.checked = checked;
@@ -134,15 +144,15 @@
 			};
 			const createButton = function(text, onclick, classname) {
 				let button = document.createElement('button');
-				button.classList.add(`gm-config-${classname}`);
+				button.classList.add(`${prefix}-${classname}`);
 				button.style.margin = '2px';
 				button.textContent = text;
 				button.onclick = onclick;
 				return button;
 			};
-			const createLabel = function(name, label) {
+			const createLabel = function(label, htmlFor) {
 				let lbl = document.createElement('label');
-				lbl.htmlFor = name;
+				lbl.htmlFor = htmlFor;
 				lbl.textContent = label;
 				return lbl;
 			};
@@ -161,10 +171,10 @@
 					} else if (setting.type === 'dropdown') {
 						control = createSelect(setting.key, setting.label, setting.values, value);
 					} else if (setting.type === 'bool') {
-						control = createCheckbox(setting.key, setting.label, value);
+						control = createCheckbox(setting.key, value);
 					}
 
-					div.appendChild(createLabel((setting.type === 'bool' ? 'gm-config-' : '') + setting.key, setting.label));
+					div.appendChild(createLabel(setting.label, control.id));
 					div.appendChild(control);
 					controls[setting.key] = control;
 
@@ -178,15 +188,14 @@
 				});
 
 				div.appendChild(createButton('Save', () => {
-					let newSettings = {};
 					settings.forEach(setting => {
 						let control = controls[setting.key];
-						newSettings[setting.key] = setting.type === 'bool' ? control.checked : control.value;
+						cfg[setting.key] = setting.type === 'bool' ? control.checked : control.value;
 					});
-					save(newSettings);
+					save(cfg);
 
 					if (ret.onsave) {
-						ret.onsave(newSettings);
+						ret.onsave(cfg);
 					}
 
 					div.remove();
