@@ -105,15 +105,15 @@
 				input.type = 'text';
 				input.name = name;
 				input.value = value;
-				input.placeholder = placeholder;
+				if (placeholder) input.placeholder = placeholder;
 				return input;
 			};
 			const createNumber = function(name, value, placeholder, min, max, step) {
 				let input = createTextbox(name, value, placeholder);
 				input.type = 'number';
-				input.min = min;
-				input.max = max;
-				input.step = step;
+				if (typeof min !== 'undefined') input.min = min;
+				if (typeof max !== 'undefined') input.max = max;
+				if (typeof step !== 'undefined') input.step = step;
 				return input;
 			};
 			const createSelect = function(name, lbl, options, value) {
@@ -145,14 +145,13 @@
 			const createButton = function(text, onclick, classname) {
 				let button = document.createElement('button');
 				button.classList.add(`${prefix}-${classname}`);
-				button.style.margin = '2px';
 				button.textContent = text;
 				button.onclick = onclick;
 				return button;
 			};
 			const createLabel = function(label, htmlFor) {
 				let lbl = document.createElement('label');
-				lbl.htmlFor = htmlFor;
+				if (htmlFor) lbl.htmlFor = htmlFor;
 				lbl.textContent = label;
 				return lbl;
 			};
