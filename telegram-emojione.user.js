@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.4
+// @version      1.1.5
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -123,7 +123,7 @@
 
 	EmojiHelper.addStyles();
 
-	const convertAndWatch = function(node, continuous, config) {
+	const convertAndWatch = function(node, config) {
 		EmojiHelper.convert(node);
 		let changes = waitForElems({
 			context: node,
@@ -131,20 +131,13 @@
 			onchange() {
 				changes.stop();
 				EmojiHelper.convert(node);
-				if (continuous) {
-					changes.resume();
-				}
+				changes.resume();
 			}
 		});
-		if (!continuous) {
-			// if no changes after 1 second, assume no changes
-			setTimeout(changes.stop, 1000);
-		}
 	};
 
 	waitForElems({
 		sel: [
-			'.im_message_text',
 			'.im_message_author',
 			'.im_message_webpage_site',
 			'.im_message_webpage_title > a',
@@ -155,21 +148,22 @@
 			'.im_message_document_caption'
 		].join(','),
 		onmatch(node) {
-			convertAndWatch(node);
+			EmojiHelper.convert(node);
 		}
 	});
 
 	waitForElems({
 		sel: [
+			'.im_message_text',
 			'.im_short_message_text',
 			'.im_short_message_media > span > span > span'
 		].join(','),
 		onmatch(node) {
-			convertAndWatch(node, true);
+			convertAndWatch(node);
 		}
 	});
 
-	convertAndWatch(Util.q('.composer_rich_textarea'), true, {
+	convertAndWatch(Util.q('.composer_rich_textarea'), {
 		characterData: true,
 		childList: true,
 		subtree: true
