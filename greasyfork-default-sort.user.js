@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Greasy Fork - Change Default Script Sort
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.13
+// @version      1.2.14
 // @description  Change default script sort on GreasyFork
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/*/users/*
@@ -9,7 +9,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/f7657850f1c8c356c8a4be0977102c28e09f5740/libs/gm_config.js
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/8ae88883001c1061373fea0a93911b93293c7d5d/libs/gm_config.js
 // @run-at       document-start
 // ==/UserScript==
 

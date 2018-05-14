@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Unblocker
 // @namespace    https://greasyfork.org/users/649
-// @version      3.0.13
+// @version      3.0.14
 // @description  Auto redirects blocked videos to the mirror site hooktube.com
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -9,7 +9,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/f7657850f1c8c356c8a4be0977102c28e09f5740/libs/gm_config.js
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/8ae88883001c1061373fea0a93911b93293c7d5d/libs/gm_config.js
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
