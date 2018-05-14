@@ -59,14 +59,14 @@ const Config = GM_config([
 	// Optional. The default value for the setting.
 	default: 'default',
 
-	// What type of setting it is. "text" will show a textbox, "number" will show a number spinner, "dropdown" will show a dropdown list, "bool" will show a checkbox.
-	type: 'text|number|dropdown|bool'
+	// What type of setting it is.
+	type: 'text|number|dropdown|bool|hidden'
 }
 ```
 
 **Type Specific Options:**
 
-**`text:`**  
+**`text:`** Shows a textbox.
 ```javascript
 {
 	// Optional. Placeholder text for the textbox.
@@ -74,7 +74,7 @@ const Config = GM_config([
 }
 ```
 
-**`number:`**  
+**`number:`** Show a number spinner.
 ```javascript
 {
 	// Optional. Placeholder text for the number spinner.
@@ -91,7 +91,7 @@ const Config = GM_config([
 }
 ```
 
-**`dropdown:`**
+**`dropdown:`** Shows a dropdown list.
 ```javascript
 {
 	// The list of possible options for the dropdown. Takes an array of values, or an array of objects with a "value" property and "text" property
@@ -101,6 +101,10 @@ const Config = GM_config([
 	]
 }
 ```
+
+**`bool:`** Shows a checkbox.
+
+**`hidden:`** Hide the setting from the UI.
 
 ### Functions:
 

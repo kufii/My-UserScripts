@@ -105,7 +105,7 @@
 				let input = document.createElement('input');
 				input.type = 'text';
 				input.name = name;
-				input.value = value;
+				if (typeof value !== 'undefined') input.value = value;
 				if (placeholder) input.placeholder = placeholder;
 				return input;
 			};
@@ -160,7 +160,7 @@
 				let controls = {};
 
 				let div = createContainer();
-				settings.forEach(setting => {
+				settings.filter(setting => setting.type !== 'hidden').forEach(setting => {
 					let value = cfg[setting.key];
 
 					let control;
