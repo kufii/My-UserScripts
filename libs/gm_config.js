@@ -17,13 +17,6 @@
 			}
 		});
 
-		const events = {
-			text: 'input',
-			number: 'input',
-			dropdown: 'change',
-			bool: 'click'
-		};
-
 		const prefix = 'gm-config';
 
 		const addStyle = function() {
@@ -178,7 +171,7 @@
 					div.appendChild(control);
 					controls[setting.key] = control;
 
-					control.addEventListener(events[setting.type], () => {
+					control.addEventListener(setting.type === 'dropdown' ? 'change' : 'input', () => {
 						if (ret.onchange) {
 							let control = controls[setting.key];
 							let value = setting.type === 'bool' ? control.checked : control.value;
