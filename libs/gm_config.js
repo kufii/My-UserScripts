@@ -188,7 +188,7 @@
 				});
 
 				div.appendChild(createButton('Save', () => {
-					settings.forEach(setting => {
+					settings.filter(setting => setting.type !== 'hidden').forEach(setting => {
 						let control = controls[setting.key];
 						cfg[setting.key] = setting.type === 'bool' ? control.checked : control.value;
 					});
