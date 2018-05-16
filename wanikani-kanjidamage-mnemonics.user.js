@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.2
+// @version      1.1.3
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
@@ -113,7 +113,8 @@
 				let meaningH2 = document.createElement('h2');
 				let meaningLink = document.createElement('a');
 				meaningLink.textContent = 'Kanjidamage';
-				meaningLink.setAttribute('target', '_blank');
+				meaningLink.target = '_blank';
+				meaningLink.rel = 'noopener noreferrer';
 				meaningH2.appendChild(meaningLink);
 				let meaningSection = document.createElement('section');
 
@@ -123,7 +124,8 @@
 				let readingH2 = document.createElement('h2');
 				let readingLink = document.createElement('a');
 				readingLink.textContent = 'Kanjidamage';
-				readingLink.setAttribute('target', '_blank');
+				readingLink.target = '_blank';
+				readingLink.rel = 'noopener noreferrer';
 				readingH2.appendChild(readingLink);
 				let readingSection = document.createElement('section');
 
@@ -134,7 +136,8 @@
 				let reviewH2 = document.createElement('h2');
 				let reviewLink = document.createElement('a');
 				reviewLink.textContent = 'Kanjidamage';
-				reviewLink.setAttribute('target', '_blank');
+				reviewLink.target = '_blank';
+				reviewLink.rel = 'noopener noreferrer';
 				reviewH2.appendChild(reviewLink);
 				reviewContainer.appendChild(reviewH2);
 				let reviewSection = document.createElement('section');
@@ -150,9 +153,9 @@
 				});
 
 				const clearOutput = function() {
-					meaningLink.setAttribute('href', '');
-					readingLink.setAttribute('href', '');
-					reviewLink.setAttribute('href', '');
+					meaningLink.href = '';
+					readingLink.href = '';
+					reviewLink.href = '';
 					meaningSection.innerHTML = '';
 					readingSection.innerHTML = '';
 					reviewSection.innerHTML = '';
@@ -167,9 +170,9 @@
 						html += kanjiObj.mnemonic;
 					}
 
-					meaningLink.setAttribute('href', kanjiObj.url);
-					readingLink.setAttribute('href', kanjiObj.url);
-					reviewLink.setAttribute('href', kanjiObj.url);
+					meaningLink.href = kanjiObj.url;
+					readingLink.href = kanjiObj.url;
+					reviewLink.href = kanjiObj.url;
 					meaningSection.innerHTML = html;
 					readingSection.innerHTML = html;
 					reviewSection.innerHTML = html;
@@ -204,7 +207,8 @@
 				let reviewH2 = document.createElement('h2');
 				let reviewLink = document.createElement('a');
 				reviewLink.textContent = 'Kanjidamage';
-				reviewLink.setAttribute('target', '_blank');
+				reviewLink.target = '_blank';
+				reviewLink.rel = 'noopener noreferrer';
 				reviewH2.appendChild(reviewLink);
 				reviewContainer.appendChild(reviewH2);
 				let reviewSection = document.createElement('section');
@@ -219,7 +223,7 @@
 						html += kanjiObj.mnemonic;
 					}
 
-					reviewLink.setAttribute('href', kanjiObj.url);
+					reviewLink.href = kanjiObj.url;
 					reviewSection.innerHTML = html;
 				};
 
@@ -259,7 +263,7 @@
 			let section = document.createElement('section');
 
 			let header = document.createElement('h2');
-			header.innerHTML = `<a href="${kanjiObj.url}" target="_blank">Kanjidamage</a>`;
+			header.innerHTML = `<a href="${kanjiObj.url}" target="_blank" rel="noopener noreferrer">Kanjidamage</a>`;
 			section.appendChild(header);
 
 			if (kanjiObj.reading) {

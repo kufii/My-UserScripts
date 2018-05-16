@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Loft Lounge Board Game Filters
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.2
+// @version      1.1.4
 // @description  Adds Filters to the Loft Lounge board game page
 // @author       Adrien Pyke
 // @match        *://www.theloftlounge.ca/pages/board-games*
@@ -36,7 +36,7 @@
 		createCheckbox(lbl) {
 			let label = document.createElement('label');
 			let checkbox = document.createElement('input');
-			checkbox.setAttribute('type', 'checkbox');
+			checkbox.type = 'checkbox';
 			label.appendChild(checkbox);
 			label.appendChild(document.createTextNode(lbl));
 			return label;
@@ -124,7 +124,7 @@
 	let selectedCategories = [];
 
 	const filter = function() {
-		rows.forEach(row => row.setAttribute('hidden', ''));
+		rows.forEach(row => row.hidden = true);
 		let rowsFilter = rows;
 
 		if (selectedCategories.length > 0) {
@@ -142,14 +142,14 @@
 			});
 		}
 
-		rowsFilter.forEach(row => row.removeAttribute('hidden'));
+		rowsFilter.forEach(row => row.hidden = false);
 	};
 
 	nameFilter.oninput = filter;
 
 	let categoryDiv = document.createElement('div');
 	categoryDiv.classList.add('category-list');
-	categoryDiv.setAttribute('hidden', '');
+	categoryDiv.hidden = true;
 
 	let categorySpan = document.createElement('span');
 
@@ -174,16 +174,16 @@
 	});
 
 	let categoryButton = Util.createButton('Categories...', () => {
-		if (categoryDiv.hasAttribute('hidden')) {
-			categoryDiv.removeAttribute('hidden');
+		if (categoryDiv.hidden) {
+			categoryDiv.hidden = false;
 		} else {
-			categoryDiv.setAttribute('hidden', '');
+			categoryDiv.hidden = true;
 		}
 	});
 
 	document.body.addEventListener('click', e => {
 		if (e.target !== categoryButton && !categoryDiv.contains(e.target)) {
-			categoryDiv.setAttribute('hidden', '');
+			categoryDiv.hidden = true;
 		}
 	});
 

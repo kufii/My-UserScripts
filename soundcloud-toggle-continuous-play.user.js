@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SoundCloud Toggle Continuous Play and Autoplay
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.13
+// @version      1.1.14
 // @description  Adds options to toggle continuous play and autoplay in SoundCloud
 // @author       Adrien Pyke
 // @match        *://soundcloud.com/*
@@ -31,7 +31,7 @@
 		createCheckbox(lbl) {
 			let label = document.createElement('label');
 			let checkbox = document.createElement('input');
-			checkbox.setAttribute('type', 'checkbox');
+			checkbox.type = 'checkbox';
 			label.appendChild(checkbox);
 			label.appendChild(document.createTextNode(lbl));
 			return label;
@@ -149,8 +149,7 @@
 		onmatch(button) {
 			if (!App.isPlaying()) {
 				button.classList.remove('sc-button-buffering');
-				button.setAttribute('title', 'Play');
-				button.textContent = 'Play';
+				button.title = button.textContent = 'Play';
 			}
 		}
 	});

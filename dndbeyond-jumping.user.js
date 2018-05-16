@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         D&D Beyond - Jumping Distance
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.4
+// @version      1.0.5
 // @description  Adds a jumping distance section to D&D Beyond
 // @author       Adrien Pyke
 // @match        *://www.dndbeyond.com/profile/*/characters/*
@@ -59,9 +59,9 @@
 			inputDiv.classList.add('speed-manager-override-item-input');
 
 			let value = document.createElement('input');
-			value.setAttribute('type', 'number');
-			value.setAttribute('min', 0);
-			value.setAttribute('value', GM_getValue(`${Character.id}-${key}`) || '');
+			value.type = 'number';
+			value.min = 0;
+			value.value = GM_getValue(`${Character.id}-${key}`) || '';
 			inputDiv.appendChild(value);
 
 			div.appendChild(inputDiv);
@@ -70,8 +70,8 @@
 			sourceDiv.classList.add('speed-manager-override-item-source');
 
 			let source = document.createElement('input');
-			source.setAttribute('type', 'text');
-			source.setAttribute('value', GM_getValue(`${Character.id}-${key}-source`) || '');
+			source.type = 'text';
+			source.value = GM_getValue(`${Character.id}-${key}-source`) || '';
 			sourceDiv.appendChild(source);
 
 			div.appendChild(sourceDiv);
