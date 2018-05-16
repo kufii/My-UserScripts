@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.14
+// @version      2.1.15
 // @description  Show MAL fansub info on Kitsu anime pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -61,6 +61,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		thumbsUp: '<path d="M40 23.2c0-2.1-1.7-3.2-4-3.2h-6.7c.5-1.8.7-3.5.7-5 0-5.8-1.6-7-3-7-.9 0-1.6.1-2.5.6-.3.2-.4.4-.5.7l-1 5.4c-1.1 2.8-3.8 5.3-6 7V36c.8 0 1.6.4 2.6.9 1.1.5 2.2 1.1 3.4 1.1h9.5c2 0 3.5-1.6 3.5-3 0-.3 0-.5-.1-.7 1.2-.5 2.1-1.5 2.1-2.8 0-.6-.1-1.1-.3-1.6.8-.5 1.5-1.4 1.5-2.4 0-.6-.3-1.2-.6-1.7.8-.6 1.4-1.6 1.4-2.6zm-2.1 0c0 1.3-1.3 1.4-1.5 2-.2.7.8.9.8 2.1 0 1.2-1.5 1.2-1.7 1.9-.2.8.5 1 .5 2.2v.2c-.2 1-1.7 1.1-2 1.5-.3.5 0 .7 0 1.8 0 .6-.7 1-1.5 1H23c-.8 0-1.6-.4-2.6-.9-.8-.4-1.6-.8-2.4-1V23.5c2.5-1.9 5.7-4.7 6.9-8.2v-.2l.9-5c.4-.1.7-.1 1.2-.1.2 0 1 1.2 1 5 0 1.5-.3 3.1-.8 5H27c-.6 0-1 .4-1 1s.4 1 1 1h9c1 0 1.9.5 1.9 1.2z"/><path d="M16 38h-6c-1.1 0-2-.9-2-2V22c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2zm-6-16v14h6V22h-6z"/>'
 	};
 
+	const Colors = {
+		like: '#16a085',
+		dislike: 'db2409',
+		neutral: '#b4b4b4'
+	};
+
 	const Util = {
 		log(...args) {
 			args.unshift(`%c${SCRIPT_NAME}:`, 'font-weight: bold;color: #233c7b;');
@@ -101,18 +107,18 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			} else return url;
 		},
 		setNewTab(node) {
-			node.setAttribute('target', '_blank');
-			node.setAttribute('rel', 'noopener noreferrer');
+			node.target = '_blank';
+			node.rel = 'noopener noreferrer';
 		},
-		icon(name, color, size, scale) {
+		icon(name, color, size = 20, flip = false) {
 			let newIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 			newIcon.innerHTML = Icon[name];
 			newIcon.setAttribute('viewBox', '0 0 50 50');
-			newIcon.setAttribute('width', '20');
-			newIcon.setAttribute('height', '20');
+			newIcon.setAttribute('width', size);
+			newIcon.setAttribute('height', size);
 			if (color) newIcon.setAttribute('fill', color);
-			if (size) { newIcon.setAttribute('width', size); newIcon.setAttribute('height', size); }
-			if (scale) newIcon.setAttribute('transform', `scale(${scale[0]}, ${scale[1]})`);
+			if (flip) newIcon.setAttribute('transform', 'scale(-1, -1)');
+			newIcon.style.verticalAlign = 'sub';
 			return newIcon;
 		},
 		createModal(title, bodyDiv) {
@@ -281,28 +287,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				}
 			});
 		},
-		getWebsite(id, cb) {
-			// Util.log('Getting website for ' + id);
-			let self = this;
-			if (self.websiteCache[id]) {
-				cb(self.websiteCache[id]);
-				return;
-			}
-			GM_xmlhttpRequest({
-				method: 'GET',
-				url: `https://myanimelist.net/fansub-groups.php?id=${id}`,
-				onload(response) {
-					let tempDiv = document.createElement('div');
-					tempDiv.innerHTML = response.responseText;
-					let link = Util.q('td.borderClass > a:first-of-type', tempDiv);
-					if (link && link.getAttribute('href')) {
-						// Util.log('Found website for id');
-						self.websiteCache[id] = link.href;
-						cb(link.href);
-					}
-				}
-			});
-		},
 		getFansubSection() {
 			let container = document.createElement('section');
 			container.classList.add('m-b-1');
@@ -314,8 +298,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			container.appendChild(title);
 
 			let list = document.createElement('ul');
-			list.classList.add('media-list');
-			list.classList.add('w-100');
+			list.classList.add('media-list', 'w-100');
 			container.appendChild(list);
 
 			return container;
@@ -335,84 +318,22 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				App.votingTabs.malid = null;
 			};
 		},
-		getFansubOutput(fansub) {
-			let fansubDiv = document.createElement('div');
-			fansubDiv.classList.add('stream-item');
-			fansubDiv.classList.add('row');
-
-			let streamWrap = document.createElement('div');
-			streamWrap.classList.add('stream-item-wrapper');
-			streamWrap.classList.add('stream-review-wrapper');
-			streamWrap.classList.add('col-sm-12');
-			fansubDiv.appendChild(streamWrap);
-
-			let streamReview = document.createElement('div');
-			streamReview.classList.add('stream-review');
-			streamReview.classList.add('row');
-			streamWrap.appendChild(streamReview);
-
-			let streamActivity = document.createElement('div');
-			streamActivity.classList.add('stream-item-activity');
-			streamWrap.appendChild(streamActivity);
-
-			let streamOptions = document.createElement('div');
-			streamOptions.classList.add('stream-item-options');
-			streamWrap.appendChild(streamOptions);
-
-			let streamContent = document.createElement('div');
-			streamContent.classList.add('stream-review-content');
-			streamReview.appendChild(streamContent);
-
-			let heading = document.createElement('small');
-			heading.classList.add('media-heading');
-			streamContent.appendChild(heading);
-
-			let name = document.createElement('h6');
-			heading.appendChild(name);
-
-			let nameLink = document.createElement('a');
-			nameLink.textContent = fansub.name;
-			nameLink.href = fansub.url;
-			Util.setNewTab(nameLink);
-			name.appendChild(nameLink);
-
-			if (fansub.lang) {
-				let lang = document.createElement('small');
-				lang.textContent = ` ${fansub.lang}`;
-				name.appendChild(lang);
-			}
-
-			App.getWebsite(fansub.id, href => {
-				let webLink = document.createElement('a');
-				webLink.href = href;
-				Util.setNewTab(webLink);
-				webLink.appendChild(document.createTextNode(' '));
-				webLink.appendChild(Util.icon('link')).setAttribute('style', 'vertical-align: sub');
-				name.appendChild(webLink);
-			});
-
+		createVotingButtons(fansub) {
 			let votingButtons = document.createElement('div');
-			votingButtons.setAttribute('style', 'display:inline-block;float:left;padding:2px 0 4px;position:relative;');
 			let voteUp = document.createElement('a');
 			let voteDown = document.createElement('a');
 			votingButtons.appendChild(voteUp);
 			votingButtons.appendChild(voteDown);
-			streamActivity.appendChild(votingButtons);
 			voteUp.href = '#';
 			voteDown.href = '#';
 			voteUp.dataset.value = 1;
 			voteDown.dataset.value = 2;
 
-			if (fansub.value === 1) {
-				voteUp.appendChild(Util.icon('thumbsUp', '#16A085')).setAttribute('style', 'width:23px;height:auto;float:left;');
-				voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
-			} else if (fansub.value === 2) {
-				voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
-				voteDown.appendChild(Util.icon('thumbsUp', '#DB2409', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
-			} else {
-				voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
-				voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
-			}
+			const setVoteIcons = () => {
+				voteUp.innerHTML = voteDown.innerHTML = '';
+				voteUp.appendChild(Util.icon('thumbsUp', fansub.value === 1 ? Colors.like : Colors.neutral, 23));
+				voteDown.appendChild(Util.icon('thumbsUp', fansub.value === 2 ? Colors.dislike : Colors.neutral, 23, true));
+			};
 
 			let voteHandler = e => {
 				e.preventDefault();
@@ -428,26 +349,66 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				}
 				App.vote(fansub.malid, fansub.id, value);
 				fansub.value = value;
-				voteUp.innerHTML = voteDown.innerHTML = '';
 
-				if (fansub.value === 1) {
-					voteUp.appendChild(Util.icon('thumbsUp', '#16A085')).setAttribute('style', 'width:23px;height:auto;float:left;');
-					voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
-				} else if (fansub.value === 2) {
-					voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
-					voteDown.appendChild(Util.icon('thumbsUp', '#DB2409', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
-				} else {
-					voteUp.appendChild(Util.icon('thumbsUp', '#B4B4B4')).setAttribute('style', 'width:23px;height:auto;float:left;');
-					voteDown.appendChild(Util.icon('thumbsUp', '#B4B4B4', '', [-1, -1])).setAttribute('style', 'width:23px;height:auto;float:left;');
-				}
+				setVoteIcons();
 			};
 			voteUp.onclick = voteHandler;
 			voteDown.onclick = voteHandler;
+			setVoteIcons();
 
-			let approvals = document.createElement('div');
-			approvals.classList.add('comment-body');
+			return votingButtons;
+		},
+		getFansubOutput(fansub) {
+			let fansubDiv = document.createElement('div');
+			fansubDiv.classList.add('stream-item', 'row');
+
+			let streamWrap = document.createElement('div');
+			streamWrap.classList.add('stream-item-wrapper', 'col-sm-12');
+			fansubDiv.appendChild(streamWrap);
+
+			let titleBlock = document.createElement('div');
+			titleBlock.classList.add('stream-item--title-block');
+			streamWrap.appendChild(titleBlock);
+
+			let authorInfo = document.createElement('div');
+			authorInfo.classList.add('author-info');
+			titleBlock.appendChild(authorInfo);
+
+			let streamContent = document.createElement('div');
+			streamContent.classList.add('stream-content');
+			streamWrap.appendChild(streamContent);
+
+			let streamContentPost = document.createElement('div');
+			streamContentPost.classList.add('stream-content-post');
+			streamContent.appendChild(streamContentPost);
+
+			let streamActivity = document.createElement('div');
+			streamActivity.classList.add('stream-item-activity');
+			streamWrap.appendChild(streamActivity);
+
+			let streamOptions = document.createElement('div');
+			streamOptions.classList.add('stream-item-options');
+			streamWrap.appendChild(streamOptions);
+
+			let nameLink = document.createElement('a');
+			nameLink.classList.add('author-name');
+			nameLink.textContent = fansub.name;
+			nameLink.href = fansub.url;
+			Util.setNewTab(nameLink);
+			authorInfo.appendChild(nameLink);
+
+			if (fansub.lang) {
+				let lang = document.createElement('small');
+				lang.classList.add('secondary-text');
+				lang.textContent = fansub.lang;
+				authorInfo.appendChild(lang);
+			}
+
+			let approvals = document.createElement('p');
 			approvals.textContent = `${fansub.totalApproved} of ${fansub.totalVotes} users approve.`;
-			streamContent.appendChild(approvals);
+			streamContentPost.appendChild(approvals);
+
+			streamActivity.appendChild(App.createVotingButtons(fansub));
 
 			if (fansub.comments && fansub.comments.length > 0) {
 				let commentsWrap = document.createElement('span');
@@ -467,13 +428,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 						let smileContainer = document.createElement('div');
 						smileContainer.classList.add('review-avatar');
-						smileContainer.setAttribute('style', 'margin-right: 0');
 						div.appendChild(smileContainer);
-						smileContainer.appendChild(comment.approves ? Util.icon('plus', '#16A085', 25) : Util.icon('minus', '#DB2409', 25));
+						smileContainer.appendChild(comment.approves ? Util.icon('plus', Colors.like, 25) : Util.icon('minus', Colors.dislike, 25));
 
 						let commentContainer = document.createElement('div');
 						commentContainer.classList.add('comment-body');
-						commentContainer.setAttribute('style', 'margin-left: 40px');
 						div.appendChild(commentContainer);
 						let commentText = document.createElement('p');
 						commentText.textContent = comment.text;
@@ -481,7 +440,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 						commentsDiv.appendChild(div);
 					});
-					Util.q('.author-header:last-child', commentsDiv).setAttribute('style', 'border-bottom: none;');
+					Util.q('.author-header:last-child', commentsDiv);
 					Util.createModal(fansub.name, commentsDiv);
 					return false;
 				};
@@ -490,12 +449,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			return fansubDiv;
 		},
 		filterFansubs(fansubs, langs) {
-			langs = langs.split(',').map(lang => {
-				return lang.trim().toLowerCase();
-			});
+			langs = langs.split(',').map(lang => lang.trim().toLowerCase());
 			return fansubs.filter(({ lang }) => {
-				lang = (lang || 'english').trim().toLowerCase();
-				return langs.includes(lang);
+				lang = lang || 'english';
+				return langs.includes(lang.trim().toLowerCase());
 			});
 		}
 	};
@@ -503,7 +460,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	const Config = GM_config([
 		{
 			key: 'lang',
-			label: 'Languages (Comma Seperated)',
+			label: 'Languages',
+			placeholder: 'Languages (Comma Seperated)',
 			type: 'text'
 		}
 	]);
@@ -537,13 +495,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 							malLink.href = response.url;
 							Util.setNewTab(malLink);
 							extLink.appendChild(malLink);
-							malLink.appendChild(Util.icon('extLink')).setAttribute('style', 'vertical-align: sub');
+							malLink.appendChild(Util.icon('extLink'));
 
 							let list = Util.q('.media-list', section);
 
 							if (response.fansubs.length > 0) {
 								let hiddenSpan = document.createElement('span');
-								hiddenSpan.style.display = 'none';
+								hiddenSpan.hidden = true;
 								let addViewMore = false;
 
 								response.fansubs.forEach((fansub, i) => {
@@ -559,24 +517,20 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 								if (addViewMore) {
 									list.appendChild(hiddenSpan);
 									let viewMoreDiv = document.createElement('div');
-									viewMoreDiv.classList.add('text-xs-center');
-									viewMoreDiv.classList.add('w-100');
+									viewMoreDiv.classList.add('text-xs-center', 'w-100');
 
-									let viewMore = document.createElement('a');
-									viewMore.classList.add('button');
-									viewMore.classList.add('button--secondary');
-									viewMore.setAttribute('style', 'color: #FFF;');
-									viewMore.href = '#';
+									let viewMore = document.createElement('button');
+									viewMore.classList.add('button', 'button--secondary');
 									viewMore.textContent = 'View More Fansubs';
 									viewMoreDiv.appendChild(viewMore);
 
 									viewMore.onclick = e => {
 										e.preventDefault();
-										if (hiddenSpan.style.display === 'none') {
-											hiddenSpan.style.display = 'inline';
+										if (hiddenSpan.hidden) {
+											hiddenSpan.hidden = false;
 											viewMore.textContent = 'View Less Fansubs';
 										} else {
-											hiddenSpan.style.display = 'none';
+											hiddenSpan.hidden = true;
 											viewMore.textContent = 'View More Fansubs';
 										}
 										return false;
