@@ -42,7 +42,7 @@ const Config = GM_config([
 
 ### Parameters:
 
-**`settings`**: An array of settings objects  
+**`settings`**: An array of settings objects.  
 **`storage`**: Optional. Defines what variable the settings will be stored under. Default is `cfg`.
 
 ### Settings Objects:
@@ -95,7 +95,7 @@ const Config = GM_config([
 	// Optional. The maximum value.
 	max: 10,
 
-	// Optional. The increment size. Defaults to 1
+	// Optional. The increment size. Defaults to 1.
 	step: 0.01
 }
 ```
@@ -116,7 +116,7 @@ const Config = GM_config([
 		}
 	],
 
-	// Optional. If true show a blank option. Default is false.
+	// Optional. If true show a blank option. Defaults to false.
 	showBlank: true
 }
 ```
@@ -132,7 +132,7 @@ const Config = GM_config([
 **`setup()`**: Initializes a UI for the user to modify the settings.
 
 ### Using the UI:
-You can hook the setup to a GreaseMonkey menu command by granting `GM_registerMenuCommand` and doing the following
+You can hook the setup to a GreaseMonkey menu command by granting `GM_registerMenuCommand` and doing the following:
 
 ```javascript
 GM_registerMenuCommand('Command Text', Config.setup);
