@@ -78,7 +78,7 @@ const Config = GM_config([
 	// Optional. If true, shows a textarea insetad of a text input. Defaults to false.
 	multiline: true,
 
-	// Optional. Only applicable when multiline is true. If true the textarea will be resizable.
+	// Optional. Only applicable when multiline is true. If true the textarea will be resizable. Defaults to false.
 	resizable: true
 }
 ```
