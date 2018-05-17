@@ -70,7 +70,13 @@ const Config = GM_config([
 ```javascript
 {
 	// Optional. Placeholder text for the textbox.
-	placeholder: 'Placeholder'
+	placeholder: 'Placeholder',
+	// Optional. Sets the maxlength of the textbox.
+	maxLength: 10,
+	// Optional. If true, shows a textarea insetad of a text input. Defaults to false.
+	multiline: true,
+	// Optional. Only applicable when multiline is true. If true the textarea will be resizable.
+	resizable: true
 }
 ```
 
@@ -94,11 +100,20 @@ const Config = GM_config([
 **`dropdown:`** Shows a dropdown list.
 ```javascript
 {
-	// The list of possible options for the dropdown. Takes an array of values, or an array of objects with a "value" property and "text" property
+	// The list of possible options for the dropdown. Each entry can be a value, an object with a text and value property, or an optgroup object.
 	values: [
-		{ value: 1, text: 'Option 1' },
-		{ value: 2, text: 'Option 2'}
-	]
+		1,
+		{ value: 2, text: 'Option 2'},
+		{
+			optgroup: 'Group',
+			values: [
+				3,
+				{ value: 4, text: 'Option 4'},
+			]
+		}
+	],
+	// Optional. If true show a blank option. Default is false.
+	showBlank: true
 }
 ```
 

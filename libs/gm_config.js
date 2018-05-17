@@ -4,19 +4,6 @@
 	window.GM_config = function(settings, storage = 'cfg') {
 		let ret;
 
-		settings.forEach(setting => {
-			if (setting.type === 'dropdown') {
-				setting.values = setting.values.map(val => {
-					if (typeof val.text === 'undefined') {
-						let value = val.value;
-						if (typeof value === 'undefined') value = val;
-						return { value, text: value };
-					}
-					return val;
-				});
-			}
-		});
-
 		const prefix = 'gm-config';
 
 		const addStyle = function() {
@@ -40,9 +27,11 @@
 					color: black;
 					text-align: right;
 					font-size: small;
+					font-weight: bold;
 				}
 
 				.${prefix} input,
+				.${prefix} textarea,
 				.${prefix} select {
 					grid-column: 2 / 4;
 				}
@@ -66,9 +55,7 @@
 
 		const load = function() {
 			let defaults = {};
-			settings.forEach(setting => {
-				defaults[setting.key] = setting.default;
-			});
+			settings.forEach(({ key, default: def }) => defaults[key] = def);
 
 			let cfg = (typeof GM_getValue !== 'undefined') ? GM_getValue(storage) : localStorage.getItem(storage);
 			if (!cfg) return defaults;
@@ -94,12 +81,17 @@
 				form.classList.add(prefix);
 				return form;
 			};
-			const createTextbox = function(name, value, placeholder) {
-				let input = document.createElement('input');
-				input.type = 'text';
+			const createTextbox = function(name, value, placeholder, maxlength, multiline, resize) {
+				let input = document.createElement(multiline ? 'textarea' : 'input');
+				if (multiline) {
+					input.style.resize = resize ? 'vertical' : 'none';
+				} else {
+					input.type = 'text';
+				}
 				input.name = name;
 				if (typeof value !== 'undefined') input.value = value;
 				if (placeholder) input.placeholder = placeholder;
+				if (maxlength) input.maxLength = maxlength;
 				return input;
 			};
 			const createNumber = function(name, value, placeholder, min, max, step) {
@@ -110,19 +102,31 @@
 				if (typeof step !== 'undefined') input.step = step;
 				return input;
 			};
-			const createSelect = function(name, lbl, options, value) {
+			const createSelect = function(name, options, value, showBlank) {
 				let select = document.createElement('select');
 				select.name = name;
 
-				let optgroup = document.createElement('optgroup');
-				optgroup.label = lbl;
-				select.appendChild(optgroup);
+				const createOption = function(val) {
+					let { value = val, text = val } = val;
+					let option = document.createElement('option');
+					option.value = value;
+					option.textContent = text;
+					return option;
+				};
+
+				if (showBlank) {
+					select.appendChild(createOption(''));
+				}
 
 				options.forEach(opt => {
-					let option = document.createElement('option');
-					option.value = opt.value;
-					option.textContent = opt.text;
-					optgroup.appendChild(option);
+					if (typeof opt.optgroup !== 'undefined') {
+						let optgroup = document.createElement('optgroup');
+						optgroup.label = opt.optgroup;
+						select.appendChild(optgroup);
+						opt.values.forEach(value => optgroup.appendChild(createOption(value)));
+					} else {
+						select.appendChild(createOption(opt));
+					}
 				});
 
 				select.value = value;
@@ -153,16 +157,16 @@
 				let controls = {};
 
 				let div = createContainer();
-				settings.filter(setting => setting.type !== 'hidden').forEach(setting => {
+				settings.filter(({ type }) => type !== 'hidden').forEach(setting => {
 					let value = cfg[setting.key];
 
 					let control;
 					if (setting.type === 'text') {
-						control = createTextbox(setting.key, value, setting.placeholder);
+						control = createTextbox(setting.key, value, setting.placeholder, setting.maxlength, setting.multiline, setting.resizable);
 					} else if (setting.type === 'number') {
 						control = createNumber(setting.key, value, setting.placeholder, setting.min, setting.max, setting.step);
 					} else if (setting.type === 'dropdown') {
-						control = createSelect(setting.key, setting.label, setting.values, value);
+						control = createSelect(setting.key, setting.values, value, setting.showBlank);
 					} else if (setting.type === 'bool') {
 						control = createCheckbox(setting.key, value);
 					}
@@ -181,9 +185,9 @@
 				});
 
 				div.appendChild(createButton('Save', () => {
-					settings.filter(setting => setting.type !== 'hidden').forEach(setting => {
-						let control = controls[setting.key];
-						cfg[setting.key] = setting.type === 'bool' ? control.checked : control.value;
+					settings.filter(({ type }) => type !== 'hidden').forEach(({ key, type }) => {
+						let control = controls[key];
+						cfg[key] = type === 'bool' ? control.checked : control.value;
 					});
 					save(cfg);
 
