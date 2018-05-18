@@ -81,7 +81,7 @@
 				form.classList.add(prefix);
 				return form;
 			};
-			const createTextbox = function(name, value, placeholder, maxlength, multiline, resize) {
+			const createTextbox = function(name, value, placeholder, maxLength, multiline, resize) {
 				let input = document.createElement(multiline ? 'textarea' : 'input');
 				if (multiline) {
 					input.style.resize = resize ? 'vertical' : 'none';
@@ -91,7 +91,7 @@
 				input.name = name;
 				if (typeof value !== 'undefined') input.value = value;
 				if (placeholder) input.placeholder = placeholder;
-				if (maxlength) input.maxLength = maxlength;
+				if (maxLength) input.maxLength = maxLength;
 				return input;
 			};
 			const createNumber = function(name, value, placeholder, min, max, step) {
@@ -162,7 +162,7 @@
 
 					let control;
 					if (setting.type === 'text') {
-						control = createTextbox(setting.key, value, setting.placeholder, setting.maxlength, setting.multiline, setting.resizable);
+						control = createTextbox(setting.key, value, setting.placeholder, setting.maxLength, setting.multiline, setting.resizable);
 					} else if (setting.type === 'number') {
 						control = createNumber(setting.key, value, setting.placeholder, setting.min, setting.max, setting.step);
 					} else if (setting.type === 'dropdown') {
