@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         The Works Burger Chooser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.2
+// @version      1.2.3
 // @description  Choose a random burger on the works menu
 // @author       Adrien Pyke
 // @match        *://worksburger.com/menu/burger-menu/*
@@ -71,13 +71,13 @@
 		Util.log('Adding Button...');
 		let button = document.createElement('button');
 		button.textContent = 'Choose Random Burger';
-		button.setAttribute('style', Util.css({
-			'position': 'fixed',
-			'bottom': '20px',
-			'left': '20px',
-			'padding': '5px',
-			'z-index': 99999
-		}));
+		button.setAttribute('style', `
+			position: fixed;
+			bottom: 20px;
+			left: 20px;
+			padding: 5px;
+			z-index: 99999;
+		`);
 		button.onclick = e => {
 			e.stopImmediatePropagation();
 			e.preventDefault();
