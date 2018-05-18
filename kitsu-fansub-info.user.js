@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.17
+// @version      2.1.18
 // @description  Show MAL fansub info on Kitsu anime pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -283,7 +283,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					Util.log('MAL ID not found');
 					let section = Util.q(`#${SECTION_ID}`);
 					if (section) section.remove();
-
 				}
 			});
 		},
