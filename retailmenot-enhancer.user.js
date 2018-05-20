@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RetailMeNot Enhancer
 // @namespace    https://greasyfork.org/users/649
-// @version      3.1.2
+// @version      3.1.3
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
@@ -45,14 +45,14 @@
 				if (hasValue) {
 					return url.replace(regex, `$1${key}=${value}$2$3`);
 				} else {
-					let [path, hash] = url.split('#');
+					const [path, hash] = url.split('#');
 					url = path.replace(regex, '$1$3').replace(/(&|\?)$/, '');
 					if (hash) url += `#${hash[1]}`;
 					return url;
 				}
 			} else if (hasValue) {
-				let separator = url.includes('?') ? '&' : '?';
-				let [path, hash] = url.split('#');
+				const separator = url.includes('?') ? '&' : '?';
+				const [path, hash] = url.split('#');
 				url = `${path + separator + key}=${value}`;
 				if (hash) url += `#${hash[1]}`;
 				return url;
@@ -67,7 +67,7 @@
 		createCookie(name, value, days) {
 			let expires;
 			if (days) {
-				let date = new Date();
+				const date = new Date();
 				date.setTime(date.getTime()+(days*24*60*60*1000));
 				expires = `; expires=${date.toGMTString()}`;
 			} else expires = '';
@@ -86,10 +86,10 @@
 		waitForElems({
 			sel: '.js-outclick, .js-title > a, .js-triggers-outclick, .js-coupon-square, .offer-item-in-list',
 			onmatch(button) {
-				let path = button.dataset.newTab && !button.dataset.newTab.match(/^\/out/i) ? button.dataset.newTab : button.dataset.mainTab;
-				let href = `${window.location.protocol}//${window.location.host}${path}`;
+				const path = button.dataset.newTab && !button.dataset.newTab.match(/^\/out/i) ? button.dataset.newTab : button.dataset.mainTab;
+				const href = `${window.location.protocol}//${window.location.host}${path}`;
 				if (path) {
-					let handler = e => {
+					const handler = e => {
 						e.preventDefault();
 						e.stopImmediatePropagation();
 						if (e.button === 1) {
@@ -102,11 +102,11 @@
 						return false;
 					};
 					if (button.classList.contains('offer-item-in-list')) {
-						let offerButton = Util.q('.offer-button', button);
+						const offerButton = Util.q('.offer-button', button);
 						if (offerButton) {
 							offerButton.onclick = handler;
 						}
-						let offerTitle = Util.q('.offer-title', button);
+						const offerTitle = Util.q('.offer-title', button);
 						if (offerTitle) {
 							offerTitle.href = href;
 							offerTitle.onclick = handler;
@@ -134,9 +134,9 @@
 		waitForElems({
 			sel: '.offer, .stage .coupon',
 			onmatch(offer) {
-				let href = `${window.location.protocol}//${window.location.host}${window.location.pathname}?c=${offer.dataset.offerid}`;
+				const href = `${window.location.protocol}//${window.location.host}${window.location.pathname}?c=${offer.dataset.offerid}`;
 
-				let clickHandler = e => {
+				const clickHandler = e => {
 					e.preventDefault();
 					e.stopImmediatePropagation();
 					if (e.button === 1) {
@@ -188,9 +188,9 @@
 		waitForElems({
 			sel: '.coupon',
 			onmatch(coupon) {
-				let id = coupon.dataset.suffix;
-				let href = `${window.location.protocol}//${window.location.host}${window.location.pathname}?r=1#${id}`;
-				let clickHandler = e => {
+				const id = coupon.dataset.suffix;
+				const href = `${window.location.protocol}//${window.location.host}${window.location.pathname}?r=1#${id}`;
+				const clickHandler = e => {
 					e.preventDefault();
 					e.stopImmediatePropagation();
 					Util.createCookie(`click_${id}`, true);
@@ -211,11 +211,11 @@
 		});
 	}
 	// human checks
-	let regex = /^https?:\/\/www\.retailmenot\.[^/]+\/humanCheck\.php/i;
+	const regex = /^https?:\/\/www\.retailmenot\.[^/]+\/humanCheck\.php/i;
 	Util.qq('a').filter(link => {
 		return link.href.match(regex);
 	}).forEach(link => {
-		let url = Util.getQueryParam('url', link.href);
+		const url = Util.getQueryParam('url', link.href);
 		if (url) {
 			link.href = `${window.location.protocol}//${window.location.host}${url}`;
 		}

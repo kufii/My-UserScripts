@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Unblocker
 // @namespace    https://greasyfork.org/users/649
-// @version      3.0.18
+// @version      3.0.19
 // @description  Auto redirects blocked videos to the mirror site hooktube.com
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -9,7 +9,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/52f42ca18eedcd6301380408d065c5ca9a901196/libs/gm_config.js
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
@@ -57,7 +57,7 @@
 			}
 		});
 	} else {
-		let cfg = Config.load();
+		const cfg = Config.load();
 		if (!cfg.autoplay) {
 			waitForElems({
 				sel: '#player-obj',

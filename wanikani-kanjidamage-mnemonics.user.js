@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.3
+// @version      1.1.4
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
@@ -16,7 +16,7 @@
 	'use strict';
 
 	const SCRIPT_NAME = 'WaniKani Kanjidamage Mnemonics';
-	let cachedKanji = [];
+	const cachedKanji = [];
 
 	const Util = {
 		log(...args) {
@@ -48,13 +48,13 @@
 					onload(response) {
 						Util.log(`Found Kanjidamage information for ${kanji}`);
 
-						let tempDiv = document.createElement('div');
+						const tempDiv = document.createElement('div');
 						tempDiv.innerHTML = response.responseText;
 
 						let reading = '';
 						let mnemonic = '';
 
-						let classReplaceCallback = elem => {
+						const classReplaceCallback = elem => {
 							if (elem.classList.contains('onyomi')) {
 								elem.classList.remove('onyomi');
 								elem.classList.add(inLesson ? 'highlight-reading' : 'reading-highlight');
@@ -72,7 +72,7 @@
 						let onyomiTable = Util.qq('h2', tempDiv).filter(elem => elem.textContent.includes('Onyomi'));
 						if (onyomiTable.length > 0) {
 							onyomiTable = onyomiTable[0].nextElementSibling;
-							let readingElem = Util.q('td:nth-child(2)', onyomiTable);
+							const readingElem = Util.q('td:nth-child(2)', onyomiTable);
 							Util.qq('span', readingElem).forEach(classReplaceCallback);
 							reading = readingElem.innerHTML;
 						}
@@ -80,7 +80,7 @@
 						let mnemonicTable = Util.qq('h2', tempDiv).filter(elem => elem.textContent.includes('Mnemonic'));
 						if (mnemonicTable.length > 0) {
 							mnemonicTable = mnemonicTable[0].nextElementSibling;
-							let mnemonicElem = Util.q('td:nth-child(2)', mnemonicTable);
+							const mnemonicElem = Util.q('td:nth-child(2)', mnemonicTable);
 							Util.qq('span', mnemonicElem).forEach(classReplaceCallback);
 							mnemonic = mnemonicElem.innerHTML;
 						}
@@ -102,45 +102,45 @@
 		}
 	};
 
-	let isReview = (window.location.pathname.includes('/review/'));
-	let isLesson = (window.location.pathname.includes('/lesson/'));
+	const isReview = (window.location.pathname.includes('/review/'));
+	const isLesson = (window.location.pathname.includes('/lesson/'));
 
 	if (isLesson) {
 		waitForElems({
 			sel: '#main-info',
 			stop: true,
 			onmatch() {
-				let meaningH2 = document.createElement('h2');
-				let meaningLink = document.createElement('a');
+				const meaningH2 = document.createElement('h2');
+				const meaningLink = document.createElement('a');
 				meaningLink.textContent = 'Kanjidamage';
 				meaningLink.target = '_blank';
 				meaningLink.rel = 'noopener noreferrer';
 				meaningH2.appendChild(meaningLink);
-				let meaningSection = document.createElement('section');
+				const meaningSection = document.createElement('section');
 
 				Util.appendAfter(Util.q('#supplement-kan-meaning-notes'), meaningH2);
 				Util.appendAfter(meaningH2, meaningSection);
 
-				let readingH2 = document.createElement('h2');
-				let readingLink = document.createElement('a');
+				const readingH2 = document.createElement('h2');
+				const readingLink = document.createElement('a');
 				readingLink.textContent = 'Kanjidamage';
 				readingLink.target = '_blank';
 				readingLink.rel = 'noopener noreferrer';
 				readingH2.appendChild(readingLink);
-				let readingSection = document.createElement('section');
+				const readingSection = document.createElement('section');
 
 				Util.appendAfter(Util.q('#supplement-kan-reading-notes'), readingH2);
 				Util.appendAfter(readingH2, readingSection);
 
-				let reviewContainer = document.createElement('section');
-				let reviewH2 = document.createElement('h2');
-				let reviewLink = document.createElement('a');
+				const reviewContainer = document.createElement('section');
+				const reviewH2 = document.createElement('h2');
+				const reviewLink = document.createElement('a');
 				reviewLink.textContent = 'Kanjidamage';
 				reviewLink.target = '_blank';
 				reviewLink.rel = 'noopener noreferrer';
 				reviewH2.appendChild(reviewLink);
 				reviewContainer.appendChild(reviewH2);
-				let reviewSection = document.createElement('section');
+				const reviewSection = document.createElement('section');
 				reviewContainer.appendChild(reviewSection);
 
 				waitForElems({
@@ -188,7 +188,7 @@
 					onchange() {
 						clearOutput();
 						if (Util.q('#main-info').classList.contains('kanji')) {
-							let kanji = Util.q('#character').textContent;
+							const kanji = Util.q('#character').textContent;
 							App.getKanjiDamageInfo(kanji, true, kanjiObj => {
 								if (kanji === kanjiObj.character) {
 									outputKanjidamage(kanjiObj);
@@ -203,18 +203,18 @@
 		waitForElems({
 			sel: '#character',
 			onmatch() {
-				let reviewContainer = document.createElement('section');
-				let reviewH2 = document.createElement('h2');
-				let reviewLink = document.createElement('a');
+				const reviewContainer = document.createElement('section');
+				const reviewH2 = document.createElement('h2');
+				const reviewLink = document.createElement('a');
 				reviewLink.textContent = 'Kanjidamage';
 				reviewLink.target = '_blank';
 				reviewLink.rel = 'noopener noreferrer';
 				reviewH2.appendChild(reviewLink);
 				reviewContainer.appendChild(reviewH2);
-				let reviewSection = document.createElement('section');
+				const reviewSection = document.createElement('section');
 				reviewContainer.appendChild(reviewSection);
 
-				let outputKanjidamage = function(kanjiObj) {
+				const outputKanjidamage = function(kanjiObj) {
 					let html = '';
 					if (kanjiObj.reading) {
 						html += kanjiObj.reading;
@@ -245,7 +245,7 @@
 					},
 					onchange() {
 						if (Util.q('#character').classList.contains('kanji')) {
-							let kanji = Util.q('#character > span').textContent;
+							const kanji = Util.q('#character > span').textContent;
 							App.getKanjiDamageInfo(kanji, true, kanjiObj => {
 								if (kanji === kanjiObj.character) {
 									outputKanjidamage(kanjiObj);
@@ -257,12 +257,12 @@
 			}
 		});
 	} else {
-		let kanji = Util.q('.kanji-icon > span:nth-child(1)').textContent;
+		const kanji = Util.q('.kanji-icon > span:nth-child(1)').textContent;
 
 		App.getKanjiDamageInfo(kanji, false, kanjiObj => {
-			let section = document.createElement('section');
+			const section = document.createElement('section');
 
-			let header = document.createElement('h2');
+			const header = document.createElement('h2');
 			header.innerHTML = `<a href="${kanjiObj.url}" target="_blank" rel="noopener noreferrer">Kanjidamage</a>`;
 			section.appendChild(header);
 

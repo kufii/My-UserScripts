@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Editor - Change Default Settings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.15
+// @version      1.1.16
 // @description  change default settings for the github editor
 // @author       Adrien Pyke
 // @match        *://github.com/*/new/*
@@ -9,7 +9,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/52f42ca18eedcd6301380408d065c5ca9a901196/libs/gm_config.js
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
@@ -46,15 +46,15 @@
 
 	const updateDropdown = function(dropdown, value) {
 		dropdown.value = value;
-		let evt = document.createEvent('HTMLEvents');
+		const evt = document.createEvent('HTMLEvents');
 		evt.initEvent('change', false, true);
 		dropdown.dispatchEvent(evt);
 	};
 
 	const applySettings = function(cfg) {
-		let indentMode = document.querySelector('.js-code-indent-mode');
-		let indentWidth = document.querySelector('.js-code-indent-width');
-		let wrapMode = document.querySelector('.js-code-wrap-mode');
+		const indentMode = document.querySelector('.js-code-indent-mode');
+		const indentWidth = document.querySelector('.js-code-indent-width');
+		const wrapMode = document.querySelector('.js-code-wrap-mode');
 
 		if (location.href.match(/^https?:\/\/github.com\/[^/]*\/[^/]*\/new\/.*/)) {
 			// new file
@@ -72,7 +72,7 @@
 	};
 
 	GM_registerMenuCommand('GitHub Editor Settings', Config.setup);
-	let settings = Config.load();
+	const settings = Config.load();
 
 	waitForElems({
 		sel: '.CodeMirror-code',

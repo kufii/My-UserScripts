@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GCPedia Ace Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.18
+// @version      1.2.19
 // @description  Use the Ace Editor when editing things on GCPedia
 // @author       Adrien Pyke
 // @match        http://www.gcpedia.gc.ca/*
@@ -10,7 +10,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/52f42ca18eedcd6301380408d065c5ca9a901196/libs/gm_config.js
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
@@ -31,13 +31,13 @@
 			return Array.from(context.querySelectorAll(query));
 		},
 		addScript(src, onload) {
-			let s = document.createElement('script');
+			const s = document.createElement('script');
 			s.onload = onload;
 			s.src = src;
 			document.body.appendChild(s);
 		},
 		addScriptText(code, onload) {
-			let s = document.createElement('script');
+			const s = document.createElement('script');
 			s.onload = onload;
 			s.textContent = code;
 			document.body.appendChild(s);
@@ -96,7 +96,7 @@
 		sel: '#wpTextbox1',
 		stop: true,
 		onmatch(textArea) {
-			let wrapper = document.createElement('div');
+			const wrapper = document.createElement('div');
 			wrapper.id = 'ace';
 			wrapper.textContent = textArea.value;
 
@@ -113,7 +113,7 @@
 			`);
 
 			Util.addScript('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js', () => {
-				let editor = unsafeWindow.ace.edit('ace');
+				const editor = unsafeWindow.ace.edit('ace');
 				editor.setTheme(`ace/theme/${Config.load().theme}`);
 				editor.getSession().setMode('ace/mode/html');
 				editor.resize();

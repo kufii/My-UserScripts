@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.2
+// @version      1.2.3
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -26,7 +26,7 @@
 	'use strict';
 
 	// short reference to unsafeWindow (or window if unsafeWindow is unavailable e.g. bookmarklet)
-	let W = (typeof unsafeWindow === 'undefined') ? window : unsafeWindow;
+	const W = (typeof unsafeWindow === 'undefined') ? window : unsafeWindow;
 	const SCRIPT_NAME = 'Newspaper Paywall Bypasser';
 
 	const Util = {
@@ -50,21 +50,21 @@
 		},
 		appendStyle(css) {
 			let out = '';
-			for (let selector in css) {
+			for (const selector in css) {
 				out += `${selector}{`;
-				for (let rule in css[selector]) {
+				for (const rule in css[selector]) {
 					out += `${rule}:${css[selector][rule]}!important;`;
 				}
 				out += '}';
 			}
 
-			let style = document.createElement('style');
+			const style = document.createElement('style');
 			style.type = 'text/css';
 			style.appendChild(document.createTextNode(out));
 			document.head.appendChild(style);
 		},
 		clearAllIntervals() {
-			let interval_id = window.setInterval(null, 9999);
+			const interval_id = window.setInterval(null, 9999);
 			for (let i = 1; i <= interval_id; i++) {
 				window.clearInterval(i);
 			}
@@ -80,7 +80,7 @@
 			};
 		},
 		addScript(src, onload) {
-			let s = document.createElement('script');
+			const s = document.createElement('script');
 			s.onload = onload;
 			s.src = src;
 			document.body.appendChild(s);
@@ -94,10 +94,10 @@
 	if (typeof GM_xmlhttpRequest === 'undefined') {
 		Util.log('Adding GM_xmlhttpRequest polyfill');
 		W.GM_xmlhttpRequest = function(config) {
-			let xhr = new XMLHttpRequest();
+			const xhr = new XMLHttpRequest();
 			xhr.open(config.method || 'GET', config.url);
 			if (config.headers) {
-				for (let header in config.headers) {
+				for (const header in config.headers) {
 					xhr.setRequestHeader(header, config.headers[header]);
 				}
 			}
@@ -151,9 +151,9 @@
 			referer: 'https://t.co/T1323aaaa',
 			afterReplace() {
 				W.loadCSS('//asset.wsj.net/public/extra.production-2a7a40d6.css');
-				let scripts = Util.qq('script');
-				let add = function(regex, onload) {
-					let matching = scripts.filter(script => {
+				const scripts = Util.qq('script');
+				const add = function(regex, onload) {
+					const matching = scripts.filter(script => {
 						return script.src.match(regex);
 					});
 					if (matching.length > 0) {
@@ -211,15 +211,15 @@
 				return story;
 			},
 			bmmode() {
-				let self = this;
+				const self = this;
 				Util.clearAllIntervals();
 				GM_xmlhttpRequest({
 					url: W.location.href,
 					method: 'GET',
 					onload(response) {
-						let tempDiv = document.createElement('div');
+						const tempDiv = document.createElement('div');
 						tempDiv.innerHTML = response.responseText;
-						let story = self.cleanupStory(Util.q('#story', tempDiv));
+						const story = self.cleanupStory(Util.q('#story', tempDiv));
 						if (story) {
 							Util.q('#story').innerHTML = story.innerHTML;
 						}
@@ -240,9 +240,9 @@
 						W.require(['vhs'], vhs => {
 							Util.qq('.video').forEach(video => {
 								video.setAttribute('style', 'position: relative');
-								let bind = document.createElement('div');
+								const bind = document.createElement('div');
 								bind.classList.add('video-bind');
-								let div = document.createElement('div');
+								const div = document.createElement('div');
 								div.setAttribute('style', 'padding-bottom: 56.25%; position: relative; overflow: hidden;');
 								bind.appendChild(div);
 								Util.prepend(video, bind);
@@ -269,7 +269,7 @@
 			name: 'NY Times Mobile Redirect',
 			match: '^https?://myaccount\\.nytimes\\.com/mobile/wall/smart/.*',
 			fn() {
-				let article = Util.getQueryParameter('EXIT_URI');
+				const article = Util.getQueryParameter('EXIT_URI');
 				if (article) {
 					W.location.replace(`http://mobile.nytimes.com?LOAD_ARTICLE=${encodeURIComponent(article)}`);
 				}
@@ -325,7 +325,7 @@
 				}
 			},
 			fn() {
-				let handler = e => {
+				const handler = e => {
 					e.stopImmediatePropagation();
 				};
 				document.addEventListener('keydown', handler, true);
@@ -337,7 +337,7 @@
 
 	const Config = {
 		load() {
-			let defaults = {
+			const defaults = {
 				blacklist: {}
 			};
 
@@ -359,7 +359,7 @@
 		},
 
 		toggleBlacklist(imp) {
-			let cfg = Config.load();
+			const cfg = Config.load();
 			if (cfg.blacklist[imp]) {
 				cfg.blacklist[imp] = false;
 			} else {
@@ -383,20 +383,20 @@
 			}
 			if (imp.css) {
 				Util.log('Adding style');
-				let cssObj = typeof imp.css === 'function' ? imp.css() : imp.css;
+				const cssObj = typeof imp.css === 'function' ? imp.css() : imp.css;
 				Util.appendStyle(cssObj);
 			}
 			if (imp.remove) {
 				Util.log('Removing elements');
-				let elemsToRemove = typeof imp.remove === 'function' ? imp.remove() : Util.qq(imp.remove);
+				const elemsToRemove = typeof imp.remove === 'function' ? imp.remove() : Util.qq(imp.remove);
 				elemsToRemove.forEach(elem => {
 					elem.remove();
 				});
 			}
 
-			let replaceSelector = typeof imp.replace === 'function' ? imp.replace() : imp.replace;
+			const replaceSelector = typeof imp.replace === 'function' ? imp.replace() : imp.replace;
 			let replaceUsing = typeof imp.replaceUsing === 'function' ? imp.replaceUsing() : imp.replaceUsing;
-			let theReferer = typeof imp.referer === 'function' ? imp.referer() : imp.referer;
+			const theReferer = typeof imp.referer === 'function' ? imp.referer() : imp.referer;
 			if (replaceSelector || replaceUsing || theReferer) {
 				replaceUsing = replaceUsing || W.location.href;
 
@@ -413,7 +413,7 @@
 							let replaceWithSelector = typeof imp.replaceWith === 'function' ? imp.replaceWith() : imp.replaceWith;
 							replaceWithSelector = replaceWithSelector || replaceSelector;
 
-							let tempDiv = document.createElement('div');
+							const tempDiv = document.createElement('div');
 							tempDiv.innerHTML = response.responseText;
 
 							Util.q(replaceSelector).innerHTML = Util.q(replaceWithSelector, tempDiv).innerHTML;
@@ -435,11 +435,11 @@
 
 		waitAndBypass(imp) {
 			if (imp.wait) {
-				let waitType = typeof imp.wait;
+				const waitType = typeof imp.wait;
 				if (waitType === 'number') {
 					setTimeout(App.bypass(imp), imp.wait || 0);
 				} else {
-					let wait = waitType === 'function' ? imp.wait() : imp.wait;
+					const wait = waitType === 'function' ? imp.wait() : imp.wait;
 					waitForElems({
 						sel: wait,
 						stop: true,
@@ -456,7 +456,7 @@
 
 		start(imps) {
 			Util.log('starting...');
-			let success = imps.some(imp => {
+			const success = imps.some(imp => {
 				if (imp.match && (new RegExp(imp.match, 'i')).test(W.location.href)) {
 					App.currentImpName = imp.name;
 					if (W.BM_MODE) {

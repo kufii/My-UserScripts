@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Loft Lounge Board Game Filters
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.4
+// @version      1.1.5
 // @description  Adds Filters to the Loft Lounge board game page
 // @author       Adrien Pyke
 // @match        *://www.theloftlounge.ca/pages/board-games*
@@ -29,20 +29,20 @@
 			parent.insertBefore(child, parent.firstChild);
 		},
 		createTextbox() {
-			let input = document.createElement('input');
+			const input = document.createElement('input');
 			input.type = 'text';
 			return input;
 		},
 		createCheckbox(lbl) {
-			let label = document.createElement('label');
-			let checkbox = document.createElement('input');
+			const label = document.createElement('label');
+			const checkbox = document.createElement('input');
 			checkbox.type = 'checkbox';
 			label.appendChild(checkbox);
 			label.appendChild(document.createTextNode(lbl));
 			return label;
 		},
 		createButton(text, onclick) {
-			let button = document.createElement('button');
+			const button = document.createElement('button');
 			button.textContent = text;
 			button.onclick = onclick;
 			return button;
@@ -51,7 +51,7 @@
 			return str.replace(/[a-z0-9]+/gi, word => word.slice(0, 1).toUpperCase() + word.slice(1));
 		},
 		appendStyle(str) {
-			let style = document.createElement('style');
+			const style = document.createElement('style');
 			style.textContent = str;
 			document.head.appendChild(style);
 		}
@@ -98,13 +98,13 @@
 		}
 	`);
 
-	let table = Util.q('#page-content > div > table > tbody');
-	let rows = Util.qq('tr:not(:first-of-type)', table);
-	let categories = new Set(rows.map(row => {
-		let typos = {
+	const table = Util.q('#page-content > div > table > tbody');
+	const rows = Util.qq('tr:not(:first-of-type)', table);
+	const categories = new Set(rows.map(row => {
+		const typos = {
 			'Triva': 'Trivia'
 		};
-		let td = Util.q('td:last-of-type', row);
+		const td = Util.q('td:last-of-type', row);
 		let category = Util.toTitleCase(td.textContent.trim());
 		if (typos[category]) {
 			td.textContent = category = typos[category];
@@ -112,16 +112,16 @@
 		return category;
 	}).sort());
 
-	let tr = document.createElement('tr');
-	let td1 = document.createElement('td');
-	let td2 = document.createElement('td');
+	const tr = document.createElement('tr');
+	const td1 = document.createElement('td');
+	const td2 = document.createElement('td');
 	tr.appendChild(td1);
 	tr.appendChild(td2);
 
-	let nameFilter = Util.createTextbox();
+	const nameFilter = Util.createTextbox();
 	td1.appendChild(nameFilter);
 
-	let selectedCategories = [];
+	const selectedCategories = [];
 
 	const filter = function() {
 		rows.forEach(row => row.hidden = true);
@@ -129,15 +129,15 @@
 
 		if (selectedCategories.length > 0) {
 			rowsFilter = rowsFilter.filter(row => {
-				let category = Util.q('td:last-of-type', row).textContent.trim().toLowerCase();
+				const category = Util.q('td:last-of-type', row).textContent.trim().toLowerCase();
 				return selectedCategories.includes(category);
 			});
 		}
 
-		let value = nameFilter.value.trim().toLowerCase();
+		const value = nameFilter.value.trim().toLowerCase();
 		if (value) {
 			rowsFilter = rowsFilter.filter(row => {
-				let name = Util.q('td:first-of-type', row).textContent.trim().toLowerCase();
+				const name = Util.q('td:first-of-type', row).textContent.trim().toLowerCase();
 				return name.includes(value);
 			});
 		}
@@ -147,20 +147,20 @@
 
 	nameFilter.oninput = filter;
 
-	let categoryDiv = document.createElement('div');
+	const categoryDiv = document.createElement('div');
 	categoryDiv.classList.add('category-list');
 	categoryDiv.hidden = true;
 
-	let categorySpan = document.createElement('span');
+	const categorySpan = document.createElement('span');
 
 	categories.forEach(category => {
-		let label = Util.createCheckbox(category);
+		const label = Util.createCheckbox(category);
 		categoryDiv.appendChild(label);
 		categoryDiv.appendChild(document.createElement('br'));
-		let check = Util.q('input', label);
+		const check = Util.q('input', label);
 		check.oninput = () => {
-			let cat = category.trim().toLowerCase();
-			let index = selectedCategories.indexOf(cat);
+			const cat = category.trim().toLowerCase();
+			const index = selectedCategories.indexOf(cat);
 			if (check.checked) {
 				if (index === -1) {
 					selectedCategories.push(cat);
@@ -173,7 +173,7 @@
 		};
 	});
 
-	let categoryButton = Util.createButton('Categories...', () => {
+	const categoryButton = Util.createButton('Categories...', () => {
 		if (categoryDiv.hidden) {
 			categoryDiv.hidden = false;
 		} else {

@@ -1,21 +1,21 @@
 // ==UserScript==
 // @name         SoundCloud Toggle Continuous Play and Autoplay
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.16
+// @version      1.1.17
 // @description  Adds options to toggle continuous play and autoplay in SoundCloud
 // @author       Adrien Pyke
 // @match        *://soundcloud.com/*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/52f42ca18eedcd6301380408d065c5ca9a901196/libs/gm_config.js
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
 (() => {
 	'use strict';
 
-	let SCRIPT_NAME = 'SoundCloud Toggle Continuous Play and Autoplay';
+	const SCRIPT_NAME = 'SoundCloud Toggle Continuous Play and Autoplay';
 
 	const Util = {
 		log(...args) {
@@ -29,8 +29,8 @@
 			return Array.from(context.querySelectorAll(query));
 		},
 		createCheckbox(lbl) {
-			let label = document.createElement('label');
-			let checkbox = document.createElement('input');
+			const label = document.createElement('label');
+			const checkbox = document.createElement('input');
 			checkbox.type = 'checkbox';
 			label.appendChild(checkbox);
 			label.appendChild(document.createTextNode(lbl));
@@ -70,21 +70,21 @@
 			}
 		},
 		getPlaying() {
-			let link = Util.q('a.playbackSoundBadge__title');
+			const link = Util.q('a.playbackSoundBadge__title');
 			if (link) {
 				return link.href;
 			}
 			return null;
 		},
 		addAutoplayControl() {
-			let container = Util.q('.playControls__inner');
-			let label = Util.createCheckbox('Autoplay');
+			const container = Util.q('.playControls__inner');
+			const label = Util.createCheckbox('Autoplay');
 			label.setAttribute('style', 'position: absolute; bottom: 0; right: 0; z-index: 1;');
 			container.appendChild(label);
-			let check = Util.q('input', label);
+			const check = Util.q('input', label);
 			check.checked = Config.load().continuousPlay;
 			check.onchange = () => {
-				let cfg = Config.load();
+				const cfg = Config.load();
 				cfg.continuousPlay = check.checked;
 				Config.save(cfg);
 			};
@@ -97,14 +97,14 @@
 		App.pause();
 	}
 
-	let autoplayControl = App.addAutoplayControl();
+	const autoplayControl = App.addAutoplayControl();
 	let current = App.getPlaying();
 	let timeout;
 	// every time the song changes
 	waitForElems({
 		context: Util.q('.playControls__soundBadge'),
 		onchange() {
-			let next = App.getPlaying();
+			const next = App.getPlaying();
 			if (!autoplayControl.checked && current && next !== current) {
 				timeout = setTimeout(() => {
 					Util.log('Pausing...');

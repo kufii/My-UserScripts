@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MyAnimeList, External Kitsu Links
 // @namespace    https://greasyfork.org/users/649
-// @version      2.2.1
+// @version      2.2.2
 // @description  Adds a link to the Kitsu page in the External Links section
 // @author       Adrien Pyke
 // @match        *://myanimelist.net/anime/*
@@ -38,7 +38,7 @@
 				},
 				onload(response) {
 					try {
-						let json = JSON.parse(response.responseText);
+						const json = JSON.parse(response.responseText);
 						GM_xmlhttpRequest({
 							method: 'GET',
 							url: `${API}/mappings/${json.data[0].id}/item?fields[${type}]=slug`,
@@ -47,7 +47,7 @@
 							},
 							onload(response) {
 								try {
-									let json = JSON.parse(response.responseText);
+									const json = JSON.parse(response.responseText);
 									if (type === 'anime') {
 										cb(`https://kitsu.io/anime/${json.data.attributes.slug}`);
 									} else if (type === 'manga') {
@@ -74,32 +74,32 @@
 
 	const match = location.href.match(/^https?:\/\/myanimelist\.net\/(anime|manga)\/([0-9]+)/i);
 	if (match) {
-		let type = match[1];
-		let id = match[2];
+		const type = match[1];
+		const id = match[2];
 		App.getKitsuLink(type, id, href => {
 			Util.log('Link:', href);
-			let container = Util.q('#content > table > tbody > tr > td.borderClass .pb16');
+			const container = Util.q('#content > table > tbody > tr > td.borderClass .pb16');
 			if (container) {
 				container.appendChild(document.createTextNode(', '));
 
-				let a = document.createElement('a');
+				const a = document.createElement('a');
 				a.textContent = 'Kitsu';
 				a.href = href;
 				a.target = '_blank';
 				a.rel = 'noopener';
 				container.appendChild(a);
 			} else {
-				let sidebar = Util.q('#content > table > tbody > tr > td.borderClass > div');
+				const sidebar = Util.q('#content > table > tbody > tr > td.borderClass > div');
 
-				let header = document.createElement('h2');
+				const header = document.createElement('h2');
 				header.textContent = 'External Links';
 				sidebar.appendChild(header);
 
-				let links = document.createElement('div');
+				const links = document.createElement('div');
 				links.classList.add('pb16');
 				sidebar.appendChild(links);
 
-				let b = document.createElement('a');
+				const b = document.createElement('a');
 				b.textContent = 'Kitsu';
 				b.href = href;
 				b.target = '_blank';

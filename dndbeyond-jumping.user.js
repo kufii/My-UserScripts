@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         D&D Beyond - Jumping Distance
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.5
+// @version      1.0.6
 // @description  Adds a jumping distance section to D&D Beyond
 // @author       Adrien Pyke
 // @match        *://www.dndbeyond.com/profile/*/characters/*
@@ -30,15 +30,15 @@
 
 	const App = {
 		createSpeedManagerItem(label, amount) {
-			let div = document.createElement('div');
+			const div = document.createElement('div');
 			div.classList.add('speed-manager-item');
 
-			let lblSpan = document.createElement('span');
+			const lblSpan = document.createElement('span');
 			lblSpan.classList.add('speed-manager-item-label');
 			lblSpan.textContent = label;
 			div.appendChild(lblSpan);
 
-			let lblAmount = document.createElement('span');
+			const lblAmount = document.createElement('span');
 			lblAmount.classList.add('speed-manager-item-amount');
 			lblAmount.textContent = `${amount} ft.`;
 			div.appendChild(lblAmount);
@@ -46,19 +46,19 @@
 			return div;
 		},
 		createOverrideItem(label, key) {
-			let div = document.createElement('div');
+			const div = document.createElement('div');
 			div.classList.add('speed-manager-override-item');
 			div.dataset.key = key;
 
-			let lblDiv = document.createElement('div');
+			const lblDiv = document.createElement('div');
 			lblDiv.classList.add('speed-manager-override-item-label');
 			lblDiv.textContent = label;
 			div.appendChild(lblDiv);
 
-			let inputDiv = document.createElement('div');
+			const inputDiv = document.createElement('div');
 			inputDiv.classList.add('speed-manager-override-item-input');
 
-			let value = document.createElement('input');
+			const value = document.createElement('input');
 			value.type = 'number';
 			value.min = 0;
 			value.value = GM_getValue(`${Character.id}-${key}`) || '';
@@ -66,10 +66,10 @@
 
 			div.appendChild(inputDiv);
 
-			let sourceDiv = document.createElement('div');
+			const sourceDiv = document.createElement('div');
 			sourceDiv.classList.add('speed-manager-override-item-source');
 
-			let source = document.createElement('input');
+			const source = document.createElement('input');
 			source.type = 'text';
 			source.value = GM_getValue(`${Character.id}-${key}-source`) || '';
 			sourceDiv.appendChild(source);
@@ -80,9 +80,9 @@
 		},
 		saveOverrideItem(item) {
 			if (item) {
-				let key = item.dataset.key;
-				let value = Util.q('.speed-manager-override-item-input > input', item).value;
-				let source = Util.q('.speed-manager-override-item-source > input', item).value;
+				const key = item.dataset.key;
+				const value = Util.q('.speed-manager-override-item-input > input', item).value;
+				const source = Util.q('.speed-manager-override-item-source > input', item).value;
 				GM_setValue(`${Character.id}-${key}`, value);
 				GM_setValue(`${Character.id}-${key}-source`, source);
 			}

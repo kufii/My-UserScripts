@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.5
+// @version      1.1.6
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -84,7 +84,7 @@
 			img.src = 'img/blank.gif';
 		},
 		toEmoji(text) {
-			let tempDiv = document.createElement('div');
+			const tempDiv = document.createElement('div');
 			tempDiv.innerHTML = emojione.toImage(EmojiHelper.makeReplacements(text));
 
 			Util.qq('img', tempDiv).forEach(emoji => emoji.outerHTML = emoji.alt);
@@ -95,7 +95,7 @@
 			return tempDiv.innerHTML;
 		},
 		shortnameToSrc(shortname) {
-			let tempDiv = document.createElement('div');
+			const tempDiv = document.createElement('div');
 			tempDiv.innerHTML = emojione.toImage(EmojiHelper.replacements[shortname] || shortname);
 			return Util.q('img', tempDiv).src;
 		},
@@ -104,7 +104,7 @@
 				Util.qq('span.emoji', node).forEach(emoji => emoji.outerHTML = emoji.textContent);
 			}
 			if (node.nodeType === Node.TEXT_NODE) {
-				let tempDiv = document.createElement('div');
+				const tempDiv = document.createElement('div');
 				tempDiv.innerHTML = EmojiHelper.toEmoji(node.textContent);
 
 				if (Util.q('img', tempDiv)) {
@@ -125,7 +125,7 @@
 
 	const convertAndWatch = function(node, config) {
 		EmojiHelper.convert(node);
-		let changes = waitForElems({
+		const changes = waitForElems({
 			context: node,
 			config,
 			onchange() {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Greasy Fork - Change Default Script Sort
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.18
+// @version      1.2.19
 // @description  Change default script sort on GreasyFork
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/*/users/*
@@ -9,7 +9,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/52f42ca18eedcd6301380408d065c5ca9a901196/libs/gm_config.js
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // @run-at       document-start
 // ==/UserScript==
 
@@ -35,14 +35,14 @@
 				if (hasValue) {
 					return url.replace(regex, `$1${key}=${value}$2$3`);
 				} else {
-					let [path, hash] = url.split('#');
+					const [path, hash] = url.split('#');
 					url = path.replace(regex, '$1$3').replace(/(&|\?)$/, '');
 					if (hash) url += `#${hash[1]}`;
 					return url;
 				}
 			} else if (hasValue) {
-				let separator = url.includes('?') ? '&' : '?';
-				let [path, hash] = url.split('#');
+				const separator = url.includes('?') ? '&' : '?';
+				const [path, hash] = url.split('#');
 				url = `${path + separator + key}=${value}`;
 				if (hash) url += `#${hash[1]}`;
 				return url;
@@ -81,12 +81,12 @@
 	]);
 	GM_registerMenuCommand('GreasyFork Sort Settings', Config.setup);
 
-	let onScripts = location.href.match(/^https?:\/\/greasyfork\.org\/[^/]+\/scripts\/?(?:\?.*)?$/i);
-	let onSearch = location.href.match(/^https?:\/\/greasyfork\.org\/[^/]+\/scripts\/search?(?:\?.*)?$/i);
-	let onProfile = location.href.match(/^https?:\/\/greasyfork\.org\/[^/]+\/users\/[^/]+?(?:\?.*)?$/i);
+	const onScripts = location.href.match(/^https?:\/\/greasyfork\.org\/[^/]+\/scripts\/?(?:\?.*)?$/i);
+	const onSearch = location.href.match(/^https?:\/\/greasyfork\.org\/[^/]+\/scripts\/search?(?:\?.*)?$/i);
+	const onProfile = location.href.match(/^https?:\/\/greasyfork\.org\/[^/]+\/users\/[^/]+?(?:\?.*)?$/i);
 
 	document.addEventListener('DOMContentLoaded', () => {
-		let defaultSort = Util.q('#script-list-sort > ul > li:nth-child(1) > a');
+		const defaultSort = Util.q('#script-list-sort > ul > li:nth-child(1) > a');
 		if (defaultSort) {
 			if (onSearch) {
 				defaultSort.href = Util.setQueryParam('sort', 'relevance', defaultSort.href);
@@ -96,9 +96,9 @@
 		}
 	});
 
-	let sort = Util.getQueryParam('sort');
+	const sort = Util.getQueryParam('sort');
 	if (!sort) {
-		let cfg = Config.load();
+		const cfg = Config.load();
 		let cfgSort;
 		if (onScripts) {
 			cfgSort = cfg.all;

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.18
+// @version      2.1.19
 // @description  Show MAL fansub info on Kitsu anime pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -11,7 +11,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/52f42ca18eedcd6301380408d065c5ca9a901196/libs/gm_config.js
+// @require      https://cdn.rawgit.com/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
@@ -93,14 +93,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				if (hasValue) {
 					return url.replace(regex, `$1${key}=${value}$2$3`);
 				} else {
-					let [path, hash] = url.split('#');
+					const [path, hash] = url.split('#');
 					url = path.replace(regex, '$1$3').replace(/(&|\?)$/, '');
 					if (hash) url += `#${hash[1]}`;
 					return url;
 				}
 			} else if (hasValue) {
-				let separator = url.includes('?') ? '&' : '?';
-				let [path, hash] = url.split('#');
+				const separator = url.includes('?') ? '&' : '?';
+				const [path, hash] = url.split('#');
 				url = `${path + separator + key}=${value}`;
 				if (hash) url += `#${hash[1]}`;
 				return url;
@@ -111,7 +111,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			node.rel = 'noopener noreferrer';
 		},
 		icon(name, color, size = 20, flip = false) {
-			let newIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+			const newIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 			newIcon.innerHTML = Icon[name];
 			newIcon.setAttribute('viewBox', '0 0 50 50');
 			newIcon.setAttribute('width', size);
@@ -122,32 +122,32 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			return newIcon;
 		},
 		createModal(title, bodyDiv) {
-			let div = document.createElement('div');
-			let modal = document.createElement('div');
+			const div = document.createElement('div');
+			const modal = document.createElement('div');
 			modal.classList.add('modal');
 			modal.style.display = 'block';
 			modal.style.overflowY = 'auto';
 			div.appendChild(modal);
-			let backdrop = document.createElement('div');
+			const backdrop = document.createElement('div');
 			backdrop.classList.add('modal-backdrop', 'fade', 'in');
 			div.appendChild(backdrop);
-			let dialog = document.createElement('div');
+			const dialog = document.createElement('div');
 			dialog.classList.add('modal-dialog');
 			modal.appendChild(dialog);
-			let content = document.createElement('div');
+			const content = document.createElement('div');
 			content.classList.add('modal-content');
 			dialog.appendChild(content);
-			let header = document.createElement('div');
+			const header = document.createElement('div');
 			header.classList.add('modal-header');
 			content.appendChild(header);
-			let body = document.createElement('div');
+			const body = document.createElement('div');
 			body.classList.add('modal-body');
 			content.appendChild(body);
-			let wrapper = document.createElement('div');
+			const wrapper = document.createElement('div');
 			wrapper.classList.add('modal-wrapper');
 			body.appendChild(wrapper);
 
-			let h4 = document.createElement('h4');
+			const h4 = document.createElement('h4');
 			h4.classList.add('modal-title');
 			h4.textContent = title;
 			header.appendChild(h4);
@@ -186,36 +186,36 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		},
 		getMALFansubInfo(malid, cb) {
 			// Util.log('Loading MAL info...');
-			let url = `https://myanimelist.net/anime/${malid}`;
+			const url = `https://myanimelist.net/anime/${malid}`;
 			GM_xmlhttpRequest({
 				method: 'GET',
 				url,
 				onload(response) {
 					Util.log('Loaded MAL info.');
-					let tempDiv = document.createElement('div');
+					const tempDiv = document.createElement('div');
 					tempDiv.innerHTML = response.responseText;
 
 					let fansubDiv = Util.q('#inlineContent', tempDiv);
 					if (fansubDiv) {
 						fansubDiv = fansubDiv.parentNode;
-						let fansubs = Util.qq('.spaceit_pad', fansubDiv).filter(node => {
+						const fansubs = Util.qq('.spaceit_pad', fansubDiv).filter(node => {
 							// only return nodes without an id
 							return !node.id;
 						}).map(node => {
-							let id = Util.q('a:nth-of-type(1)', node).dataset.groupId;
-							let link = Util.q('a:nth-of-type(4)', node);
-							let tagNode = Util.q('small:nth-of-type(1)', node);
-							let tag = (tagNode && tagNode.textContent !== '[]') ? tagNode.textContent : null;
-							let langNode = Util.q('small:nth-of-type(2)', node);
-							let lang = (langNode) ? langNode.textContent.substring(1, langNode.textContent.length - 1) : null;
-							let voteUpButton = Util.q(`#good${id}`, node);
-							let voteDownButton = Util.q(`#bad${id}`, node);
-							let approvalNode = Util.q('a:nth-of-type(5) > small', node);
+							const id = Util.q('a:nth-of-type(1)', node).dataset.groupId;
+							const link = Util.q('a:nth-of-type(4)', node);
+							const tagNode = Util.q('small:nth-of-type(1)', node);
+							const tag = (tagNode && tagNode.textContent !== '[]') ? tagNode.textContent : null;
+							const langNode = Util.q('small:nth-of-type(2)', node);
+							const lang = (langNode) ? langNode.textContent.substring(1, langNode.textContent.length - 1) : null;
+							const voteUpButton = Util.q(`#good${id}`, node);
+							const voteDownButton = Util.q(`#bad${id}`, node);
+							const approvalNode = Util.q('a:nth-of-type(5) > small', node);
 							let totalApproved = 0;
 							let totalVotes = 0;
 							let comments = [];
 							if (approvalNode) {
-								let match = approvalNode.textContent.match(/([0-9]+)[^0-9]*([0-9]+)/);
+								const match = approvalNode.textContent.match(/([0-9]+)[^0-9]*([0-9]+)/);
 								if (match) {
 									totalApproved = match[1];
 									totalVotes = match[2];
@@ -260,7 +260,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			});
 		},
 		getFansubs(id, cb) {
-			let self = this;
+			const self = this;
 			if (self.fansubCache[id]) {
 				cb(self.fansubCache[id]);
 				return;
@@ -281,22 +281,22 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					});
 				} else {
 					Util.log('MAL ID not found');
-					let section = Util.q(`#${SECTION_ID}`);
+					const section = Util.q(`#${SECTION_ID}`);
 					if (section) section.remove();
 				}
 			});
 		},
 		getFansubSection() {
-			let container = document.createElement('section');
+			const container = document.createElement('section');
 			container.classList.add('m-b-1');
 			container.id = SECTION_ID;
 
-			let title = document.createElement('h5');
+			const title = document.createElement('h5');
 			title.id = 'fansubs-title';
 			title.textContent = 'Fansubs';
 			container.appendChild(title);
 
-			let list = document.createElement('ul');
+			const list = document.createElement('ul');
 			list.classList.add('media-list', 'w-100');
 			container.appendChild(list);
 
@@ -318,9 +318,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			};
 		},
 		createVotingButtons(fansub) {
-			let votingButtons = document.createElement('div');
-			let voteUp = document.createElement('a');
-			let voteDown = document.createElement('a');
+			const votingButtons = document.createElement('div');
+			const voteUp = document.createElement('a');
+			const voteDown = document.createElement('a');
 			votingButtons.appendChild(voteUp);
 			votingButtons.appendChild(voteDown);
 			voteUp.href = '#';
@@ -334,7 +334,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				voteDown.appendChild(Util.icon('thumbsUp', fansub.value === 2 ? Colors.dislike : Colors.neutral, 23, true));
 			};
 
-			let voteHandler = e => {
+			const voteHandler = e => {
 				e.preventDefault();
 				let clickedNode = e.target;
 				if (clickedNode.nodeName === 'svg') {
@@ -358,38 +358,38 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			return votingButtons;
 		},
 		getFansubOutput(fansub) {
-			let fansubDiv = document.createElement('div');
+			const fansubDiv = document.createElement('div');
 			fansubDiv.classList.add('stream-item', 'row');
 
-			let streamWrap = document.createElement('div');
+			const streamWrap = document.createElement('div');
 			streamWrap.classList.add('stream-item-wrapper', 'col-sm-12');
 			fansubDiv.appendChild(streamWrap);
 
-			let titleBlock = document.createElement('div');
+			const titleBlock = document.createElement('div');
 			titleBlock.classList.add('stream-item--title-block');
 			streamWrap.appendChild(titleBlock);
 
-			let authorInfo = document.createElement('div');
+			const authorInfo = document.createElement('div');
 			authorInfo.classList.add('author-info');
 			titleBlock.appendChild(authorInfo);
 
-			let streamContent = document.createElement('div');
+			const streamContent = document.createElement('div');
 			streamContent.classList.add('stream-content');
 			streamWrap.appendChild(streamContent);
 
-			let streamContentPost = document.createElement('div');
+			const streamContentPost = document.createElement('div');
 			streamContentPost.classList.add('stream-content-post');
 			streamContent.appendChild(streamContentPost);
 
-			let streamActivity = document.createElement('div');
+			const streamActivity = document.createElement('div');
 			streamActivity.classList.add('stream-item-activity');
 			streamWrap.appendChild(streamActivity);
 
-			let streamOptions = document.createElement('div');
+			const streamOptions = document.createElement('div');
 			streamOptions.classList.add('stream-item-options');
 			streamWrap.appendChild(streamOptions);
 
-			let nameLink = document.createElement('a');
+			const nameLink = document.createElement('a');
 			nameLink.classList.add('author-name');
 			nameLink.textContent = fansub.name;
 			nameLink.href = fansub.url;
@@ -397,43 +397,43 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			authorInfo.appendChild(nameLink);
 
 			if (fansub.lang) {
-				let lang = document.createElement('small');
+				const lang = document.createElement('small');
 				lang.classList.add('secondary-text');
 				lang.textContent = fansub.lang;
 				authorInfo.appendChild(lang);
 			}
 
-			let approvals = document.createElement('p');
+			const approvals = document.createElement('p');
 			approvals.textContent = `${fansub.totalApproved} of ${fansub.totalVotes} users approve.`;
 			streamContentPost.appendChild(approvals);
 
 			streamActivity.appendChild(App.createVotingButtons(fansub));
 
 			if (fansub.comments && fansub.comments.length > 0) {
-				let commentsWrap = document.createElement('span');
+				const commentsWrap = document.createElement('span');
 				commentsWrap.classList.add('more-wrapper');
 				streamOptions.appendChild(commentsWrap);
-				let commentsLink = document.createElement('a');
+				const commentsLink = document.createElement('a');
 				commentsLink.classList.add('more-drop');
 				commentsLink.href = '#';
 				commentsLink.textContent = 'Comments...';
 				commentsWrap.appendChild(commentsLink);
 				commentsLink.onclick = e => {
 					e.preventDefault();
-					let commentsDiv = document.createElement('div');
+					const commentsDiv = document.createElement('div');
 					fansub.comments.forEach(comment => {
-						let div = document.createElement('div');
+						const div = document.createElement('div');
 						div.classList.add('author-header');
 
-						let smileContainer = document.createElement('div');
+						const smileContainer = document.createElement('div');
 						smileContainer.classList.add('review-avatar');
 						div.appendChild(smileContainer);
 						smileContainer.appendChild(comment.approves ? Util.icon('plus', Colors.like, 25) : Util.icon('minus', Colors.dislike, 25));
 
-						let commentContainer = document.createElement('div');
+						const commentContainer = document.createElement('div');
 						commentContainer.classList.add('comment-body');
 						div.appendChild(commentContainer);
-						let commentText = document.createElement('p');
+						const commentText = document.createElement('p');
 						commentText.textContent = comment.text;
 						commentContainer.appendChild(commentText);
 
@@ -468,43 +468,43 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	if (location.hostname === 'kitsu.io') {
 		GM_registerMenuCommand('Kitsu Fansub Info Settings', Config.setup);
 
-		let cfg = Config.load();
+		const cfg = Config.load();
 		waitForUrl(REGEX, () => {
 			waitForElems({
 				sel: '.media-container > .row > .col-sm-8',
 				stop: true,
 				onmatch(container) {
-					let reviews = Util.qq('section.m-b-1', container)[1];
+					const reviews = Util.qq('section.m-b-1', container)[1];
 
 					let section = Util.q(`#${SECTION_ID}`, container);
 					if (section) section.remove();
 					section = App.getFansubSection();
 					reviews.parentNode.insertBefore(section, reviews.nextSibling);
 
-					let slug = location.href.match(REGEX)[1];
-					let url = location.href;
+					const slug = location.href.match(REGEX)[1];
+					const url = location.href;
 					App.getFansubs(slug, response => {
 						if (location.href === url) {
 							if (cfg.lang) {
 								response.fansubs = App.filterFansubs(response.fansubs, cfg.lang);
 							}
 
-							let extLink = Util.q('h5#fansubs-title', section);
-							let malLink = document.createElement('a');
+							const extLink = Util.q('h5#fansubs-title', section);
+							const malLink = document.createElement('a');
 							malLink.href = response.url;
 							Util.setNewTab(malLink);
 							extLink.appendChild(malLink);
 							malLink.appendChild(Util.icon('extLink'));
 
-							let list = Util.q('.media-list', section);
+							const list = Util.q('.media-list', section);
 
 							if (response.fansubs.length > 0) {
-								let hiddenSpan = document.createElement('span');
+								const hiddenSpan = document.createElement('span');
 								hiddenSpan.hidden = true;
 								let addViewMore = false;
 
 								response.fansubs.forEach((fansub, i) => {
-									let fansubDiv = App.getFansubOutput(fansub);
+									const fansubDiv = App.getFansubOutput(fansub);
 									if (i < 4) {
 										list.appendChild(fansubDiv);
 									} else {
@@ -515,10 +515,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 								if (addViewMore) {
 									list.appendChild(hiddenSpan);
-									let viewMoreDiv = document.createElement('div');
+									const viewMoreDiv = document.createElement('div');
 									viewMoreDiv.classList.add('text-xs-center', 'w-100');
 
-									let viewMore = document.createElement('button');
+									const viewMore = document.createElement('button');
 									viewMore.classList.add('button', 'button--secondary');
 									viewMore.textContent = 'View More Fansubs';
 									viewMoreDiv.appendChild(viewMore);
@@ -538,7 +538,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 									list.appendChild(viewMoreDiv);
 								}
 							} else {
-								let p = document.createElement('p');
+								const p = document.createElement('p');
 								p.textContent = 'No fansubs found.';
 								p.style.textAlign = 'center';
 								p.style.marginTop = '5px';
@@ -550,10 +550,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			});
 		});
 	} else if (Util.getQueryParam('US_VOTE')) {
-		let groupid = Util.getQueryParam('groupid');
-		let value = Util.getQueryParam('value');
-		let comment = Util.getQueryParam('comment');
-		let button = Util.q(`.js-fansub-set-vote-button[data-type="${value}"][data-group-id="${groupid}"]`);
+		const groupid = Util.getQueryParam('groupid');
+		const value = Util.getQueryParam('value');
+		const comment = Util.getQueryParam('comment');
+		const button = Util.q(`.js-fansub-set-vote-button[data-type="${value}"][data-group-id="${groupid}"]`);
 		button.click();
 		if (value === '3') {
 			setTimeout(window.close, 0);
@@ -562,8 +562,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				sel: '#fancybox-inner',
 				stop: true,
 				onmatch(node) {
-					let commentBox = Util.q('#fsgcomm', node);
-					let submit = Util.q('.js-fansub-comment-button', node);
+					const commentBox = Util.q('#fsgcomm', node);
+					const submit = Util.q('.js-fansub-comment-button', node);
 					commentBox.value = comment;
 					setTimeout(() => {
 						Util.log(submit);

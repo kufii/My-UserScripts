@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         The Works Burger Chooser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.3
+// @version      1.2.4
 // @description  Choose a random burger on the works menu
 // @author       Adrien Pyke
 // @match        *://worksburger.com/menu/burger-menu/*
@@ -11,7 +11,7 @@
 (() => {
 	'use strict';
 
-	let W = (typeof unsafeWindow === 'undefined') ? window : unsafeWindow;
+	const W = (typeof unsafeWindow === 'undefined') ? window : unsafeWindow;
 
 	const SCRIPT_NAME = 'The Works Burger Chooser';
 
@@ -30,7 +30,7 @@
 			parent.insertBefore(child, parent.firstChild);
 		},
 		randomColor() {
-			let letters = '0123456789ABCDEF'.split('');
+			const letters = '0123456789ABCDEF'.split('');
 			let color = '#';
 			for (let i = 0; i < 6; i++) {
 				color += letters[Math.floor(Math.random() * letters.length)];
@@ -42,12 +42,12 @@
 	const selectBurger = function() {
 		Util.log('Choosing Random Burger...');
 
-		let burgers = Util.qq('.vc_grid-item-mini');
+		const burgers = Util.qq('.vc_grid-item-mini');
 		burgers.forEach(burger => {
 			burger.removeAttribute('style');
 		});
 
-		let burger = burgers[Math.floor(Math.random() * burgers.length)];
+		const burger = burgers[Math.floor(Math.random() * burgers.length)];
 
 		Util.log(burger);
 
@@ -69,7 +69,7 @@
 		selectBurger();
 	} else {
 		Util.log('Adding Button...');
-		let button = document.createElement('button');
+		const button = document.createElement('button');
 		button.textContent = 'Choose Random Burger';
 		button.setAttribute('style', `
 			position: fixed;
