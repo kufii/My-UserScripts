@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Flair Linkifier
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.4
+// @version      2.0.5
 // @description  Turns the text in various subreddits' flair into links
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
@@ -22,7 +22,7 @@
 	`);
 
 	const newLayoutId = '#\\32x-container';
-	const rightColSelector = `${newLayoutId} > div > div:last-of-type > div > div:first-of-type > div:last-of-type > div > div > div:last-of-type > div:last-of-type > div:last-of-type > div`;
+	const rightColSelector = '#SHORTCUT_FOCUSABLE_DIV > div > div:first-of-type > div:last-of-type > div > div > div > div:last-of-type > div:last-of-type > div:last-of-type > div';
 
 	waitForElems({
 		sel: [
@@ -33,7 +33,7 @@
 			`${newLayoutId} .Post > div:nth-of-type(2) > div:first-of-type > div > div:first-of-type > div:nth-of-type(2) > span`,
 			`${newLayoutId} .Post > div:nth-of-type(2) > article > div:first-of-type > div:first-of-type > div > div:first-of-type > div:nth-of-type(2) > span`,
 			// classic template
-			`${newLayoutId} .Post > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > div:first-of-type > div:nth-of-type(2) > span`,
+			`${newLayoutId} .Post > div:last-of-type > div > div:last-of-type > div:nth-of-type(2) > div:nth-of-type(2) > div:last-of-type > span`,
 			// compact template
 			`${newLayoutId} .Post > div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > span`,
 
@@ -45,7 +45,7 @@
 			`${newLayoutId} .Comment > div > div:last-of-type > div > div:first-of-type > div:nth-of-type(2) > span`,
 
 			// moderators
-			`${rightColSelector} > div:nth-of-type(5) > div > div > div:first-of-type > div > div > span`,
+			`${rightColSelector} > div > div > div > div:first-of-type > div > div > span`,
 
 			// user flair preview
 			`${rightColSelector} > div:first-of-type > div:last-of-type > div:last-of-type > div > span`,
