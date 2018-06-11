@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Flair Linkifier
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.6
+// @version      2.0.7
 // @description  Turns the text in various subreddits' flair into links
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
@@ -28,6 +28,7 @@
 		sel: [
 			// old reddit
 			'span.flair',
+			'span.Comment__authorFlair',
 
 			// card template
 			`${newLayoutId} .Post > div:nth-of-type(2) > div:first-of-type > div > div:first-of-type > div:nth-of-type(2) > span`,
