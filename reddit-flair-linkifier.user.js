@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Flair Linkifier
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.5
+// @version      2.0.6
 // @description  Turns the text in various subreddits' flair into links
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
@@ -21,8 +21,8 @@
 		}
 	`);
 
-	const newLayoutId = '#\\32x-container';
-	const rightColSelector = '#SHORTCUT_FOCUSABLE_DIV > div > div:first-of-type > div:last-of-type > div > div > div > div:last-of-type > div:last-of-type > div:last-of-type > div';
+	const newLayoutId = '#SHORTCUT_FOCUSABLE_DIV';
+	const rightColSelector = `${newLayoutId} > div > div:first-of-type > div:last-of-type > div > div > div > div:last-of-type > div:last-of-type > div:last-of-type > div`;
 
 	waitForElems({
 		sel: [
