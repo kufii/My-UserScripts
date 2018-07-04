@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Flair Linkifier
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.8
+// @version      2.0.9
 // @description  Turns the text in various subreddits' flair into links
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
@@ -40,6 +40,12 @@
 
 			// comments
 			`${newLayoutId} .Comment > div:nth-of-type(2) > div:first-of-type > div:nth-of-type(2) > span`,
+
+			// comments post title
+			`${newLayoutId} [data-test-id="post-content"] > div:nth-of-type(2) > div > div:first-of-type > div:last-of-type > span`,
+
+			// comments post mods
+			`${newLayoutId} > div > div:nth-of-type(2) > div:last-of-type > div:first-of-type > div > div:last-of-type > div  > div > div > div:last-of-type > div > div > span`,
 
 			// user profile comments
 			`${newLayoutId} .Comment > div > div:last-of-type > div > div:first-of-type > div:first-of-type > div:nth-of-type(2) > span`,
