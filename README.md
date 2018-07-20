@@ -19,7 +19,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [MyAnimeList, External Kitsu Links](https://greasyfork.org/en/scripts/23163-myanimelist-external-hummingbird-links)
 * [Newspaper Paywall Bypasser](https://greasyfork.org/en/scripts/18585-newspaper-paywall-bypasser)
 * [New reddit: Prevent middle click scroll](https://greasyfork.org/en/scripts/48534-new-reddit-prevent-middle-click-scroll)
-* [Nintendo Store Canada](https://greasyfork.org/en/scripts/25423-nintendo-store-canada
+* [Nintendo Store Canada](https://greasyfork.org/en/scripts/25423-nintendo-store-canada)
 * [PokemonDB Default Version](https://greasyfork.org/en/scripts/25060-pokemondb-default-version)
 * [Prevent Wikia Ads](https://greasyfork.org/en/scripts/22420-prevent-wikia-ads)
 * [Reddit Disable No Participation](https://greasyfork.org/en/scripts/23529-reddit-disable-no-participation)
