@@ -6,6 +6,7 @@
 	"globals": {
 		"waitForElems": true,
 		"waitForUrl": true,
-		"GM_config": true
+		"GM_config": true,
+		"m": true
 	}
 }
