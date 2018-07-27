@@ -23,9 +23,6 @@
 			align-items: center;
 			margin-top: 8px;
 		}
-		.${CLASS_PREFIX}slider ytd-thumbnail.ytd-compact-video-renderer {
-			margin: 0;
-		}
 		.${CLASS_PREFIX}thumbnails-wrap {
 			flex-grow: 1;
 			overflow-x: hidden;
@@ -41,14 +38,23 @@
 			flex-direction: column;
 			margin-right: 8px;
 		}
-		${CLASS_PREFIX}mount-point {
+		.${CLASS_PREFIX}thumbnail.${CLASS_PREFIX}active {
+			background-color: hsl(0, 0%, 93.3%);
+		}
+		#${CLASS_PREFIX}mount-point {
 			margin-top: 8px;
+		}
+		.${CLASS_PREFIX}slider ytd-thumbnail.ytd-compact-video-renderer {
+			margin: 0;
+		}
+		.${CLASS_PREFIX}slider #video-title.ytd-compact-video-renderer {
+			max-height: 4.8rem;
 		}
 	`);
 
 	const API_URL = 'https://www.googleapis.com/youtube/v3/';
 	const API_KEY = 'AIzaSyCR7JKF4Lb-CsTQNapToOQeMF7SIIbqxSw';
-	const RESULTS_PER_FETCH = 50;
+	const RESULTS_PER_FETCH = 15;
 	const LAZY_LOAD_BUFFER = 10;
 
 	const Util = {
@@ -111,7 +117,7 @@
 				publishedAfter: currentVideo.publishedAt,
 				maxResults: 1
 			});
-			return Math.min(data.pageInfo.totalResults, 500);
+			return Math.max(0, Math.min(data.pageInfo.totalResults - 1, 500));
 		},
 		async getOlderVideos(currentVideo, pageToken) {
 			const data = await Api.performSearch(currentVideo, {
@@ -160,8 +166,10 @@
 				currentVideo: null,
 				olderVideos: [],
 				olderPageToken: null,
+				loadingOlder: false,
 				newerVideos: [],
 				newerPageToken: null,
+				loadingNewer: false,
 				position: 0
 			}),
 			actions: {
@@ -172,22 +180,29 @@
 					if (numNewerVideos > 0) {
 						if (numNewerVideos > RESULTS_PER_FETCH) {
 							const numOnLastPage = numNewerVideos % RESULTS_PER_FETCH;
-							let page = numNewerVideos - numOnLastPage;
-							if (numOnLastPage === 1) page -= RESULTS_PER_FETCH;
+							const page = numNewerVideos - numOnLastPage;
 							if (page > 0) model.newerPageToken = Api.pageTokens[page];
 						}
 						this.loadNewer(model);
 					}
 				},
 				async loadOlder(model) {
-					const results = await Api.getOlderVideos(model.currentVideo, model.olderPageToken);
-					model.olderVideos.push(...results.videos);
-					model.olderPageToken = results.pageToken;
+					if (!model.loadingOlder) {
+						model.loadingOlder = true;
+						const results = await Api.getOlderVideos(model.currentVideo, model.olderPageToken);
+						model.olderVideos.push(...results.videos);
+						model.olderPageToken = results.pageToken;
+						model.loadingOlder = false;
+					}
 				},
 				async loadNewer(model) {
-					const results = await Api.getNewerVideos(model.currentVideo, model.newerPageToken);
-					model.newerVideos.unshift(...results.videos.reverse());
-					model.newerPageToken = results.pageToken;
+					if (!model.loadingNewer) {
+						model.loadingNewer = true;
+						const results = await Api.getNewerVideos(model.currentVideo, model.newerPageToken);
+						model.newerVideos.unshift(...results.videos.reverse());
+						model.newerPageToken = results.pageToken;
+						model.loadingNewer = false;
+					}
 				},
 				moveLeft(model) {
 					model.position--;
@@ -216,7 +231,13 @@
 					m(`div.${CLASS_PREFIX}thumbnails-wrap`, [
 						m(`div.${CLASS_PREFIX}thumbnails`, {
 							style: { left: `${(model.newerVideos.length * -176) - (model.position * 176)}px` }
-						}, model.newerVideos.concat(model.olderVideos).map(video => m(Components.Thumbnail, { key: video.id, video })))
+						}, model.newerVideos.concat(model.olderVideos).map(video => {
+							return m(Components.Thumbnail, {
+								key: video.id,
+								active: video.id === model.currentVideo.id,
+								video
+							});
+						}))
 					]),
 					Util.iconBtn('chevron-right', { onclick: () => actions.moveRight(model) })
 				]);
@@ -231,7 +252,7 @@
 			},
 			view(vnode) {
 				const { model } = vnode.state;
-				return m(`div.${CLASS_PREFIX}thumbnail`, [
+				return m(`div.${CLASS_PREFIX}thumbnail${vnode.attrs.active ? `.${CLASS_PREFIX}active` : ''}`, [
 					m('ytd-thumbnail.style-scope.ytd-compact-video-renderer', { width: 168 }, [
 						m('a#thumbnail.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail', { rel: 'nofollow', href: `/watch?v=${model.video.id}` }, [
 							m('yt-img-shadow.style-scope.ytd-thumbnail.no-transition[loaded]', [
