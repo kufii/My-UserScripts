@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.2
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -54,7 +54,7 @@
 
 	const API_URL = 'https://www.googleapis.com/youtube/v3/';
 	const API_KEY = 'AIzaSyCR7JKF4Lb-CsTQNapToOQeMF7SIIbqxSw';
-	const RESULTS_PER_FETCH = 15;
+	const RESULTS_PER_FETCH = 50;
 	const LAZY_LOAD_BUFFER = 10;
 
 	const Util = {
