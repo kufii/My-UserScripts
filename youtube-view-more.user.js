@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.2
+// @version      1.0.3
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -37,6 +37,7 @@
 			display: flex;
 			flex-direction: column;
 			margin-right: 8px;
+			min-width: 168px;
 		}
 		.${CLASS_PREFIX}thumbnail.${CLASS_PREFIX}active {
 			background-color: hsl(0, 0%, 93.3%);
@@ -170,20 +171,22 @@
 				newerVideos: [],
 				newerPageToken: null,
 				loadingNewer: false,
-				position: 0
+				position: 0,
+				get leftpx() {
+					return (this.newerVideos.length * -176) - (this.position * 176);
+				}
 			}),
 			actions: {
-				async fetchVideos(model, currentVideoId) {
+				async fetchInitialVideos(model, currentVideoId) {
 					model.currentVideo = await Api.getVideo(currentVideoId);
 					const numNewerVideos = await Api.getNumNewerVideos(model.currentVideo);
 					this.loadOlder(model);
 					if (numNewerVideos > 0) {
-						if (numNewerVideos > RESULTS_PER_FETCH) {
-							const numOnLastPage = numNewerVideos % RESULTS_PER_FETCH;
-							const page = numNewerVideos - numOnLastPage;
-							if (page > 0) model.newerPageToken = Api.pageTokens[page];
-						}
+						const numOnLastPage = numNewerVideos % RESULTS_PER_FETCH;
+						const page = numNewerVideos - numOnLastPage;
+						if (page > 0) model.newerPageToken = Api.pageTokens[page];
 						this.loadNewer(model);
+						model.position = -1;
 					}
 				},
 				async loadOlder(model) {
@@ -198,9 +201,17 @@
 				async loadNewer(model) {
 					if (!model.loadingNewer) {
 						model.loadingNewer = true;
-						const results = await Api.getNewerVideos(model.currentVideo, model.newerPageToken);
+
+						let results;
+						let timesTried = 0;
+						// dumb workaround for page token sometimes being incorrect
+						do {
+							results = await Api.getNewerVideos(model.currentVideo, model.newerPageToken);
+							model.newerPageToken = results.pageToken;
+							timesTried++;
+						} while (!results.videos.length && results.pageToken && timesTried < 5);
+
 						model.newerVideos.unshift(...results.videos.reverse());
-						model.newerPageToken = results.pageToken;
 						model.loadingNewer = false;
 					}
 				},
@@ -221,16 +232,15 @@
 			},
 			oninit(vnode) {
 				const { model, actions } = vnode.state;
-				actions.fetchVideos(model, vnode.attrs.videoId);
+				actions.fetchInitialVideos(model, vnode.attrs.videoId);
 			},
 			view(vnode) {
 				const { model, actions } = vnode.state;
-				console.log(model.newerVideos);
 				return m(`div.${CLASS_PREFIX}slider`, { hidden: vnode.attrs.hidden }, [
 					Util.iconBtn('chevron-left', { onclick: () => actions.moveLeft(model) }),
 					m(`div.${CLASS_PREFIX}thumbnails-wrap`, [
 						m(`div.${CLASS_PREFIX}thumbnails`, {
-							style: { left: `${(model.newerVideos.length * -176) - (model.position * 176)}px` }
+							style: { left: `${model.leftpx}px` }
 						}, model.newerVideos.concat(model.olderVideos).map(video => {
 							return m(Components.Thumbnail, {
 								key: video.id,
