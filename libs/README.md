@@ -75,7 +75,7 @@ const Config = GM_config([
 	// Optional. Sets the max length of the textbox.
 	maxLength: 10,
 
-	// Optional. If true, shows a textarea insetad of a text input. Defaults to false.
+	// Optional. If true, shows a textarea instead of a text input. Defaults to false.
 	multiline: true,
 
 	// Optional. Only applicable when multiline is true. If true the textarea will be resizable. Defaults to false.

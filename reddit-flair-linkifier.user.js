@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Flair Linkifier
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.4
+// @version      2.0.9
 // @description  Turns the text in various subreddits' flair into links
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
@@ -21,34 +21,41 @@
 		}
 	`);
 
-	const newLayoutId = '#\\32x-container';
-	const rightColSelector = `${newLayoutId} > div > div:last-of-type > div > div:first-of-type > div:last-of-type > div > div > div:last-of-type > div:last-of-type > div:last-of-type > div`;
+	const newLayoutId = '#SHORTCUT_FOCUSABLE_DIV';
+	const rightColSelector = `${newLayoutId} > div > div:first-of-type > div:last-of-type > div > div > div > div:last-of-type > div:last-of-type > div:last-of-type > div`;
 
 	waitForElems({
 		sel: [
 			// old reddit
 			'span.flair',
+			'span.Comment__authorFlair',
 
 			// card template
 			`${newLayoutId} .Post > div:nth-of-type(2) > div:first-of-type > div > div:first-of-type > div:nth-of-type(2) > span`,
 			`${newLayoutId} .Post > div:nth-of-type(2) > article > div:first-of-type > div:first-of-type > div > div:first-of-type > div:nth-of-type(2) > span`,
 			// classic template
-			`${newLayoutId} .Post > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > div:first-of-type > div:nth-of-type(2) > span`,
+			`${newLayoutId} .Post > div:last-of-type > div > div:last-of-type > div:nth-of-type(2) > div:nth-of-type(2) > div:last-of-type > span`,
 			// compact template
-			`${newLayoutId} .Post > div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > span`,
+			`${newLayoutId} .Post > div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(3) > div:nth-of-type(2) > span`,
 
 			// comments
 			`${newLayoutId} .Comment > div:nth-of-type(2) > div:first-of-type > div:nth-of-type(2) > span`,
+
+			// comments post title
+			`${newLayoutId} [data-test-id="post-content"] > div:nth-of-type(2) > div > div:first-of-type > div:last-of-type > span`,
+
+			// comments post mods
+			`${newLayoutId} > div > div:nth-of-type(2) > div:last-of-type > div:first-of-type > div > div:last-of-type > div  > div > div > div:last-of-type > div > div > span`,
 
 			// user profile comments
 			`${newLayoutId} .Comment > div > div:last-of-type > div > div:first-of-type > div:first-of-type > div:nth-of-type(2) > span`,
 			`${newLayoutId} .Comment > div > div:last-of-type > div > div:first-of-type > div:nth-of-type(2) > span`,
 
 			// moderators
-			`${rightColSelector} > div:nth-of-type(5) > div > div > div:first-of-type > div > div > span`,
+			`${rightColSelector} > div > div > div:last-of-type > div > div > span`,
 
 			// user flair preview
-			`${rightColSelector} > div:first-of-type > div:last-of-type > div:last-of-type > div > span`,
+			`${rightColSelector} > div:first-of-type > div:last-of-type > div:last-of-type > div:last-of-type > div > span`,
 
 			// flair edit
 			'body > div:last-of-type > div > div > div:nth-of-type(2) > div > span'

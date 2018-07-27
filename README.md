@@ -2,7 +2,6 @@
 A collection of user scripts that I made to make my experience on the web a little nicer
 
 ## List of UserScripts
-* [Auto Select Sun/Moon on PokemonDB](https://greasyfork.org/en/scripts/25060-auto-select-sun-moon-on-pokemondb)
 * [Cubemania - Auto Select Inspection](https://greasyfork.org/en/scripts/27009-cubemania-auto-select-inspection)
 * [Dailymotion disable autoplay](https://greasyfork.org/en/scripts/33276-dailymotion-disable-autoplay)
 * [D&D Beyond - Jumping Distance](https://greasyfork.org/en/scripts/40734-d-d-beyond-jumping-distance)
@@ -21,6 +20,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [Newspaper Paywall Bypasser](https://greasyfork.org/en/scripts/18585-newspaper-paywall-bypasser)
 * [New reddit: Prevent middle click scroll](https://greasyfork.org/en/scripts/48534-new-reddit-prevent-middle-click-scroll)
 * [Nintendo Store Canada](https://greasyfork.org/en/scripts/25423-nintendo-store-canada)
+* [PokemonDB Default Version](https://greasyfork.org/en/scripts/25060-pokemondb-default-version)
 * [Prevent Wikia Ads](https://greasyfork.org/en/scripts/22420-prevent-wikia-ads)
 * [Reddit Disable No Participation](https://greasyfork.org/en/scripts/23529-reddit-disable-no-participation)
 * [Reddit Flair Linkifier](https://greasyfork.org/en/scripts/706-reddit-flair-linkifier)

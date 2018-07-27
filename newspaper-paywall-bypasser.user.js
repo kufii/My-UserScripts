@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.3
+// @version      1.2.4
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -42,8 +42,8 @@
 		},
 		getQueryParameter(name, url = W.location.href) {
 			name = name.replace(/[[\]]/g, '\\$&');
-			let regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
-				results = regex.exec(url);
+			const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
+			const results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
 			return decodeURIComponent(results[2].replace(/\+/g, ' '));
