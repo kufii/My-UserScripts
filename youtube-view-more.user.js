@@ -55,7 +55,7 @@
 
 	const API_URL = 'https://www.googleapis.com/youtube/v3/';
 	const API_KEY = 'AIzaSyCR7JKF4Lb-CsTQNapToOQeMF7SIIbqxSw';
-	const RESULTS_PER_FETCH = 10;
+	const RESULTS_PER_FETCH = 50;
 	const LAZY_LOAD_BUFFER = 10;
 
 	const Util = {
