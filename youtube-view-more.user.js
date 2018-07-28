@@ -55,7 +55,7 @@
 
 	const API_URL = 'https://www.googleapis.com/youtube/v3/';
 	const API_KEY = 'AIzaSyCR7JKF4Lb-CsTQNapToOQeMF7SIIbqxSw';
-	const RESULTS_PER_FETCH = 50;
+	const RESULTS_PER_FETCH = 10;
 	const LAZY_LOAD_BUFFER = 10;
 
 	const Util = {
@@ -75,6 +75,13 @@
 					if (oninit) oninit(vnode);
 				}
 			});
+		},
+		delayedRedraw(func, delay = 50) {
+			return new Promise(resolve => setTimeout(() => {
+				func();
+				m.redraw();
+				resolve();
+			}, delay));
 		}
 	};
 
@@ -83,6 +90,7 @@
 		request(endpoint, data, method = 'GET') {
 			return m.request({
 				method,
+				background: true,
 				url: API_URL + endpoint,
 				data: Object.assign(data, { key: API_KEY })
 			});
@@ -166,11 +174,10 @@
 			model: () => ({
 				currentVideo: null,
 				olderVideos: [],
+				loading: false,
 				olderPageToken: null,
-				loadingOlder: false,
 				newerVideos: [],
 				newerPageToken: null,
-				loadingNewer: false,
 				position: 0,
 				get leftpx() {
 					return (this.newerVideos.length * -176) - (this.position * 176);
@@ -178,6 +185,7 @@
 			}),
 			actions: {
 				async fetchInitialVideos(model, currentVideoId) {
+					model.loading = true;
 					model.currentVideo = await Api.getVideo(currentVideoId);
 					const numNewerVideos = await Api.getNumNewerVideos(model.currentVideo);
 					this.loadOlder(model);
@@ -188,46 +196,59 @@
 						this.loadNewer(model);
 						model.position = -1;
 					}
+					m.redraw();
+					Util.delayedRedraw(() => model.loading = false);
 				},
-				async loadOlder(model) {
-					if (!model.loadingOlder) {
-						model.loadingOlder = true;
-						const results = await Api.getOlderVideos(model.currentVideo, model.olderPageToken);
-						model.olderVideos.push(...results.videos);
-						model.olderPageToken = results.pageToken;
-						model.loadingOlder = false;
-					}
-				},
-				async loadNewer(model) {
-					if (!model.loadingNewer) {
-						model.loadingNewer = true;
+				async loadOlder(model, keepLoading = false) {
+					model.loading = true;
 
-						let results;
-						let timesTried = 0;
-						// dumb workaround for page token sometimes being incorrect
-						do {
-							results = await Api.getNewerVideos(model.currentVideo, model.newerPageToken);
-							model.newerPageToken = results.pageToken;
-							timesTried++;
-						} while (!results.videos.length && results.pageToken && timesTried < 5);
+					const results = await Api.getOlderVideos(model.currentVideo, model.olderPageToken);
+					model.olderVideos.push(...results.videos);
+					model.olderPageToken = results.pageToken;
 
-						model.newerVideos.unshift(...results.videos.reverse());
-						model.loadingNewer = false;
-					}
+					if(!keepLoading) model.loading = false;
+					m.redraw();
 				},
-				moveLeft(model) {
-					model.position--;
+				async loadNewer(model, keepLoading = false) {
+					model.loading = true;
+
+					let results;
+					let timesTried = 0;
+					// dumb workaround for page token sometimes being incorrect
+					do {
+						results = await Api.getNewerVideos(model.currentVideo, model.newerPageToken);
+						model.newerPageToken = results.pageToken;
+						timesTried++;
+					} while (!results.videos.length && results.pageToken && timesTried < 5);
+
+					model.newerVideos.unshift(...results.videos.reverse());
+
+					if(!keepLoading) model.loading = false;
+					m.redraw();
+				},
+				async moveLeft(model) {
+					if (model.loading) return;
 					if (Math.abs(model.position - LAZY_LOAD_BUFFER) > model.newerVideos.length && model.newerPageToken) {
-						this.loadNewer(model);
+						await this.loadNewer(model, true);
+						Util.delayedRedraw(() => {
+							model.position = Math.max(model.position - 1, -model.newerVideos.length);
+							model.loading = false;
+						});
+					} else {
+						model.position -= 1;
 					}
-					model.position = Math.max(model.position, -model.newerVideos.length);
 				},
-				moveRight(model) {
-					model.position++;
+				async moveRight(model) {
+					if (model.loading) return;
 					if (model.position + LAZY_LOAD_BUFFER > model.olderVideos.length && model.olderPageToken) {
-						this.loadOlder(model);
+						await this.loadOlder(model, true);
+						Util.delayedRedraw(() => {
+							model.position = Math.min(model.position + 1, model.olderVideos.length);
+							model.loading = false;
+						});
+					} else {
+						model.position += 1;
 					}
-					model.position = Math.min(model.position, model.olderVideos.length - 1);
 				}
 			},
 			oninit(vnode) {
@@ -240,7 +261,7 @@
 					Util.iconBtn('chevron-left', { onclick: () => actions.moveLeft(model) }),
 					m(`div.${CLASS_PREFIX}thumbnails-wrap`, [
 						m(`div.${CLASS_PREFIX}thumbnails`, {
-							style: { left: `${model.leftpx}px` }
+							style: `left: ${model.leftpx}px;transition-property:${model.loading ? 'none' : ''};`
 						}, model.newerVideos.concat(model.olderVideos).map(video => {
 							return m(Components.Thumbnail, {
 								key: video.id,
