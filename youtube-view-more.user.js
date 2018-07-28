@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.4
+// @version      1.0.5
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -185,7 +185,6 @@
 			}),
 			actions: {
 				async fetchInitialVideos(model, currentVideoId) {
-					model.loading = true;
 					model.currentVideo = await Api.getVideo(currentVideoId);
 					const numNewerVideos = await Api.getNumNewerVideos(model.currentVideo);
 					this.loadOlder(model);
@@ -197,7 +196,6 @@
 						model.position = -1;
 					}
 					m.redraw();
-					Util.delayedRedraw(() => model.loading = false);
 				},
 				async loadOlder(model, keepLoading = false) {
 					model.loading = true;
