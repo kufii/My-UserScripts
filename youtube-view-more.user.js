@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.5
+// @version      1.0.6
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -233,7 +233,7 @@
 							model.loading = false;
 						});
 					} else {
-						model.position -= 1;
+						model.position--;
 					}
 				},
 				async moveRight(model) {
@@ -245,7 +245,7 @@
 							model.loading = false;
 						});
 					} else {
-						model.position += 1;
+						model.position++;
 					}
 				}
 			},
