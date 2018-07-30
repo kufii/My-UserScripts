@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.6
+// @version      1.0.7
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -179,6 +179,12 @@
 				newerVideos: [],
 				newerPageToken: null,
 				position: 0,
+				shiftLeft() {
+					this.position = Math.max(this.position - 1, -this.newerVideos.length);
+				},
+				shiftRight() {
+					this.position = Math.min(this.position + 1, this.olderVideos.length - 1);
+				},
 				get leftpx() {
 					return (this.newerVideos.length * -176) - (this.position * 176);
 				}
@@ -229,11 +235,11 @@
 					if (Math.abs(model.position - LAZY_LOAD_BUFFER) > model.newerVideos.length && model.newerPageToken) {
 						await this.loadNewer(model, true);
 						Util.delayedRedraw(() => {
-							model.position = Math.max(model.position - 1, -model.newerVideos.length);
+							model.shiftLeft();
 							model.loading = false;
 						});
 					} else {
-						model.position--;
+						model.shiftLeft();
 					}
 				},
 				async moveRight(model) {
@@ -241,11 +247,11 @@
 					if (model.position + LAZY_LOAD_BUFFER > model.olderVideos.length && model.olderPageToken) {
 						await this.loadOlder(model, true);
 						Util.delayedRedraw(() => {
-							model.position = Math.min(model.position + 1, model.olderVideos.length);
+							model.shiftRight();
 							model.loading = false;
 						});
 					} else {
-						model.position++;
+						model.shiftRight();
 					}
 				}
 			},
