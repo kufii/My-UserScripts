@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.7
+// @version      1.0.8
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -101,9 +101,14 @@
 				title: data.snippet.title,
 				channelId: data.snippet.channelId,
 				channelTitle: data.snippet.channelTitle,
-				publishedAt: data.snippet.publishedAt,
+				publishedAt: new Date(data.snippet.publishedAt),
 				thumbnail: data.snippet.thumbnails.medium.url
 			};
+		},
+		sortVideos(a, b) {
+			if (a.publishedAt > b.publishedAt) return -1;
+			else if (a.publishedAt < b.publishedAt) return 1;
+			return 0;
 		},
 		async getVideo(id) {
 			const data = await Api.request('videos', {
@@ -122,28 +127,32 @@
 			}, pageToken ? { pageToken } : {}, options));
 		},
 		async getNumNewerVideos(currentVideo) {
+			const publishedAfter = new Date(currentVideo.publishedAt.getTime());
+			publishedAfter.setSeconds(publishedAfter.getSeconds() + 1);
 			const data = await Api.performSearch(currentVideo, {
-				publishedAfter: currentVideo.publishedAt,
+				publishedAfter: publishedAfter.toISOString(),
 				maxResults: 1
 			});
-			return Math.max(0, Math.min(data.pageInfo.totalResults - 1, 500));
+			return Math.min(data.pageInfo.totalResults, 500);
 		},
 		async getOlderVideos(currentVideo, pageToken) {
 			const data = await Api.performSearch(currentVideo, {
-				publishedBefore: currentVideo.publishedAt
+				publishedBefore: currentVideo.publishedAt.toISOString()
 			}, pageToken);
 			return {
 				pageToken: data.nextPageToken,
-				videos: data.items.map(Api.parseVideo)
+				videos: data.items.map(Api.parseVideo).sort(Api.sortVideos)
 			};
 		},
 		async getNewerVideos(currentVideo, pageToken) {
+			const publishedAfter = new Date(currentVideo.publishedAt.getTime());
+			publishedAfter.setSeconds(publishedAfter.getSeconds() + 1);
 			const data = await Api.performSearch(currentVideo, {
-				publishedAfter: currentVideo.publishedAt
+				publishedAfter: publishedAfter.toISOString()
 			}, pageToken);
 			return {
 				pageToken: data.prevPageToken,
-				videos: data.items.map(Api.parseVideo).filter(video => video.id !== currentVideo.id).reverse()
+				videos: data.items.map(Api.parseVideo).sort(Api.sortVideos).reverse()
 			};
 		},
 		get currentVideoId() {
@@ -197,9 +206,11 @@
 					if (numNewerVideos > 0) {
 						const numOnLastPage = numNewerVideos % RESULTS_PER_FETCH;
 						const page = numNewerVideos - numOnLastPage;
-						if (page > 0) model.newerPageToken = Api.pageTokens[page];
+						if (page > 0) {
+							model.newerPageToken = Api.pageTokens[page];
+							model.position = -1;
+						}
 						this.loadNewer(model);
-						model.position = -1;
 					}
 					m.redraw();
 				},
