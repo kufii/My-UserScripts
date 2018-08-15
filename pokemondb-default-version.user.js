@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokemonDB Default Version
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0
+// @version      2.0.1
 // @description  Auto selects the chosen version in the Moves section on PokemonDB
 // @author       Adrien Pyke
 // @match        *://pokemondb.net/pokedex/*
@@ -64,11 +64,22 @@
 	const match = location.href.match(/^https?:\/\/pokemondb\.net\/pokedex\/.*?\/moves\/(\d+)/i);
 	const currentGen = match ? match[1] : 7;
 	const defaultVersion = Config.load()[currentGen];
+	const tabs = Array.from(document.querySelectorAll('.tabs-tab-list > a.tabs-tab'));
 
 	if (defaultVersion) {
-		const [tab] = Array.from(document.querySelectorAll('.tabs-tab-list > a.tabs-tab')).filter(tab => tab.textContent === defaultVersion);
+		const [tab] = tabs.filter(tab => tab.textContent === defaultVersion);
 		if (tab) {
 			tab.click();
 		}
 	}
+
+	let changing = false;
+	tabs.forEach(tab => {
+		tab.addEventListener('click', () => {
+			if (changing) return;
+			changing = true;
+			tabs.filter(tabB => tabB.textContent === tab.textContent).forEach(tabB => tabB.click());
+			changing = false;
+		});
+	});
 })();
