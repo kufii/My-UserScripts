@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokemonDB Default Version
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.1
+// @version      2.1
 // @description  Auto selects the chosen version in the Moves section on PokemonDB
 // @author       Adrien Pyke
 // @match        *://pokemondb.net/pokedex/*
