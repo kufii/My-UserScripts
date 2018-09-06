@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Greasy Fork - Change Default Script Sort
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3
+// @version      1.3.1
 // @description  Change default script sort on GreasyFork
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/*/users/*
@@ -10,6 +10,7 @@
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
 // @require      https://cdn.rawgit.com/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
+// @require      https://cdn.rawgit.com/fuzetsu/userscripts/89e64ca31aa4c27ce8bc68a84ffac53e06f074c0/wait-for-elements/wait-for-elements.js
 // @run-at       document-start
 // ==/UserScript==
 
@@ -36,7 +37,10 @@
 			label: 'Search Sort',
 			default: 'relevance',
 			type: 'dropdown',
-			values: [{ value: 'relevance', text: 'Relevance' }].concat(commonValues)
+			values: [
+				{ value: 'relevance', text: 'Relevance' },
+				...commonValues
+			]
 		}, {
 			key: 'user',
 			label: 'User Profile Sort',
@@ -51,9 +55,10 @@
 	const onScripts = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/scripts\/?/i);
 	const onProfile = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/users\//i);
 
-	document.addEventListener('DOMContentLoaded', () => {
-		const defaultSort = document.querySelector('#script-list-sort > ul > li:nth-child(1) > a');
-		if (defaultSort) {
+	waitForElems({
+		sel: '#script-list-sort > ul > li:first-of-type > a',
+		stop: true,
+		onmatch(defaultSort) {
 			const url = new URL(defaultSort.href);
 			url.searchParams.set('sort', onSearch ? 'relevance' : 'daily-installs');
 			defaultSort.href = url.href;
