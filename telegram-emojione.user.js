@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.8
+// @version      1.1.9
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
 // @grant        GM_addStyle
-// @require      https://cdn.rawgit.com/fuzetsu/userscripts/89e64ca31aa4c27ce8bc68a84ffac53e06f074c0/wait-for-elements/wait-for-elements.js
+// @require      https://cdn.rawgit.com/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
 // @require      https://cdn.rawgit.com/emojione/emojione/9a81e8462ea5c1efc8e4f2947944d0a248b8ec73/lib/js/emojione.min.js
 // ==/UserScript==
 /* global emojione */
