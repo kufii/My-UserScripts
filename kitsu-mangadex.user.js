@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu MangaDex Links
 // @namespace    https://greasyfork.org/users/649
-// @version      3.0.4
+// @version      3.0.5
 // @description  Adds MangaDex links to Kitsu manga pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -108,7 +108,7 @@
 							link.setAttribute('aria-label', 'MangaDex');
 							link.className = 'hint--top hint--bounce hint--rounded';
 							const img = document.createElement('img');
-							img.src = 'https://mangadex.org/images/avatars/default.png';
+							img.src = 'https://mangadex.org/images/misc/navbar.svg';
 							img.style.verticalAlign = 'text-bottom';
 							link.appendChild(img);
 							list.appendChild(link);
