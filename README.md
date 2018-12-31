@@ -33,4 +33,5 @@ A collection of user scripts that I made to make my experience on the web a litt
 * [userstyles.org - auto select keep me logged in](https://greasyfork.org/en/scripts/22419-userstyles-org-auto-select-keep-me-logged-in)
 * [WaniKani Kanjidamage Mnemonics](https://greasyfork.org/en/scripts/20106-wanikani-kanjidamage-mnemonics)
 * [Youtube Middle Click Search](https://greasyfork.org/en/scripts/6031-youtube-middle-click-search)
+* [Youtube Scroll Volume](https://greasyfork.org/en/scripts/376155-youtube-scroll-volume)
 * [Youtube Unblocker](https://greasyfork.org/en/scripts/24163-youtube-unblocker)
