@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Imgur Mirror
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.4
+// @version      1.1.5
 // @description  Switches all imgur links to the mirror site http://kageurufu.net/imgur
 // @author       Adrien Pyke
 // @include      http*
-// @require      https://cdn.rawgit.com/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
 // @grant        none
 // ==/UserScript==
 

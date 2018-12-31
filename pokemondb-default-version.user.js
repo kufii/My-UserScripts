@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         PokemonDB Default Version
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1
+// @version      2.1.1
 // @description  Auto selects the chosen version in the Moves section on PokemonDB
 // @author       Adrien Pyke
 // @match        *://pokemondb.net/pokedex/*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
+// @require      https://gitcdn.link/repo/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
 // ==/UserScript==
 
 (() => {

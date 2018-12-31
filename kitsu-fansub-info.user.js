@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.21
+// @version      2.1.22
 // @description  Show MAL fansub info on Kitsu anime pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -11,8 +11,8 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://cdn.rawgit.com/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
-// @require      https://cdn.rawgit.com/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://gitcdn.link/repo/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
+// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
 /*

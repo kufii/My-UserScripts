@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Reddit Disable No Participation
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.5
+// @version      1.0.6
 // @description  Disables No Participation on Reddit
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
-// @require      https://cdn.rawgit.com/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
 // @run-at       document-start
 // @grant        none
 // ==/UserScript==
