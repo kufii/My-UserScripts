@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.22
+// @version      2.1.23
 // @description  Show MAL fansub info on Kitsu anime pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -198,10 +198,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					let fansubDiv = Util.q('#inlineContent', tempDiv);
 					if (fansubDiv) {
 						fansubDiv = fansubDiv.parentNode;
-						const fansubs = Util.qq('.spaceit_pad', fansubDiv).filter(node => {
-							// only return nodes without an id
-							return !node.id;
-						}).map(node => {
+						const fansubs = Util.qq('.spaceit_pad', fansubDiv).filter(node => !node.id).map(node => {
 							const id = Util.q('a:nth-of-type(1)', node).dataset.groupId;
 							const link = Util.q('a:nth-of-type(4)', node);
 							const tagNode = Util.q('small:nth-of-type(1)', node);
@@ -219,12 +216,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 								if (match) {
 									totalApproved = match[1];
 									totalVotes = match[2];
-									comments = Util.qq(`#fsgComments${id} > .spaceit`, node).map(comment => {
-										return {
-											text: comment.textContent,
-											approves: !comment.hasAttribute('style')
-										};
-									});
+									comments = Util.qq(`#fsgComments${id} > .spaceit`, node).map(comment => ({
+										text: comment.textContent,
+										approves: !comment.hasAttribute('style')
+									}));
 								}
 							}
 							let value = 3;

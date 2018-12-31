@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.13
+// @version      1.0.14
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -277,13 +277,11 @@
 					m(`div.${CLASS_PREFIX}thumbnails-wrap`, [
 						m(`div.${CLASS_PREFIX}thumbnails`, {
 							style: `left: ${model.leftpx}px;transition-property:${model.loading ? 'none' : ''};`
-						}, model.newerVideos.concat(model.olderVideos).map(video => {
-							return m(Components.Thumbnail, {
-								key: video.id,
-								active: video.id === model.currentVideo.id,
-								video
-							});
-						}))
+						}, model.newerVideos.concat(model.olderVideos).map(video => m(Components.Thumbnail, {
+							key: video.id,
+							active: video.id === model.currentVideo.id,
+							video
+						})))
 					]),
 					Util.iconBtn('chevron-right', { onclick: () => actions.moveRight(model) })
 				]);

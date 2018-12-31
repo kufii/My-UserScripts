@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RetailMeNot Enhancer
 // @namespace    https://greasyfork.org/users/649
-// @version      3.1.6
+// @version      3.1.7
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
@@ -212,9 +212,7 @@
 	}
 	// human checks
 	const regex = /^https?:\/\/www\.retailmenot\.[^/]+\/humanCheck\.php/i;
-	Util.qq('a').filter(link => {
-		return link.href.match(regex);
-	}).forEach(link => {
+	Util.qq('a').filter(link => link.href.match(regex)).forEach(link => {
 		const url = Util.getQueryParam('url', link.href);
 		if (url) {
 			link.href = `${window.location.protocol}//${window.location.host}${url}`;

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Newspaper Paywall Bypasser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.4
+// @version      1.2.5
 // @description  Bypass the paywall on online newspapers
 // @author       Adrien Pyke
 // @match        *://www.thenation.com/article/*
@@ -18,7 +18,7 @@
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
 // @grant        unsafeWindow
-// @require      https://cdn.rawgit.com/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
+// @require      https://gitcdn.link/repo/fuzetsu/userscripts/477063e939b9658b64d2f91878da20a7f831d98b/wait-for-elements/wait-for-elements.js
 // @noframes
 // ==/UserScript==
 
@@ -153,9 +153,7 @@
 				W.loadCSS('//asset.wsj.net/public/extra.production-2a7a40d6.css');
 				const scripts = Util.qq('script');
 				const add = function(regex, onload) {
-					const matching = scripts.filter(script => {
-						return script.src.match(regex);
-					});
+					const matching = scripts.filter(script => script.src.match(regex));
 					if (matching.length > 0) {
 						Util.addScript(matching[0].src, onload);
 					} else {
