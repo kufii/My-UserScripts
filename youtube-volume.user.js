@@ -26,7 +26,8 @@
 	const Config = GM_config([
 		{ key: 'reverse', label: 'Reverse Scroll', default: false, type: 'bool' },
 		{ key: 'step', label: 'Change By', default: 5, type: 'number', min: 1, max: 100 },
-		{ key: 'hud', label: 'Display HUD', default: true, type: 'bool' }
+		{ key: 'hud', label: 'Display HUD', default: true, type: 'bool' },
+		{ key: 'requireShift', label: 'Only handle scroll if holding "Shift" key', default: false, type: 'bool' }
 	]);
 	GM_registerMenuCommand('Youtube Scroll Volume Settings', Config.setup);
 
@@ -85,6 +86,7 @@
 			};
 
 			node.onwheel = e => {
+				if(config.requireShift && !e.shiftKey) return;
 				const player = node.getPlayer();
 				const dir = (e.deltaY > 0 ? -1 : 1) * (config.reverse ? -1 : 1);
 
