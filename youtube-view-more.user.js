@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.14
+// @version      1.0.15
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
