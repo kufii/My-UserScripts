@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Scroll Volume
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.0
+// @version      1.1.1
 // @description  Use the scroll wheel to adjust volume of youtube videos
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -28,7 +28,7 @@
 		{ key: 'step', label: 'Change By', default: 5, type: 'number', min: 1, max: 100 }
 	]);
 	GM_registerMenuCommand('Youtube Scroll Volume Settings', Config.setup);
-	
+
 	let config = Config.load();
 	Config.onsave = newConf => config = newConf;
 
