@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Scroll Volume
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.2
+// @version      1.1.3
 // @description  Use the scroll wheel to adjust volume of youtube videos
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -25,7 +25,8 @@
 
 	const Config = GM_config([
 		{ key: 'reverse', label: 'Reverse Scroll', default: false, type: 'bool' },
-		{ key: 'step', label: 'Change By', default: 5, type: 'number', min: 1, max: 100 }
+		{ key: 'step', label: 'Change By', default: 5, type: 'number', min: 1, max: 100 },
+		{ key: 'hud', label: 'Display HUD', default: true, type: 'bool' }
 	]);
 	GM_registerMenuCommand('Youtube Scroll Volume Settings', Config.setup);
 
@@ -54,7 +55,7 @@
 			max-width: 800px;
 		}
 		.YSV_progress {
-			transition: width 250ms ease-out 0s;
+			transition: width 100ms ease-out 0s;
 			background-color: #444;
 			height: 35px;
 		}
@@ -76,6 +77,13 @@
 			const progress = q(hud).q('.YSV_progress');
 			node.appendChild(hud);
 
+			const showHud = volume => {
+				clearTimeout(id);
+				progress.style.width = `${volume}%`;
+				hud.style.opacity = 1;
+				id = setTimeout(() => hud.style.opacity = 0, 800);
+			};
+
 			node.onwheel = e => {
 				const player = node.getPlayer();
 				const dir = (e.deltaY > 0 ? -1 : 1) * (config.reverse ? -1 : 1);
@@ -83,11 +91,7 @@
 				const vol = Util.bound(player.getVolume() + (config.step * dir), 0, 100);
 				player.setVolume(vol);
 				if (vol > 0) player.unMute();
-
-				clearTimeout(id);
-				progress.style.width = `${vol}%`;
-				hud.style.opacity = 1;
-				id = setTimeout(() => hud.style.opacity = 0, 800);
+				if (config.hud) showHud(vol);
 
 				e.preventDefault();
 				e.stopImmediatePropagation();
