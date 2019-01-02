@@ -28,6 +28,11 @@
 		{ key: 'step', label: 'Change By', default: 5, type: 'number', min: 1, max: 100 }
 	]);
 	GM_registerMenuCommand('Youtube Scroll Volume Settings', Config.setup);
+	
+	let config = Config.load();
+	Config.onsave = newConf => config = newConf;
+	
+	const shakeAnim = 'YSV_shake'
 
 	GM_addStyle(`
 		.YSV_hud {
@@ -37,23 +42,40 @@
 			position: absolute;
 			top: 0;
 			bottom: 0;
-			left: 10%;
-			right: 10%;
+			left: 0;
+			right: 0;
 			opacity: 0;
 			transition: opacity 500ms ease 0s;
 			z-index: 10;
 			pointer-events: none;
 		}
-		.YSV_hud .YSV_bar {
-			display: block;
+		.YSV_bar {
 			background-color: #888;
-			border: 1px solid black;
-			width: 100%;
+			border: 2px solid white;
+			width: 80%;
+			max-width: 800px;
 		}
-		.YSV_hud .YSV_bar .YSV_progress {
-			display: block;
+		.YSV_progress {
+			transition: width 250ms ease-out 0s;
 			background-color: #444;
-			height: 20px;
+			height: 35px;
+		}
+		.${shakeAnim} {
+			animation: ${shakeAnim} 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+		}
+		@keyframes ${shakeAnim} {
+			10%, 90% {
+				transform: translate3d(-1px, 0, 0);
+			}
+			20%, 80% {
+				transform: translate3d(2px, 0, 0);
+			}
+			30%, 50%, 70% {
+				transform: translate3d(-4px, 0, 0);
+			}
+			40%, 60% {
+				transform: translate3d(4px, 0, 0);
+			}
 		}
 	`);
 
@@ -75,17 +97,24 @@
 
 			node.onwheel = e => {
 				const player = node.getPlayer();
-				const config = Config.load();
 				const dir = (e.deltaY > 0 ? -1 : 1) * (config.reverse ? -1 : 1);
 
-				const vol = Util.bound(player.getVolume() + (config.step * dir), 0, 100);
+				const lastVol = player.getVolume()
+				const vol = Util.bound(lastVol + (config.step * dir), 0, 100);
 				player.setVolume(vol);
 				if (vol > 0) player.unMute();
+							
+				const bar = hud.firstChild;
+				if (lastVol === vol) bar.classList.add(shakeAnim);
+				else bar.classList.remove(shakeAnim);
 
 				clearTimeout(id);
 				progress.style.width = `${vol}%`;
 				hud.style.opacity = 1;
-				id = setTimeout(() => hud.style.opacity = 0, 800);
+				id = setTimeout(() => {
+					hud.style.opacity = 0;
+					bar.classList.remove(shakeAnim);
+				}, 800);
 
 				e.preventDefault();
 				e.stopImmediatePropagation();
