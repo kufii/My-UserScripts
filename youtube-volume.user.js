@@ -32,7 +32,7 @@
 	let config = Config.load();
 	Config.onsave = newConf => config = newConf;
 	
-	const shakeAnim = 'YSV_shake'
+	const shakeAnim = 'YSV_shake';
 
 	GM_addStyle(`
 		.YSV_hud {
@@ -99,7 +99,7 @@
 				const player = node.getPlayer();
 				const dir = (e.deltaY > 0 ? -1 : 1) * (config.reverse ? -1 : 1);
 
-				const lastVol = player.getVolume()
+				const lastVol = player.getVolume();
 				const vol = Util.bound(lastVol + (config.step * dir), 0, 100);
 				player.setVolume(vol);
 				if (vol > 0) player.unMute();
