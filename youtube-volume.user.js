@@ -28,6 +28,9 @@
 		{ key: 'step', label: 'Change By', default: 5, type: 'number', min: 1, max: 100 }
 	]);
 	GM_registerMenuCommand('Youtube Scroll Volume Settings', Config.setup);
+	
+	let config = Config.load();
+	Config.onsave = newConf => config = newConf;
 
 	GM_addStyle(`
 		.YSV_hud {
@@ -37,23 +40,23 @@
 			position: absolute;
 			top: 0;
 			bottom: 0;
-			left: 10%;
-			right: 10%;
+			left: 0;
+			right: 0;
 			opacity: 0;
 			transition: opacity 500ms ease 0s;
 			z-index: 10;
 			pointer-events: none;
 		}
-		.YSV_hud .YSV_bar {
-			display: block;
+		.YSV_bar {
 			background-color: #888;
-			border: 1px solid black;
-			width: 100%;
+			border: 2px solid white;
+			width: 80%;
+			max-width: 800px;
 		}
-		.YSV_hud .YSV_bar .YSV_progress {
-			display: block;
+		.YSV_progress {
+			transition: width 250ms ease-out 0s;
 			background-color: #444;
-			height: 20px;
+			height: 35px;
 		}
 	`);
 
@@ -75,7 +78,6 @@
 
 			node.onwheel = e => {
 				const player = node.getPlayer();
-				const config = Config.load();
 				const dir = (e.deltaY > 0 ? -1 : 1) * (config.reverse ? -1 : 1);
 
 				const vol = Util.bound(player.getVolume() + (config.step * dir), 0, 100);
