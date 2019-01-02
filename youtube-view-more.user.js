@@ -58,6 +58,11 @@
 	const RESULTS_PER_FETCH = 50;
 	const LAZY_LOAD_BUFFER = 10;
 
+	const icons = {
+		'chevron-left': '<g id="chevron-left"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></g>',
+		'chevron-right': '<g id="chevron-right"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></g>'
+	};
+
 	const Util = {
 		btn(options, text) {
 			return m('paper-button[role=button][subscribed].style-scope.ytd-subscribe-button-renderer', options, text);
@@ -82,6 +87,21 @@
 				m.redraw();
 				resolve();
 			}, delay));
+		},
+		fillIcons(vnode) {
+			Array.from(vnode.dom.querySelectorAll('paper-icon-button'))
+				.forEach(btn => btn.querySelector('iron-icon').innerHTML = `
+					<svg viewBox="0 0 24 24"
+						preserveAspectRatio="xMidYMid meet"
+						focusable="false"
+						class="style-scope yt-icon"
+						style="pointer-events: none;
+							display: block;
+							width: 100%;
+							height: 100%;">
+						${icons[btn.getAttribute('icon')]}
+					</svg>
+				`);
 		}
 	};
 
@@ -270,6 +290,7 @@
 				const { model, actions } = vnode.state;
 				actions.fetchInitialVideos(model, vnode.attrs.videoId);
 			},
+			oncreate: Util.fillIcons,
 			view(vnode) {
 				const { model, actions } = vnode.state;
 				return m(`div.${CLASS_PREFIX}slider`, { hidden: vnode.attrs.hidden }, [
