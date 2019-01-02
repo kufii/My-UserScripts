@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Scroll Volume
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.3
+// @version      1.1.4
 // @description  Use the scroll wheel to adjust volume of youtube videos
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -49,14 +49,14 @@
 			pointer-events: none;
 		}
 		.YSV_bar {
-			background-color: #888;
+			background-color: #444;
 			border: 2px solid white;
 			width: 80%;
 			max-width: 800px;
 		}
 		.YSV_progress {
 			transition: width 100ms ease-out 0s;
-			background-color: #444;
+			background-color: #888;
 			height: 35px;
 		}
 	`);
