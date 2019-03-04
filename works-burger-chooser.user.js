@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         The Works Burger Chooser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.4
+// @version      1.3.0
 // @description  Choose a random burger on the works menu
 // @author       Adrien Pyke
 // @match        *://worksburger.com/menu/burger-menu/*
@@ -11,7 +11,7 @@
 (() => {
 	'use strict';
 
-	const W = (typeof unsafeWindow === 'undefined') ? window : unsafeWindow;
+	const W = unsafeWindow || window;
 
 	const SCRIPT_NAME = 'The Works Burger Chooser';
 
@@ -20,14 +20,16 @@
 			args.unshift(`%c${SCRIPT_NAME}:`, 'font-weight: bold;color: #233c7b;');
 			console.log(...args);
 		},
-		q(query, context = document) {
-			return context.querySelector(query);
-		},
-		qq(query, context = document) {
-			return Array.from(context.querySelectorAll(query));
-		},
-		prepend(parent, child) {
-			parent.insertBefore(child, parent.firstChild);
+		q: (query, context = document) => context.querySelector(query),
+		qq: (query, context = document) => Array.from(context.querySelectorAll(query)),
+		prepend: (parent, child) => parent.insertBefore(child, parent.firstChild),
+		createCheckbox(text) {
+			const label = document.createElement('label');
+			label.textContent = text;
+			const checkbox = document.createElement('input');
+			checkbox.type = 'checkbox';
+			label.appendChild(checkbox);
+			return label;
 		},
 		randomColor() {
 			const letters = '0123456789ABCDEF'.split('');
@@ -39,13 +41,36 @@
 		}
 	};
 
-	const selectBurger = function() {
+	const container = document.createElement('div');
+	container.setAttribute('style', `
+		position: fixed;
+		bottom: 20px;
+		left: 20px;
+		padding: 5px;
+		z-index: 99999;
+		background-color: white;
+		display: flex;
+		flex-direction: column;
+	`);
+
+	const vegetarian = Util.createCheckbox('Vegetarian ');
+	const cbVegetarian = Util.q('input', vegetarian);
+	container.appendChild(vegetarian);
+
+	const button = document.createElement('button');
+	button.textContent = 'Choose Random Burger';
+	container.appendChild(button);
+
+	document.body.appendChild(container);
+
+	const selectBurger = () => {
 		Util.log('Choosing Random Burger...');
 
-		const burgers = Util.qq('.vc_grid-item-mini');
-		burgers.forEach(burger => {
-			burger.removeAttribute('style');
-		});
+		let burgers = Util.qq('.vc_grid-item-mini');
+		burgers.forEach(burger => burger.removeAttribute('style'));
+		if (cbVegetarian.checked) {
+			burgers = burgers.filter(b => Util.q('img[src="/wp-content/uploads/2017/11/veg.png"]', b));
+		}
 
 		const burger = burgers[Math.floor(Math.random() * burgers.length)];
 
@@ -67,22 +92,7 @@
 
 	if (W.BM_MODE) {
 		selectBurger();
-	} else {
-		Util.log('Adding Button...');
-		const button = document.createElement('button');
-		button.textContent = 'Choose Random Burger';
-		button.setAttribute('style', `
-			position: fixed;
-			bottom: 20px;
-			left: 20px;
-			padding: 5px;
-			z-index: 99999;
-		`);
-		button.onclick = e => {
-			e.stopImmediatePropagation();
-			e.preventDefault();
-			selectBurger();
-		};
-		document.body.appendChild(button);
 	}
+
+	button.onclick = selectBurger;
 })();
