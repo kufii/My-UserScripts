@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         The Works Burger Chooser
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.0
+// @version      1.3.1
 // @description  Choose a random burger on the works menu
 // @author       Adrien Pyke
 // @match        *://worksburger.com/menu/burger-menu/*
@@ -38,8 +38,19 @@
 				color += letters[Math.floor(Math.random() * letters.length)];
 			}
 			return color;
+		},
+		createStyle(css) {
+			const style = document.createElement('style');
+			style.textContent = css;
+			document.head.appendChild(style);
 		}
 	};
+
+	Util.createStyle(`
+		.vc_grid-item-mini .vc_col-sm-12 {
+			width: 100%
+		}
+	`);
 
 	const container = document.createElement('div');
 	container.setAttribute('style', `
@@ -74,8 +85,6 @@
 
 		const burger = burgers[Math.floor(Math.random() * burgers.length)];
 
-		Util.log(burger);
-
 		burger.setAttribute('style', `
 			transition: 0.5s;
 			box-shadow: inset 0 0 100px ${Util.randomColor()};
@@ -83,9 +92,7 @@
 			border-radius: 20px;
 		`);
 
-		setTimeout(() => {
-			burger.style.transform = 'scale(1, 1)';
-		}, 500);
+		setTimeout(() => burger.style.transform = 'scale(1, 1)', 500);
 
 		burger.scrollIntoView();
 	};
