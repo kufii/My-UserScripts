@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.15
+// @version      1.0.16
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -102,6 +102,11 @@
 						${icons[btn.getAttribute('icon')]}
 					</svg>
 				`);
+		},
+		decode(text) {
+			const elem = document.createElement('textarea');
+			elem.innerHTML = text;
+			return elem.value;
 		}
 	};
 
@@ -317,6 +322,7 @@
 			},
 			view(vnode) {
 				const { model } = vnode.state;
+				const title = Util.decode(model.video.title);
 				return m(`div.${CLASS_PREFIX}thumbnail${vnode.attrs.active ? `.${CLASS_PREFIX}active` : ''}`, [
 					m('ytd-thumbnail.style-scope.ytd-compact-video-renderer', { width: 168 }, [
 						m('a#thumbnail.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail', { rel: 'nofollow', href: `/watch?v=${model.video.id}` }, [
@@ -327,7 +333,7 @@
 					]),
 					m('a.yt-simple-endpoint.style-scope.ytd-compact-video-renderer', { rel: 'nofollow', href: `/watch?v=${model.video.id}` }, [
 						m('h3.style-scope.ytd-compact-video-renderer', [
-							m('span#video-title.style-scope.ytd-compact-video-renderer', { title: model.video.title }, model.video.title)
+							m('span#video-title.style-scope.ytd-compact-video-renderer', { title }, title)
 						])
 					])
 				]);
