@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokemonDB Default Version
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.1
+// @version      2.1.2
 // @description  Auto selects the chosen version in the Moves section on PokemonDB
 // @author       Adrien Pyke
 // @match        *://pokemondb.net/pokedex/*
@@ -56,7 +56,7 @@
 			label: 'Gen 7',
 			type: 'dropdown',
 			showBlank: true,
-			values: ['Ultra Sun/Ultra Moon', 'Sun/Moon']
+			values: ['Sun/Moon', 'Ultra Sun/Ultra Moon', "Let's Go Pikachu/Let's Go Eevee"]
 		}
 	]);
 	GM_registerMenuCommand('Select default PokemonDB versions', Config.setup);
