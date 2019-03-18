@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokemonDB Default Version
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.2
+// @version      2.1.3
 // @description  Auto selects the chosen version in the Moves section on PokemonDB
 // @author       Adrien Pyke
 // @match        *://pokemondb.net/pokedex/*
@@ -74,12 +74,10 @@
 	}
 
 	let changing = false;
-	tabs.forEach(tab => {
-		tab.addEventListener('click', () => {
-			if (changing) return;
-			changing = true;
-			tabs.filter(tabB => tabB.textContent === tab.textContent).forEach(tabB => tabB.click());
-			changing = false;
-		});
-	});
+	tabs.forEach(tab => tab.addEventListener('click', () => {
+		if (changing) return;
+		changing = true;
+		tabs.filter(tabB => tabB.textContent === tab.textContent).forEach(tabB => tabB.click());
+		changing = false;
+	}));
 })();
