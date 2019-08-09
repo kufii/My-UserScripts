@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Scroll Volume
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.7
+// @version      1.1.8
 // @description  Use the scroll wheel to adjust volume of youtube videos
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -95,7 +95,7 @@
 
 				const vol = Util.bound(player.getVolume() + (config.step * dir), 0, 100);
 				player.setVolume(vol);
-				if (vol > 0) player.unMute();
+				if (vol > 0 && player.isMuted()) player.unMute();
 				if (config.hud) showHud(vol);
 
 				e.preventDefault();
