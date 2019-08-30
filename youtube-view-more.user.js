@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.16
+// @version      1.1.0
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -40,7 +40,7 @@
 			min-width: 168px;
 		}
 		.${CLASS_PREFIX}thumbnail.${CLASS_PREFIX}active {
-			background-color: var(--yt-live-chat-action-panel-background-color);
+			background-color: var(--yt-thumbnail-placeholder-color);
 		}
 		#${CLASS_PREFIX}mount-point {
 			margin-top: 8px;
@@ -68,8 +68,8 @@
 			return m('paper-button[role=button][subscribed].style-scope.ytd-subscribe-button-renderer', options, text);
 		},
 		iconBtn(icon, options = {}) {
-			return m('ytd-button-renderer.style-scope.ytd-menu-renderer.force-icon-button.style-default.size-default[button-renderer][is-icon-button]', [
-				m('paper-icon-button', Object.assign(options, { icon }))
+			return m('ytd-button-renderer.style-scope.ytd-menu-renderer.force-icon-button.style-default.size-default[button-renderer][is-icon-button]', { icon }, [
+				m('paper-icon-button', Object.assign(options))
 			]);
 		},
 		initCmp(cmp) {
@@ -89,7 +89,7 @@
 			}, delay));
 		},
 		fillIcons(vnode) {
-			Array.from(vnode.dom.querySelectorAll('paper-icon-button'))
+			Array.from(vnode.dom.querySelectorAll('ytd-button-renderer[icon]'))
 				.forEach(btn => btn.querySelector('iron-icon').innerHTML = `
 					<svg viewBox="0 0 24 24"
 						preserveAspectRatio="xMidYMid meet"
@@ -117,7 +117,7 @@
 				method,
 				background: true,
 				url: API_URL + endpoint,
-				data: Object.assign(data, { key: API_KEY })
+				params: Object.assign(data, { key: API_KEY })
 			});
 		},
 		parseVideo(data) {
@@ -351,7 +351,7 @@
 			oldMount.remove();
 		}
 		wait = waitForElems({
-			sel: 'ytd-video-secondary-info-renderer #container',
+			sel: 'ytd-video-secondary-info-renderer > #container',
 			stop: true,
 			onmatch(container) {
 				const mount = document.createElement('div');
