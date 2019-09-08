@@ -2,7 +2,7 @@
 // @name         Cubemania - Auto Select Inspection
 // @namespace    https://greasyfork.org/users/649
 // @version      1.1
-// @description  auto checkes the 15 second inspection checkbox on the cubemania timer
+// @description  auto checks the 15 second inspection checkbox on the cubemania timer
 // @author       Adrien Pyke
 // @match        *://www.cubemania.org/puzzles/*/timer
 // @grant        GM_getValue
@@ -30,8 +30,11 @@
 		document.querySelector('input.inspection-toggle').click();
 	}
 
-	GM_registerMenuCommand(`${autoselect ? 'Disable' : 'Enable'} "Auto Select Inspection" for ${puzzle}`, () => {
-		Config.setAutoSelect(puzzle, !autoselect);
-		location.reload();
-	});
+	GM_registerMenuCommand(
+		`${autoselect ? 'Disable' : 'Enable'} "Auto Select Inspection" for ${puzzle}`,
+		() => {
+			Config.setAutoSelect(puzzle, !autoselect);
+			location.reload();
+		}
+	);
 })();

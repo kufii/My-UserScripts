@@ -48,7 +48,10 @@
 			return button;
 		},
 		toTitleCase(str) {
-			return str.replace(/[a-z0-9]+/gi, word => word.slice(0, 1).toUpperCase() + word.slice(1));
+			return str.replace(
+				/[a-z0-9]+/gi,
+				word => word.slice(0, 1).toUpperCase() + word.slice(1)
+			);
 		},
 		appendStyle(str) {
 			const style = document.createElement('style');
@@ -100,17 +103,21 @@
 
 	const table = Util.q('#page-content > div > table > tbody');
 	const rows = Util.qq('tr:not(:first-of-type)', table);
-	const categories = new Set(rows.map(row => {
-		const typos = {
-			'Triva': 'Trivia'
-		};
-		const td = Util.q('td:last-of-type', row);
-		let category = Util.toTitleCase(td.textContent.trim());
-		if (typos[category]) {
-			td.textContent = category = typos[category];
-		}
-		return category;
-	}).sort());
+	const categories = new Set(
+		rows
+			.map(row => {
+				const typos = {
+					Triva: 'Trivia'
+				};
+				const td = Util.q('td:last-of-type', row);
+				let category = Util.toTitleCase(td.textContent.trim());
+				if (typos[category]) {
+					td.textContent = category = typos[category];
+				}
+				return category;
+			})
+			.sort()
+	);
 
 	const tr = document.createElement('tr');
 	const td1 = document.createElement('td');
@@ -124,12 +131,14 @@
 	const selectedCategories = [];
 
 	const filter = function() {
-		rows.forEach(row => row.hidden = true);
+		rows.forEach(row => (row.hidden = true));
 		let rowsFilter = rows;
 
 		if (selectedCategories.length > 0) {
 			rowsFilter = rowsFilter.filter(row => {
-				const category = Util.q('td:last-of-type', row).textContent.trim().toLowerCase();
+				const category = Util.q('td:last-of-type', row)
+					.textContent.trim()
+					.toLowerCase();
 				return selectedCategories.includes(category);
 			});
 		}
@@ -137,12 +146,14 @@
 		const value = nameFilter.value.trim().toLowerCase();
 		if (value) {
 			rowsFilter = rowsFilter.filter(row => {
-				const name = Util.q('td:first-of-type', row).textContent.trim().toLowerCase();
+				const name = Util.q('td:first-of-type', row)
+					.textContent.trim()
+					.toLowerCase();
 				return name.includes(value);
 			});
 		}
 
-		rowsFilter.forEach(row => row.hidden = false);
+		rowsFilter.forEach(row => (row.hidden = false));
 	};
 
 	nameFilter.oninput = filter;
@@ -168,7 +179,9 @@
 			} else if (index !== -1) {
 				selectedCategories.splice(index, 1);
 			}
-			categorySpan.textContent = selectedCategories.map(category => Util.toTitleCase(category)).join(', ');
+			categorySpan.textContent = selectedCategories
+				.map(category => Util.toTitleCase(category))
+				.join(', ');
 			filter();
 		};
 	});

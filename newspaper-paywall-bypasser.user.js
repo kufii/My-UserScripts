@@ -26,7 +26,7 @@
 	'use strict';
 
 	// short reference to unsafeWindow (or window if unsafeWindow is unavailable e.g. bookmarklet)
-	const W = (typeof unsafeWindow === 'undefined') ? window : unsafeWindow;
+	const W = typeof unsafeWindow === 'undefined' ? window : unsafeWindow;
 	const SCRIPT_NAME = 'Newspaper Paywall Bypasser';
 
 	const Util = {
@@ -143,8 +143,11 @@
 			match: '^https?://www\\.thenation\\.com/article/.*',
 			remove: '#paywall',
 			wait: '#paywall',
-			bmmode() { W.Paywall.hide(); }
-		}, {
+			bmmode() {
+				W.Paywall.hide();
+			}
+		},
+		{
 			name: 'Wall Street Journal',
 			match: '^https?://.*\\.wsj\\.com/.*',
 			wait: '.wsj-snippet-login',
@@ -166,7 +169,8 @@
 					});
 				});
 			}
-		}, {
+		},
+		{
 			name: 'Boston Globe',
 			match: '^https?://www\\.bostonglobe\\.com/.*',
 			css: {
@@ -177,7 +181,8 @@
 					display: 'none'
 				}
 			}
-		}, {
+		},
+		{
 			name: 'NY Times',
 			match: '^https?://www\\.nytimes\\.com/.*',
 			css: {
@@ -197,9 +202,11 @@
 			},
 			cleanupStory(story) {
 				if (story) {
-				// prevent payywall from finding the elements to remove
+					// prevent payywall from finding the elements to remove
 					Util.qq('figure', story).forEach(figure => {
-						figure.outerHTML = figure.outerHTML.replace(/<figure/, '<div').replace(/<\/figure/, '</div');
+						figure.outerHTML = figure.outerHTML
+							.replace(/<figure/, '<div')
+							.replace(/<\/figure/, '</div');
 					});
 					Util.qq('.story-body-text', story).forEach(paragraph => {
 						paragraph.classList.remove('story-body-text');
@@ -225,7 +232,7 @@
 				});
 			},
 			fn() {
-			// clear intervals once the paywall comes up to prevent changes afterward
+				// clear intervals once the paywall comes up to prevent changes afterward
 				waitForElems({
 					sel: '#Gateway_optly',
 					stop: true,
@@ -241,7 +248,10 @@
 								const bind = document.createElement('div');
 								bind.classList.add('video-bind');
 								const div = document.createElement('div');
-								div.setAttribute('style', 'padding-bottom: 56.25%; position: relative; overflow: hidden;');
+								div.setAttribute(
+									'style',
+									'padding-bottom: 56.25%; position: relative; overflow: hidden;'
+								);
 								bind.appendChild(div);
 								Util.prepend(video, bind);
 								vhs.player({
@@ -263,16 +273,20 @@
 					});
 				}, 0);
 			}
-		}, {
+		},
+		{
 			name: 'NY Times Mobile Redirect',
 			match: '^https?://myaccount\\.nytimes\\.com/mobile/wall/smart/.*',
 			fn() {
 				const article = Util.getQueryParameter('EXIT_URI');
 				if (article) {
-					W.location.replace(`http://mobile.nytimes.com?LOAD_ARTICLE=${encodeURIComponent(article)}`);
+					W.location.replace(
+						`http://mobile.nytimes.com?LOAD_ARTICLE=${encodeURIComponent(article)}`
+					);
 				}
 			}
-		}, {
+		},
+		{
 			name: 'NY Times Mobile Loader',
 			match: '^https?://mobile\\.nytimes\\.com',
 			css: {
@@ -299,7 +313,8 @@
 				}
 				return null;
 			}
-		}, {
+		},
+		{
 			name: 'LA Times',
 			match: '^https?://www\\.latimes\\.com/.*',
 			css: {
@@ -311,7 +326,8 @@
 				}
 			},
 			fn: Util.hijackScrollEvent
-		}, {
+		},
+		{
 			name: 'Washington Post',
 			match: '^https?://www\\.washingtonpost\\.com/.*',
 			css: {
@@ -386,14 +402,16 @@
 			}
 			if (imp.remove) {
 				Util.log('Removing elements');
-				const elemsToRemove = typeof imp.remove === 'function' ? imp.remove() : Util.qq(imp.remove);
+				const elemsToRemove =
+					typeof imp.remove === 'function' ? imp.remove() : Util.qq(imp.remove);
 				elemsToRemove.forEach(elem => {
 					elem.remove();
 				});
 			}
 
 			const replaceSelector = typeof imp.replace === 'function' ? imp.replace() : imp.replace;
-			let replaceUsing = typeof imp.replaceUsing === 'function' ? imp.replaceUsing() : imp.replaceUsing;
+			let replaceUsing =
+				typeof imp.replaceUsing === 'function' ? imp.replaceUsing() : imp.replaceUsing;
 			const theReferer = typeof imp.referer === 'function' ? imp.referer() : imp.referer;
 			if (replaceSelector || replaceUsing || theReferer) {
 				replaceUsing = replaceUsing || W.location.href;
@@ -408,13 +426,19 @@
 					anonymous: true,
 					onload(response) {
 						if (replaceSelector) {
-							let replaceWithSelector = typeof imp.replaceWith === 'function' ? imp.replaceWith() : imp.replaceWith;
+							let replaceWithSelector =
+								typeof imp.replaceWith === 'function'
+									? imp.replaceWith()
+									: imp.replaceWith;
 							replaceWithSelector = replaceWithSelector || replaceSelector;
 
 							const tempDiv = document.createElement('div');
 							tempDiv.innerHTML = response.responseText;
 
-							Util.q(replaceSelector).innerHTML = Util.q(replaceWithSelector, tempDiv).innerHTML;
+							Util.q(replaceSelector).innerHTML = Util.q(
+								replaceWithSelector,
+								tempDiv
+							).innerHTML;
 						} else {
 							document.body.innerHTML = response.responseText;
 						}
@@ -455,7 +479,7 @@
 		start(imps) {
 			Util.log('starting...');
 			const success = imps.some(imp => {
-				if (imp.match && (new RegExp(imp.match, 'i')).test(W.location.href)) {
+				if (imp.match && new RegExp(imp.match, 'i').test(W.location.href)) {
 					App.currentImpName = imp.name;
 					if (W.BM_MODE) {
 						App.waitAndBypass(imp);

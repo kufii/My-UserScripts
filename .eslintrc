@@ -1,12 +1,12 @@
 {
-	"extends": "adpyke-es6",
-	"env": {
-		"greasemonkey": true
-	},
-	"globals": {
-		"waitForElems": true,
-		"waitForUrl": true,
-		"GM_config": true,
-		"m": true
-	}
+  "extends": ["adpyke-es6", "prettier"],
+  "env": {
+    "greasemonkey": true
+  },
+  "globals": {
+    "waitForElems": true,
+    "waitForUrl": true,
+    "GM_config": true,
+    "m": true
+  }
 }

@@ -52,22 +52,28 @@
 		sizes: [
 			{
 				size: 20
-			}, {
+			},
+			{
 				class: ['im_short_message_text', 'im_short_message_media'],
 				size: 16
-			}, {
+			},
+			{
 				class: ['composer_emoji_tooltip', 'stickerset_modal_sticker_alt'],
 				size: 26
 			}
 		],
 		addStyles() {
-			GM_addStyle(EmojiHelper.sizes.map(size => {
-				let output = '.emoji';
-				if (size.class) {
-					output = size.class.map(c => `.${c} .emoji`).join(', ');
-				}
-				return `${output} {width: ${size.size}px; height: ${size.size}px; vertical-align: middle;}`;
-			}).join(''));
+			GM_addStyle(
+				EmojiHelper.sizes
+					.map(size => {
+						let output = '.emoji';
+						if (size.class) {
+							output = size.class.map(c => `.${c} .emoji`).join(', ');
+						}
+						return `${output} {width: ${size.size}px; height: ${size.size}px; vertical-align: middle;}`;
+					})
+					.join('')
+			);
 		},
 		makeReplacements(str) {
 			Object.entries(EmojiHelper.replacements).forEach(([key, value]) => {
@@ -87,7 +93,7 @@
 			const tempDiv = document.createElement('div');
 			tempDiv.innerHTML = emojione.toImage(EmojiHelper.makeReplacements(text));
 
-			Util.qq('img', tempDiv).forEach(emoji => emoji.outerHTML = emoji.alt);
+			Util.qq('img', tempDiv).forEach(emoji => (emoji.outerHTML = emoji.alt));
 			tempDiv.innerHTML = emojione.toImage(EmojiHelper.makeReplacements(tempDiv.textContent));
 
 			Util.qq('img', tempDiv).forEach(emoji => EmojiHelper.buildEmoji(emoji, emoji.src));
@@ -101,14 +107,16 @@
 		},
 		convert(node) {
 			if (node.childNodes && node.childNodes.length > 0) {
-				Util.qq('span.emoji', node).forEach(emoji => emoji.outerHTML = emoji.textContent);
+				Util.qq('span.emoji', node).forEach(emoji => (emoji.outerHTML = emoji.textContent));
 			}
 			if (node.nodeType === Node.TEXT_NODE) {
 				const tempDiv = document.createElement('div');
 				tempDiv.innerHTML = EmojiHelper.toEmoji(node.textContent);
 
 				if (Util.q('img', tempDiv)) {
-					Array.from(tempDiv.childNodes).forEach(tempChild => node.parentNode.insertBefore(tempChild, node));
+					Array.from(tempDiv.childNodes).forEach(tempChild =>
+						node.parentNode.insertBefore(tempChild, node)
+					);
 					node.remove();
 				}
 			} else if (node.tagName === 'IMG') {
@@ -176,7 +184,9 @@
 	waitForElems({
 		sel: '.composer_emoji_option',
 		onmatch(option) {
-			Util.q('.emoji', option).outerHTML = EmojiHelper.toEmoji(Util.q('span', option).textContent);
+			Util.q('.emoji', option).outerHTML = EmojiHelper.toEmoji(
+				Util.q('span', option).textContent
+			);
 		}
 	});
 })();

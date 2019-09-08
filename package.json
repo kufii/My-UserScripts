@@ -1,0 +1,22 @@
+{
+  "name": "my-userscripts",
+  "version": "1.0.0",
+  "description": "A collection of user scripts",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kufii/My-UserScripts.git"
+  },
+  "author": "Adrien Pyke",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kufii/My-UserScripts/issues"
+  },
+  "homepage": "https://github.com/kufii/My-UserScripts#readme",
+  "devDependencies": {
+    "eslint": "^6.3.0",
+    "eslint-config-adpyke-es6": "^1.4.12",
+    "eslint-config-prettier": "^6.2.0",
+    "prettier": "^1.18.2"
+  }
+}

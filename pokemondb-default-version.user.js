@@ -21,37 +21,43 @@
 			type: 'dropdown',
 			showBlank: true,
 			values: ['Red/Blue', 'Yellow']
-		}, {
+		},
+		{
 			key: 2,
 			label: 'Gen 2',
 			type: 'dropdown',
 			showBlank: true,
 			values: ['Gold/Silver', 'Crystal']
-		}, {
+		},
+		{
 			key: 3,
 			label: 'Gen 3',
 			type: 'dropdown',
 			showBlank: true,
 			values: ['Ruby/Sapphire', 'FireRed/LeafGreen', 'Emerald']
-		}, {
+		},
+		{
 			key: 4,
 			label: 'Gen 4',
 			type: 'dropdown',
 			showBlank: true,
 			values: ['Diamond/Pearl', 'Platinum', 'HeartGold/SoulSilver']
-		}, {
+		},
+		{
 			key: 5,
 			label: 'Gen 5',
 			type: 'dropdown',
 			showBlank: true,
 			values: ['Black/White', 'Black 2/White 2']
-		}, {
+		},
+		{
 			key: 6,
 			label: 'Gen 6',
 			type: 'dropdown',
 			showBlank: true,
 			values: ['X/Y', 'Omega Ruby/Alpha Sapphire']
-		}, {
+		},
+		{
 			key: 7,
 			label: 'Gen 7',
 			type: 'dropdown',
@@ -74,10 +80,12 @@
 	}
 
 	let changing = false;
-	tabs.forEach(tab => tab.addEventListener('click', () => {
-		if (changing) return;
-		changing = true;
-		tabs.filter(tabB => tabB.textContent === tab.textContent).forEach(tabB => tabB.click());
-		changing = false;
-	}));
+	tabs.forEach(tab =>
+		tab.addEventListener('click', () => {
+			if (changing) return;
+			changing = true;
+			tabs.filter(tabB => tabB.textContent === tab.textContent).forEach(tabB => tabB.click());
+			changing = false;
+		})
+	);
 })();

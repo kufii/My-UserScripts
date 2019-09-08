@@ -2,7 +2,7 @@
 // @name         Dailymotion disable autoplay
 // @namespace    https://greasyfork.org/users/649
 // @version      1.1.3
-// @description  Disables autoplay and auto next vid on dailmotion
+// @description  Disables autoplay and auto next vid on dailymotion
 // @author       Adrien Pyke
 // @match        *://www.dailymotion.com/video/*
 // @grant        none

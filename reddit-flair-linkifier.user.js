@@ -33,12 +33,20 @@
 			`${newLayoutId} span`
 		].join(','),
 		onmatch(flair) {
-			if (flair.childNodes.length !== 1 || flair.childNodes[0].nodeType !== Node.TEXT_NODE || flair.closest('.DraftEditor-root')) return;
-			const newhtml = flair.textContent.split(' ').map(
-				segment => segment.match(/^https?:\/\//)
-					? `<a href="${segment}" class="flair-link" target="_blank" rel="noopener noreferrer">${segment}</a>`
-					: segment
-			).join(' ');
+			if (
+				flair.childNodes.length !== 1 ||
+				flair.childNodes[0].nodeType !== Node.TEXT_NODE ||
+				flair.closest('.DraftEditor-root')
+			)
+				return;
+			const newhtml = flair.textContent
+				.split(' ')
+				.map(segment =>
+					segment.match(/^https?:\/\//)
+						? `<a href="${segment}" class="flair-link" target="_blank" rel="noopener noreferrer">${segment}</a>`
+						: segment
+				)
+				.join(' ');
 			if (flair.innerHTML !== newhtml) flair.innerHTML = newhtml;
 		}
 	});

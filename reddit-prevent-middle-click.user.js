@@ -35,7 +35,11 @@
 				const link = links[links.length - 1];
 				if (link) {
 					post.onclick = post.onauxclick = e => {
-						if (e.button === 1 && e.target.tagName !== 'A' && e.target.parentNode.tagName !== 'A') {
+						if (
+							e.button === 1 &&
+							e.target.tagName !== 'A' &&
+							e.target.parentNode.tagName !== 'A'
+						) {
 							e.preventDefault();
 							e.stopImmediatePropagation();
 							GM_openInTab(link.href, true);

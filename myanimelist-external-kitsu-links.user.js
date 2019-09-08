@@ -34,7 +34,7 @@
 				method: 'GET',
 				url: `${API}/mappings?filter[external_site]=myanimelist/${type}&filter[external_id]=${malid}`,
 				headers: {
-					'Accept': 'application/vnd.api+json'
+					Accept: 'application/vnd.api+json'
 				},
 				onload(response) {
 					try {
@@ -43,7 +43,7 @@
 							method: 'GET',
 							url: `${API}/mappings/${json.data[0].id}/item?fields[${type}]=slug`,
 							headers: {
-								'Accept': 'application/vnd.api+json'
+								Accept: 'application/vnd.api+json'
 							},
 							onload(response) {
 								try {

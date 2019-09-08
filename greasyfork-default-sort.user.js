@@ -32,16 +32,15 @@
 			default: 'daily-installs',
 			type: 'dropdown',
 			values: commonValues
-		}, {
+		},
+		{
 			key: 'search',
 			label: 'Search Sort',
 			default: 'relevance',
 			type: 'dropdown',
-			values: [
-				{ value: 'relevance', text: 'Relevance' },
-				...commonValues
-			]
-		}, {
+			values: [{ value: 'relevance', text: 'Relevance' }, ...commonValues]
+		},
+		{
 			key: 'user',
 			label: 'User Profile Sort',
 			default: 'daily-installs',

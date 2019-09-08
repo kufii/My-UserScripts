@@ -53,7 +53,9 @@
 	`);
 
 	const container = document.createElement('div');
-	container.setAttribute('style', `
+	container.setAttribute(
+		'style',
+		`
 		position: fixed;
 		bottom: 20px;
 		left: 20px;
@@ -62,7 +64,8 @@
 		background-color: white;
 		display: flex;
 		flex-direction: column;
-	`);
+	`
+	);
 
 	const vegetarian = Util.createCheckbox('Vegetarian ');
 	const cbVegetarian = Util.q('input', vegetarian);
@@ -80,19 +83,24 @@
 		let burgers = Util.qq('.vc_grid-item-mini');
 		burgers.forEach(burger => burger.removeAttribute('style'));
 		if (cbVegetarian.checked) {
-			burgers = burgers.filter(b => Util.q('img[src="/wp-content/uploads/2017/11/veg.png"]', b));
+			burgers = burgers.filter(b =>
+				Util.q('img[src="/wp-content/uploads/2017/11/veg.png"]', b)
+			);
 		}
 
 		const burger = burgers[Math.floor(Math.random() * burgers.length)];
 
-		burger.setAttribute('style', `
+		burger.setAttribute(
+			'style',
+			`
 			transition: 0.5s;
 			box-shadow: inset 0 0 100px ${Util.randomColor()};
 			transform: scale(1.2, 1.2);
 			border-radius: 20px;
-		`);
+		`
+		);
 
-		setTimeout(() => burger.style.transform = 'scale(1, 1)', 500);
+		setTimeout(() => (burger.style.transform = 'scale(1, 1)'), 500);
 
 		burger.scrollIntoView();
 	};

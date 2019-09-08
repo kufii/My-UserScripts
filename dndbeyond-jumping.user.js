@@ -92,16 +92,25 @@
 	const Character = {
 		id: parseInt(location.pathname.match(/\/([0-9]+)$/)[1]),
 		get strength() {
-			return parseInt(Util.q('.character-ability-strength > .character-ability-score').textContent);
+			return parseInt(
+				Util.q('.character-ability-strength > .character-ability-score').textContent
+			);
 		},
 		get strengthModifier() {
-			return parseInt(Util.q('.character-ability-strength > .character-ability-modifier > .character-ability-stat-value').textContent);
+			return parseInt(
+				Util.q(
+					'.character-ability-strength > .character-ability-modifier > .character-ability-stat-value'
+				).textContent
+			);
 		},
 		get longJump() {
 			return parseInt(GM_getValue(`${Character.id}-long-jump`) || Character.strength);
 		},
 		get highJump() {
-			return parseInt(GM_getValue(`${Character.id}-high-jump`) || Math.max(Character.strengthModifier + 3, 0));
+			return parseInt(
+				GM_getValue(`${Character.id}-high-jump`) ||
+					Math.max(Character.strengthModifier + 3, 0)
+			);
 		}
 	};
 
@@ -113,7 +122,9 @@
 			items.appendChild(App.createSpeedManagerItem('High Jump', Character.highJump));
 
 			Util.q('.fullscreen-modal-accept > button').addEventListener('click', () => {
-				Util.qq('.speed-manager-override-item[data-key]').forEach(item => App.saveOverrideItem(item));
+				Util.qq('.speed-manager-override-item[data-key]').forEach(item =>
+					App.saveOverrideItem(item)
+				);
 			});
 		}
 	});

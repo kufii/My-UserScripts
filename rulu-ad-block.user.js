@@ -22,7 +22,7 @@
 
 	Util.qq('a')
 		.filter(link => link.href.match(REGEX))
-		.forEach(link => link.href = link.href.replace(REGEX, ''));
+		.forEach(link => (link.href = link.href.replace(REGEX, '')));
 
 	waitForElems({
 		sel: '#d0bf',

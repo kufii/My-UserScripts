@@ -44,7 +44,8 @@
 			label: 'Autoplay',
 			default: false,
 			type: 'bool'
-		}, {
+		},
+		{
 			key: 'continuousPlay',
 			label: 'Continuous Play',
 			default: false,
@@ -52,7 +53,6 @@
 		}
 	]);
 	GM_registerMenuCommand('SoundCloud Autoplay', Config.setup);
-
 
 	const App = {
 		playButton: Util.q('.playControl'),

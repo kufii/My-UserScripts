@@ -40,7 +40,7 @@
 		},
 		setQueryParam(key, value, url = location.href) {
 			const regex = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'gi');
-			const hasValue = (typeof value !== 'undefined' && value !== null && value !== '');
+			const hasValue = typeof value !== 'undefined' && value !== null && value !== '';
 			if (regex.test(url)) {
 				if (hasValue) {
 					return url.replace(regex, `$1${key}=${value}$2$3`);
@@ -68,7 +68,7 @@
 			let expires;
 			if (days) {
 				const date = new Date();
-				date.setTime(date.getTime()+(days*24*60*60*1000));
+				date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
 				expires = `; expires=${date.toGMTString()}`;
 			} else expires = '';
 			document.cookie = `${name}=${value}${expires}; path=/`;
@@ -77,16 +77,21 @@
 
 	// remove force reload param
 	Util.changeUrl(Util.removeQueryParam('r'));
-	if (window.location.href.match(/^https?:\/\/www\.retailmenot\.com/i)) { // US
+	if (window.location.href.match(/^https?:\/\/www\.retailmenot\.com/i)) {
+		// US
 		Util.log('Enhancing US site');
 		// Show Coupons
 		document.body.classList.add('ctc');
 
 		// Disable pop unders
 		waitForElems({
-			sel: '.js-outclick, .js-title > a, .js-triggers-outclick, .js-coupon-square, .offer-item-in-list',
+			sel:
+				'.js-outclick, .js-title > a, .js-triggers-outclick, .js-coupon-square, .offer-item-in-list',
 			onmatch(button) {
-				const path = button.dataset.newTab && !button.dataset.newTab.match(/^\/out/i) ? button.dataset.newTab : button.dataset.mainTab;
+				const path =
+					button.dataset.newTab && !button.dataset.newTab.match(/^\/out/i)
+						? button.dataset.newTab
+						: button.dataset.mainTab;
 				const href = `${window.location.protocol}//${window.location.host}${path}`;
 				if (path) {
 					const handler = e => {
@@ -123,7 +128,8 @@
 				}
 			}
 		});
-	} else if (window.location.href.match(/^https?:\/\/www\.retailmenot\.ca/i)) { // CANADA
+	} else if (window.location.href.match(/^https?:\/\/www\.retailmenot\.ca/i)) {
+		// CANADA
 		Util.log('Enhancing Canadian site');
 		// Show Coupons
 		Util.qq('.crux > .cover').forEach(cover => {
@@ -159,7 +165,10 @@
 					});
 				}
 
-				Util.qq('.action-button, .crux, .caterpillar-title, .caterpillar-code', offer).forEach(elem => {
+				Util.qq(
+					'.action-button, .crux, .caterpillar-title, .caterpillar-code',
+					offer
+				).forEach(elem => {
 					elem.onclick = clickHandler;
 				});
 			}
@@ -172,7 +181,8 @@
 				e.stopImmediatePropagation();
 			};
 		});
-	} else { // GERMANY, SPAIN, ITALY, POLAND
+	} else {
+		// GERMANY, SPAIN, ITALY, POLAND
 		Util.log('Enhancing international site');
 		// Remove hash after modal comes up
 		if (window.location.href.indexOf('#') !== -1) {
@@ -212,12 +222,14 @@
 	}
 	// human checks
 	const regex = /^https?:\/\/www\.retailmenot\.[^/]+\/humanCheck\.php/i;
-	Util.qq('a').filter(link => link.href.match(regex)).forEach(link => {
-		const url = Util.getQueryParam('url', link.href);
-		if (url) {
-			link.href = `${window.location.protocol}//${window.location.host}${url}`;
-		}
-	});
+	Util.qq('a')
+		.filter(link => link.href.match(regex))
+		.forEach(link => {
+			const url = Util.getQueryParam('url', link.href);
+			if (url) {
+				link.href = `${window.location.protocol}//${window.location.host}${url}`;
+			}
+		});
 
 	// remove coupon query param so reloads work properly
 	Util.changeUrl(Util.removeQueryParam('c'));

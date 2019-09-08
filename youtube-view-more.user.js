@@ -59,18 +59,26 @@
 	const LAZY_LOAD_BUFFER = 10;
 
 	const icons = {
-		'chevron-left': '<g id="chevron-left"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></g>',
-		'chevron-right': '<g id="chevron-right"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></g>'
+		'chevron-left':
+			'<g id="chevron-left"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></g>',
+		'chevron-right':
+			'<g id="chevron-right"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></g>'
 	};
 
 	const Util = {
 		btn(options, text) {
-			return m('paper-button[role=button][subscribed].style-scope.ytd-subscribe-button-renderer', options, text);
+			return m(
+				'paper-button[role=button][subscribed].style-scope.ytd-subscribe-button-renderer',
+				options,
+				text
+			);
 		},
 		iconBtn(icon, options = {}) {
-			return m('ytd-button-renderer.style-scope.ytd-menu-renderer.force-icon-button.style-default.size-default[button-renderer][is-icon-button]', { icon }, [
-				m('paper-icon-button', Object.assign(options))
-			]);
+			return m(
+				'ytd-button-renderer.style-scope.ytd-menu-renderer.force-icon-button.style-default.size-default[button-renderer][is-icon-button]',
+				{ icon },
+				[m('paper-icon-button', Object.assign(options))]
+			);
 		},
 		initCmp(cmp) {
 			const oninit = cmp.oninit;
@@ -82,15 +90,18 @@
 			});
 		},
 		delayedRedraw(func, delay = 50) {
-			return new Promise(resolve => setTimeout(() => {
-				func();
-				m.redraw();
-				resolve();
-			}, delay));
+			return new Promise(resolve =>
+				setTimeout(() => {
+					func();
+					m.redraw();
+					resolve();
+				}, delay)
+			);
 		},
 		fillIcons(vnode) {
-			Array.from(vnode.dom.querySelectorAll('ytd-button-renderer[icon]'))
-				.forEach(btn => btn.querySelector('iron-icon').innerHTML = `
+			Array.from(vnode.dom.querySelectorAll('ytd-button-renderer[icon]')).forEach(
+				btn =>
+					(btn.querySelector('iron-icon').innerHTML = `
 					<svg viewBox="0 0 24 24"
 						preserveAspectRatio="xMidYMid meet"
 						focusable="false"
@@ -101,7 +112,8 @@
 							height: 100%;">
 						${icons[btn.getAttribute('icon')]}
 					</svg>
-				`);
+				`)
+			);
 		},
 		decode(text) {
 			const elem = document.createElement('textarea');
@@ -143,13 +155,20 @@
 			if (data && data.items.length > 0) return Api.parseVideo(data.items[0]);
 		},
 		performSearch(currentVideo, options, pageToken) {
-			return Api.request('search', Object.assign({
-				part: 'snippet',
-				type: 'video',
-				channelId: currentVideo.channelId,
-				order: 'date',
-				maxResults: RESULTS_PER_FETCH
-			}, pageToken ? { pageToken } : {}, options));
+			return Api.request(
+				'search',
+				Object.assign(
+					{
+						part: 'snippet',
+						type: 'video',
+						channelId: currentVideo.channelId,
+						order: 'date',
+						maxResults: RESULTS_PER_FETCH
+					},
+					pageToken ? { pageToken } : {},
+					options
+				)
+			);
 		},
 		async getNumNewerVideos(currentVideo) {
 			const publishedAfter = new Date(currentVideo.publishedAt.getTime());
@@ -161,9 +180,13 @@
 			return Math.min(data.pageInfo.totalResults, 500);
 		},
 		async getOlderVideos(currentVideo, pageToken) {
-			const data = await Api.performSearch(currentVideo, {
-				publishedBefore: currentVideo.publishedAt.toISOString()
-			}, pageToken);
+			const data = await Api.performSearch(
+				currentVideo,
+				{
+					publishedBefore: currentVideo.publishedAt.toISOString()
+				},
+				pageToken
+			);
 			return {
 				pageToken: data.nextPageToken,
 				videos: data.items.map(Api.parseVideo).sort(Api.sortVideos)
@@ -172,12 +195,19 @@
 		async getNewerVideos(currentVideo, pageToken) {
 			const publishedAfter = new Date(currentVideo.publishedAt.getTime());
 			publishedAfter.setSeconds(publishedAfter.getSeconds() + 1);
-			const data = await Api.performSearch(currentVideo, {
-				publishedAfter: publishedAfter.toISOString()
-			}, pageToken);
+			const data = await Api.performSearch(
+				currentVideo,
+				{
+					publishedAfter: publishedAfter.toISOString()
+				},
+				pageToken
+			);
 			return {
 				pageToken: data.prevPageToken,
-				videos: data.items.map(Api.parseVideo).sort(Api.sortVideos).reverse()
+				videos: data.items
+					.map(Api.parseVideo)
+					.sort(Api.sortVideos)
+					.reverse()
 			};
 		},
 		get currentVideoId() {
@@ -192,14 +222,17 @@
 				hidden: true
 			}),
 			actions: {
-				toggle: model => model.hidden = !model.hidden
+				toggle: model => (model.hidden = !model.hidden)
 			},
 			view(vnode) {
 				const { model, actions } = vnode.state;
 				return m('div', [
-					Util.btn({
-						onclick: () => actions.toggle(model)
-					}, 'View More Videos'),
+					Util.btn(
+						{
+							onclick: () => actions.toggle(model)
+						},
+						'View More Videos'
+					),
 					m(Components.Slider, { hidden: model.hidden, videoId: Api.currentVideoId })
 				]);
 			}
@@ -220,7 +253,7 @@
 					this.position = Math.min(this.position + 1, this.olderVideos.length - 1);
 				},
 				get leftpx() {
-					return (this.newerVideos.length * -176) - (this.position * 176);
+					return this.newerVideos.length * -176 - this.position * 176;
 				}
 			}),
 			actions: {
@@ -242,7 +275,10 @@
 				async loadOlder(model, keepLoading = false) {
 					model.loading = true;
 
-					const results = await Api.getOlderVideos(model.currentVideo, model.olderPageToken);
+					const results = await Api.getOlderVideos(
+						model.currentVideo,
+						model.olderPageToken
+					);
 					model.olderVideos.push(...results.videos);
 					model.olderPageToken = results.pageToken;
 
@@ -256,7 +292,10 @@
 					let timesTried = 0;
 					// dumb workaround for page token sometimes being incorrect
 					do {
-						results = await Api.getNewerVideos(model.currentVideo, model.newerPageToken);
+						results = await Api.getNewerVideos(
+							model.currentVideo,
+							model.newerPageToken
+						);
 						model.newerPageToken = results.pageToken;
 						timesTried++;
 					} while (!results.videos.length && results.pageToken && timesTried < 5);
@@ -268,7 +307,10 @@
 				},
 				async moveLeft(model) {
 					if (model.loading) return;
-					if (Math.abs(model.position - LAZY_LOAD_BUFFER) > model.newerVideos.length && model.newerPageToken) {
+					if (
+						Math.abs(model.position - LAZY_LOAD_BUFFER) > model.newerVideos.length &&
+						model.newerPageToken
+					) {
 						await this.loadNewer(model, true);
 						Util.delayedRedraw(() => {
 							model.shiftLeft();
@@ -280,7 +322,10 @@
 				},
 				async moveRight(model) {
 					if (model.loading) return;
-					if (model.position + LAZY_LOAD_BUFFER > model.olderVideos.length && model.olderPageToken) {
+					if (
+						model.position + LAZY_LOAD_BUFFER > model.olderVideos.length &&
+						model.olderPageToken
+					) {
 						await this.loadOlder(model, true);
 						Util.delayedRedraw(() => {
 							model.shiftRight();
@@ -301,13 +346,21 @@
 				return m(`div.${CLASS_PREFIX}slider`, { hidden: vnode.attrs.hidden }, [
 					Util.iconBtn('chevron-left', { onclick: () => actions.moveLeft(model) }),
 					m(`div.${CLASS_PREFIX}thumbnails-wrap`, [
-						m(`div.${CLASS_PREFIX}thumbnails`, {
-							style: `left: ${model.leftpx}px;transition-property:${model.loading ? 'none' : ''};`
-						}, model.newerVideos.concat(model.olderVideos).map(video => m(Components.Thumbnail, {
-							key: video.id,
-							active: video.id === model.currentVideo.id,
-							video
-						})))
+						m(
+							`div.${CLASS_PREFIX}thumbnails`,
+							{
+								style: `left: ${model.leftpx}px;transition-property:${
+									model.loading ? 'none' : ''
+								};`
+							},
+							model.newerVideos.concat(model.olderVideos).map(video =>
+								m(Components.Thumbnail, {
+									key: video.id,
+									active: video.id === model.currentVideo.id,
+									video
+								})
+							)
+						)
 					]),
 					Util.iconBtn('chevron-right', { onclick: () => actions.moveRight(model) })
 				]);
@@ -323,42 +376,68 @@
 			view(vnode) {
 				const { model } = vnode.state;
 				const title = Util.decode(model.video.title);
-				return m(`div.${CLASS_PREFIX}thumbnail${vnode.attrs.active ? `.${CLASS_PREFIX}active` : ''}`, [
-					m('ytd-thumbnail.style-scope.ytd-compact-video-renderer', { width: 168 }, [
-						m('a#thumbnail.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail', { rel: 'nofollow', href: `/watch?v=${model.video.id}` }, [
-							m('yt-img-shadow.style-scope.ytd-thumbnail.no-transition[loaded]', [
-								m('img.style-scope.yt-img-shadow', { width: 168, src: model.video.thumbnail })
-							])
-						])
-					]),
-					m('a.yt-simple-endpoint.style-scope.ytd-compact-video-renderer', { rel: 'nofollow', href: `/watch?v=${model.video.id}` }, [
-						m('h3.style-scope.ytd-compact-video-renderer', [
-							m('span#video-title.style-scope.ytd-compact-video-renderer', { title }, title)
-						])
-					])
-				]);
+				return m(
+					`div.${CLASS_PREFIX}thumbnail${
+						vnode.attrs.active ? `.${CLASS_PREFIX}active` : ''
+					}`,
+					[
+						m('ytd-thumbnail.style-scope.ytd-compact-video-renderer', { width: 168 }, [
+							m(
+								'a#thumbnail.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail',
+								{ rel: 'nofollow', href: `/watch?v=${model.video.id}` },
+								[
+									m(
+										'yt-img-shadow.style-scope.ytd-thumbnail.no-transition[loaded]',
+										[
+											m('img.style-scope.yt-img-shadow', {
+												width: 168,
+												src: model.video.thumbnail
+											})
+										]
+									)
+								]
+							)
+						]),
+						m(
+							'a.yt-simple-endpoint.style-scope.ytd-compact-video-renderer',
+							{ rel: 'nofollow', href: `/watch?v=${model.video.id}` },
+							[
+								m('h3.style-scope.ytd-compact-video-renderer', [
+									m(
+										'span#video-title.style-scope.ytd-compact-video-renderer',
+										{ title },
+										title
+									)
+								])
+							]
+						)
+					]
+				);
 			}
 		})
 	};
 
 	let wait;
 	const mountId = `${CLASS_PREFIX}mount-point`;
-	waitForUrl(() => true, () => {
-		if (wait) wait.stop();
-		const oldMount = document.getElementById(mountId);
-		if (oldMount) {
-			m.mount(oldMount, null);
-			oldMount.remove();
-		}
-		wait = waitForElems({
-			sel: 'ytd-video-secondary-info-renderer > #container',
-			stop: true,
-			onmatch(container) {
-				const mount = document.createElement('div');
-				mount.id = mountId;
-				container.prepend(mount);
-				m.mount(mount, Components.App);
+	waitForUrl(
+		() => true,
+		() => {
+			if (wait) wait.stop();
+			const oldMount = document.getElementById(mountId);
+			if (oldMount) {
+				m.mount(oldMount, null);
+				oldMount.remove();
 			}
-		});
-	});
+			wait = waitForElems({
+				sel: 'ytd-video-secondary-info-renderer > #container',
+				stop: true,
+				onmatch(container) {
+					const mount = document.createElement('div');
+					mount.id = mountId;
+					container.prepend(mount);
+					m.mount(mount, Components.App);
+				}
+			});
+		}
+	);
 })();

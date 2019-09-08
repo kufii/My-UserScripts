@@ -15,7 +15,7 @@
 
 	const setQueryParam = function(key, value, url = location.href) {
 		const regex = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'gi');
-		const hasValue = (typeof value !== 'undefined' && value !== null && value !== '');
+		const hasValue = typeof value !== 'undefined' && value !== null && value !== '';
 		if (regex.test(url)) {
 			if (hasValue) {
 				return url.replace(regex, `$1${key}=${value}$2$3`);
@@ -74,7 +74,9 @@
 				if (e.button === 1) {
 					e.preventDefault();
 					e.stopImmediatePropagation();
-					const text = elem.classList.contains('sbpqs_d') ? elem.querySelector('span').textContent : elem.textContent;
+					const text = elem.classList.contains('sbpqs_d')
+						? elem.querySelector('span').textContent
+						: elem.textContent;
 					const url = getUrl(text);
 					GM_openInTab(url, true);
 					return false;

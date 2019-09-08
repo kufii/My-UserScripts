@@ -57,19 +57,27 @@
 						const classReplaceCallback = elem => {
 							if (elem.classList.contains('onyomi')) {
 								elem.classList.remove('onyomi');
-								elem.classList.add(inLesson ? 'highlight-reading' : 'reading-highlight');
+								elem.classList.add(
+									inLesson ? 'highlight-reading' : 'reading-highlight'
+								);
 							}
 							if (elem.classList.contains('component')) {
 								elem.classList.remove('component');
-								elem.classList.add(inLesson ? 'highlight-radical' : 'radical-highlight');
+								elem.classList.add(
+									inLesson ? 'highlight-radical' : 'radical-highlight'
+								);
 							}
 							if (elem.classList.contains('translation')) {
 								elem.classList.remove('translation');
-								elem.classList.add(inLesson ? 'highlight-kanji' : 'kanji-highlight');
+								elem.classList.add(
+									inLesson ? 'highlight-kanji' : 'kanji-highlight'
+								);
 							}
 						};
 
-						let onyomiTable = Util.qq('h2', tempDiv).filter(elem => elem.textContent.includes('Onyomi'));
+						let onyomiTable = Util.qq('h2', tempDiv).filter(elem =>
+							elem.textContent.includes('Onyomi')
+						);
 						if (onyomiTable.length > 0) {
 							onyomiTable = onyomiTable[0].nextElementSibling;
 							const readingElem = Util.q('td:nth-child(2)', onyomiTable);
@@ -77,7 +85,9 @@
 							reading = readingElem.innerHTML;
 						}
 
-						let mnemonicTable = Util.qq('h2', tempDiv).filter(elem => elem.textContent.includes('Mnemonic'));
+						let mnemonicTable = Util.qq('h2', tempDiv).filter(elem =>
+							elem.textContent.includes('Mnemonic')
+						);
 						if (mnemonicTable.length > 0) {
 							mnemonicTable = mnemonicTable[0].nextElementSibling;
 							const mnemonicElem = Util.q('td:nth-child(2)', mnemonicTable);
@@ -102,8 +112,8 @@
 		}
 	};
 
-	const isReview = (window.location.pathname.includes('/review/'));
-	const isLesson = (window.location.pathname.includes('/lesson/'));
+	const isReview = window.location.pathname.includes('/review/');
+	const isLesson = window.location.pathname.includes('/lesson/');
 
 	if (isLesson) {
 		waitForElems({

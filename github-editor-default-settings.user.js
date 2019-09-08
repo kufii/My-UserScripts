@@ -22,25 +22,21 @@
 			label: 'Indent mode',
 			default: 'tab',
 			type: 'dropdown',
-			values: [
-				{ value: 'space', text: 'Spaces' },
-				{ value: 'tab', text: 'Tabs' }
-			]
-		}, {
+			values: [{ value: 'space', text: 'Spaces' }, { value: 'tab', text: 'Tabs' }]
+		},
+		{
 			key: 'indentWidth',
 			label: 'Indent size',
 			default: 4,
 			type: 'dropdown',
 			values: [2, 4, 8]
-		}, {
+		},
+		{
 			key: 'wrapMode',
 			label: 'Line wrap mode',
 			default: 'off',
 			type: 'dropdown',
-			values: [
-				{ value: 'off', text: 'No wrap' },
-				{ value: 'on', text: 'Soft wrap' }
-			]
+			values: [{ value: 'off', text: 'No wrap' }, { value: 'on', text: 'Soft wrap' }]
 		}
 	]);
 
