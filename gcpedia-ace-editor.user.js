@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         GCPedia Ace Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.23
+// @version      1.3.0
 // @description  Use the Ace Editor when editing things on GCPedia
 // @author       Adrien Pyke
-// @match        http://www.gcpedia.gc.ca/*
+// @match        *://www.gcpedia.gc.ca/*
 // @grant        unsafeWindow
 // @grant        GM_addStyle
 // @grant        GM_getValue

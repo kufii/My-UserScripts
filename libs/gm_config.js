@@ -55,9 +55,12 @@
 
 		const load = function() {
 			const defaults = {};
-			settings.forEach(({ key, default: def }) => defaults[key] = def);
+			settings.forEach(({ key, default: def }) => (defaults[key] = def));
 
-			let cfg = (typeof GM_getValue !== 'undefined') ? GM_getValue(storage) : localStorage.getItem(storage);
+			let cfg =
+				typeof GM_getValue !== 'undefined'
+					? GM_getValue(storage)
+					: localStorage.getItem(storage);
 			if (!cfg) return defaults;
 
 			cfg = JSON.parse(cfg);
@@ -72,7 +75,9 @@
 
 		const save = function(cfg) {
 			const data = JSON.stringify(cfg);
-			(typeof GM_setValue !== 'undefined') ? GM_setValue(storage, data) : localStorage.setItem(storage, data);
+			typeof GM_setValue !== 'undefined'
+				? GM_setValue(storage, data)
+				: localStorage.setItem(storage, data);
 		};
 
 		const setup = function() {
@@ -157,53 +162,92 @@
 				const controls = {};
 
 				const div = createContainer();
-				settings.filter(({ type }) => type !== 'hidden').forEach(setting => {
-					const value = cfg[setting.key];
+				settings
+					.filter(({ type }) => type !== 'hidden')
+					.forEach(setting => {
+						const value = cfg[setting.key];
 
-					let control;
-					if (setting.type === 'text') {
-						control = createTextbox(setting.key, value, setting.placeholder, setting.maxLength, setting.multiline, setting.resizable);
-					} else if (setting.type === 'number') {
-						control = createNumber(setting.key, value, setting.placeholder, setting.min, setting.max, setting.step);
-					} else if (setting.type === 'dropdown') {
-						control = createSelect(setting.key, setting.values, value, setting.showBlank);
-					} else if (setting.type === 'bool') {
-						control = createCheckbox(setting.key, value);
-					}
-
-					div.appendChild(createLabel(setting.label, control.id));
-					div.appendChild(control);
-					controls[setting.key] = control;
-
-					control.addEventListener(setting.type === 'dropdown' ? 'change' : 'input', () => {
-						if (ret.onchange) {
-							const control = controls[setting.key];
-							const value = setting.type === 'bool' ? control.checked : control.value;
-							ret.onchange(setting.key, value);
+						let control;
+						if (setting.type === 'text') {
+							control = createTextbox(
+								setting.key,
+								value,
+								setting.placeholder,
+								setting.maxLength,
+								setting.multiline,
+								setting.resizable
+							);
+						} else if (setting.type === 'number') {
+							control = createNumber(
+								setting.key,
+								value,
+								setting.placeholder,
+								setting.min,
+								setting.max,
+								setting.step
+							);
+						} else if (setting.type === 'dropdown') {
+							control = createSelect(
+								setting.key,
+								setting.values,
+								value,
+								setting.showBlank
+							);
+						} else if (setting.type === 'bool') {
+							control = createCheckbox(setting.key, value);
 						}
+
+						div.appendChild(createLabel(setting.label, control.id));
+						div.appendChild(control);
+						controls[setting.key] = control;
+
+						control.addEventListener(
+							setting.type === 'dropdown' ? 'change' : 'input',
+							() => {
+								if (ret.onchange) {
+									const control = controls[setting.key];
+									const value =
+										setting.type === 'bool' ? control.checked : control.value;
+									ret.onchange(setting.key, value);
+								}
+							}
+						);
 					});
-				});
 
-				div.appendChild(createButton('Save', () => {
-					settings.filter(({ type }) => type !== 'hidden').forEach(({ key, type }) => {
-						const control = controls[key];
-						cfg[key] = type === 'bool' ? control.checked : control.value;
-					});
-					save(cfg);
+				div.appendChild(
+					createButton(
+						'Save',
+						() => {
+							settings
+								.filter(({ type }) => type !== 'hidden')
+								.forEach(({ key, type }) => {
+									const control = controls[key];
+									cfg[key] = type === 'bool' ? control.checked : control.value;
+								});
+							save(cfg);
 
-					if (ret.onsave) {
-						ret.onsave(cfg);
-					}
+							if (ret.onsave) {
+								ret.onsave(cfg);
+							}
 
-					div.remove();
-				}, 'save'));
+							div.remove();
+						},
+						'save'
+					)
+				);
 
-				div.appendChild(createButton('Cancel', () => {
-					if (ret.oncancel) {
-						ret.oncancel(cfg);
-					}
-					div.remove();
-				}, 'cancel'));
+				div.appendChild(
+					createButton(
+						'Cancel',
+						() => {
+							if (ret.oncancel) {
+								ret.oncancel(cfg);
+							}
+							div.remove();
+						},
+						'cancel'
+					)
+				);
 
 				document.body.appendChild(div);
 			};

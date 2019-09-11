@@ -4,7 +4,7 @@
   "useTabs": true,
   "overrides": [
     {
-      "files": ["*.json", ".prettierrc", ".eslintrc"],
+      "files": ["*.json", ".prettierrc", ".eslintrc", "*.md"],
       "options": {
         "useTabs": false,
         "tabWidth": 2
