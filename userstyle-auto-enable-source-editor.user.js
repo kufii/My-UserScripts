@@ -1,11 +1,10 @@
 // ==UserScript==
 // @name         userstyles.org - Auto Enable Source Editor
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.1
-// @description  auto enables the source editor on userstyle.org
+// @version      1.1.0
+// @description  auto enables the source editor on userstyles.org
 // @author       Adrien Pyke
-// @match        *://userstyles.org/styles/*/edit*
-// @match        *://userstyles.org/styles/new*
+// @match        *://userstyles.org/d/styles/*
 // @grant        none
 // ==/UserScript==
 
