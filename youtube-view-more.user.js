@@ -102,17 +102,17 @@
 			Array.from(vnode.dom.querySelectorAll('ytd-button-renderer[icon]')).forEach(
 				btn =>
 					(btn.querySelector('iron-icon').innerHTML = `
-					<svg viewBox="0 0 24 24"
-						preserveAspectRatio="xMidYMid meet"
-						focusable="false"
-						class="style-scope yt-icon"
-						style="pointer-events: none;
-							display: block;
-							width: 100%;
-							height: 100%;">
-						${icons[btn.getAttribute('icon')]}
-					</svg>
-				`)
+						<svg viewBox="0 0 24 24"
+							preserveAspectRatio="xMidYMid meet"
+							focusable="false"
+							class="style-scope yt-icon"
+							style="pointer-events: none;
+								display: block;
+								width: 100%;
+								height: 100%;">
+							${icons[btn.getAttribute('icon')]}
+						</svg>
+					`)
 			);
 		},
 		decode(text) {
