@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "A collection of user scripts",
   "private": true,
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.{js,jsx,md,json,css,prettierrc,eslintrc}\""
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kufii/My-UserScripts.git"
