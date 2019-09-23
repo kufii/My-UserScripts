@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.0
+// @version      1.2.0
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -134,7 +134,7 @@
 		},
 		parseVideo(data) {
 			return {
-				id: data.id.videoId || data.id,
+				id: data.snippet.resourceId ? data.snippet.resourceId.videoId : data.id,
 				title: data.snippet.title,
 				channelId: data.snippet.channelId,
 				channelTitle: data.snippet.channelTitle,
@@ -154,60 +154,23 @@
 			});
 			if (data && data.items.length > 0) return Api.parseVideo(data.items[0]);
 		},
-		performSearch(currentVideo, options, pageToken) {
-			return Api.request(
-				'search',
-				Object.assign(
-					{
-						part: 'snippet',
-						type: 'video',
-						channelId: currentVideo.channelId,
-						order: 'date',
-						maxResults: RESULTS_PER_FETCH
-					},
-					pageToken ? { pageToken } : {},
-					options
-				)
-			);
-		},
-		async getNumNewerVideos(currentVideo) {
-			const publishedAfter = new Date(currentVideo.publishedAt.getTime());
-			publishedAfter.setSeconds(publishedAfter.getSeconds() + 1);
-			const data = await Api.performSearch(currentVideo, {
-				publishedAfter: publishedAfter.toISOString(),
-				maxResults: 1
+		async getPlaylistId(channelId) {
+			const data = await Api.request('channels', {
+				part: 'contentDetails',
+				id: channelId
 			});
-			return Math.min(data.pageInfo.totalResults, 500);
+			return data.items[0].contentDetails.relatedPlaylists.uploads;
 		},
-		async getOlderVideos(currentVideo, pageToken) {
-			const data = await Api.performSearch(
-				currentVideo,
-				{
-					publishedBefore: currentVideo.publishedAt.toISOString()
-				},
-				pageToken
-			);
+		async getVideos(playlistId, pageToken) {
+			const data = await Api.request('playlistItems', {
+				part: 'snippet',
+				maxResults: RESULTS_PER_FETCH,
+				playlistId,
+				...(pageToken ? { pageToken } : {})
+			});
 			return {
 				pageToken: data.nextPageToken,
-				videos: data.items.map(Api.parseVideo).sort(Api.sortVideos)
-			};
-		},
-		async getNewerVideos(currentVideo, pageToken) {
-			const publishedAfter = new Date(currentVideo.publishedAt.getTime());
-			publishedAfter.setSeconds(publishedAfter.getSeconds() + 1);
-			const data = await Api.performSearch(
-				currentVideo,
-				{
-					publishedAfter: publishedAfter.toISOString()
-				},
-				pageToken
-			);
-			return {
-				pageToken: data.prevPageToken,
-				videos: data.items
-					.map(Api.parseVideo)
-					.sort(Api.sortVideos)
-					.reverse()
+				videos: data.items.map(Api.parseVideo)
 			};
 		},
 		get currentVideoId() {
@@ -240,93 +203,53 @@
 		Slider: Util.initCmp({
 			model: () => ({
 				currentVideo: null,
-				olderVideos: [],
+				playlistId: null,
+				videos: [],
+				pageToken: null,
 				loading: false,
-				olderPageToken: null,
-				newerVideos: [],
-				newerPageToken: null,
 				position: 0,
 				shiftLeft() {
-					this.position = Math.max(this.position - 1, -this.newerVideos.length);
+					this.position = Math.max(this.position - 1, 0);
 				},
 				shiftRight() {
-					this.position = Math.min(this.position + 1, this.olderVideos.length - 1);
+					this.position = Math.min(this.position + 1, this.videos.length - 1);
 				},
-				get leftpx() {
-					return this.newerVideos.length * -176 - this.position * 176;
+				get leftPx() {
+					return this.position * -176;
 				}
 			}),
 			actions: {
 				async fetchInitialVideos(model, currentVideoId) {
 					model.currentVideo = await Api.getVideo(currentVideoId);
-					const numNewerVideos = await Api.getNumNewerVideos(model.currentVideo);
-					this.loadOlder(model);
-					if (numNewerVideos > 0) {
-						const numOnLastPage = numNewerVideos % RESULTS_PER_FETCH;
-						const page = numNewerVideos - numOnLastPage;
-						if (page > 0) {
-							model.newerPageToken = Api.pageTokens[page];
-							model.position = -1;
-						}
-						this.loadNewer(model);
-					}
-					m.redraw();
-				},
-				async loadOlder(model, keepLoading = false) {
-					model.loading = true;
-
-					const results = await Api.getOlderVideos(
-						model.currentVideo,
-						model.olderPageToken
+					model.playlistId = await Api.getPlaylistId(model.currentVideo.channelId);
+					await this.loadVideos(model);
+					model.position = Math.max(
+						(model.videos.findIndex(v => v.id === model.currentVideo.id) || 0) - 1,
+						0
 					);
-					model.olderVideos.push(...results.videos);
-					model.olderPageToken = results.pageToken;
-
-					if (!keepLoading) model.loading = false;
-					m.redraw();
 				},
-				async loadNewer(model, keepLoading = false) {
+				async loadVideos(model) {
 					model.loading = true;
-
-					let results;
-					let timesTried = 0;
-					// dumb workaround for page token sometimes being incorrect
-					do {
-						results = await Api.getNewerVideos(
-							model.currentVideo,
-							model.newerPageToken
-						);
-						model.newerPageToken = results.pageToken;
-						timesTried++;
-					} while (!results.videos.length && results.pageToken && timesTried < 5);
-
-					model.newerVideos.unshift(...results.videos.reverse());
-
-					if (!keepLoading) model.loading = false;
+					const { pageToken, videos } = await Api.getVideos(
+						model.playlistId,
+						model.pageToken
+					);
+					model.videos.push(...videos);
+					model.pageToken = pageToken;
+					model.loading = false;
 					m.redraw();
 				},
-				async moveLeft(model) {
-					if (model.loading) return;
-					if (
-						Math.abs(model.position - LAZY_LOAD_BUFFER) > model.newerVideos.length &&
-						model.newerPageToken
-					) {
-						await this.loadNewer(model, true);
-						Util.delayedRedraw(() => {
-							model.shiftLeft();
-							model.loading = false;
-						});
-					} else {
-						model.shiftLeft();
-					}
+				moveLeft(model) {
+					model.shiftLeft();
+					m.redraw();
 				},
 				async moveRight(model) {
 					if (model.loading) return;
 					if (
-						model.position + LAZY_LOAD_BUFFER > model.olderVideos.length &&
-						model.olderPageToken
+						model.position + LAZY_LOAD_BUFFER > model.videos.length &&
+						model.pageToken
 					) {
-						await this.loadOlder(model, true);
+						await this.loadVideos(model, true);
 						Util.delayedRedraw(() => {
 							model.shiftRight();
 							model.loading = false;
@@ -349,11 +272,11 @@
 						m(
 							`div.${CLASS_PREFIX}thumbnails`,
 							{
-								style: `left: ${model.leftpx}px;transition-property:${
+								style: `left: ${model.leftPx}px;transition-property:${
 									model.loading ? 'none' : ''
 								};`
 							},
-							model.newerVideos.concat(model.olderVideos).map(video =>
+							model.videos.map(video =>
 								m(Components.Thumbnail, {
 									key: video.id,
 									active: video.id === model.currentVideo.id,
