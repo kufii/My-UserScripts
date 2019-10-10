@@ -5,13 +5,39 @@
 		Object.fromEntries ||
 		(iterable => [...iterable].reduce((obj, [key, val]) => ((obj[key] = val), obj), {}));
 
-	window.GM_config = function(settings, storage = 'cfg') {
+	const makeElem = (type, { classes, ...opts } = {}) => {
+		const node = Object.assign(
+			document.createElement(type),
+			fromEntries(Object.entries(opts).filter(([_, value]) => value != null))
+		);
+		classes && classes.forEach(c => node.classList.add(c));
+		return node;
+	};
+
+	const zip = (parts, args) =>
+		parts.reduce((acc, c, i) => acc + c + (args[i] == null ? '' : args[i]), '');
+
+	const css = (parts, ...args) => {
+		const style = zip(parts, args);
+		window.GM_addStyle == null
+			? document.head.appendChild(makeElem('style', { textContent: style }))
+			: GM_addStyle(style);
+	};
+
+	const preventDefault = e => {
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		e.stopPropagation();
+		return false;
+	};
+
+	window.GM_config = (settings, storage = 'cfg') => {
 		let ret = null;
 
 		const prefix = 'gm-config';
 
-		const addStyle = function() {
-			const css = `
+		const addStyle = () =>
+			css`
 				.${prefix} {
 					display: grid;
 					align-items: center;
@@ -48,16 +74,8 @@
 					grid-column: 3 / 4;
 				}
 			`;
-			if (window.GM_addStyle == null) {
-				const style = document.createElement('style');
-				style.textContent = css;
-				document.head.appendChild(style);
-			} else {
-				GM_addStyle(css);
-			}
-		};
 
-		const load = function() {
+		const load = () => {
 			const defaults = {};
 			settings.forEach(({ key, default: def }) => (defaults[key] = def));
 
@@ -75,25 +93,17 @@
 			return cfg;
 		};
 
-		const save = function(cfg) {
+		const save = cfg => {
 			const data = JSON.stringify(cfg);
 			window.GM_setValue != null
 				? GM_setValue(storage, data)
 				: localStorage.setItem(storage, data);
 		};
 
-		const setup = function() {
-			const makeElem = (type, opts = {}) =>
-				Object.assign(
-					document.createElement(type),
-					fromEntries(Object.entries(opts).filter(([_, value]) => value != null))
-				);
-			const createContainer = function() {
-				const form = makeElem('form');
-				form.classList.add(prefix);
-				return form;
-			};
-			const createTextbox = function(name, value, placeholder, maxLength, multiline, resize) {
+		const setup = () => {
+			const createContainer = () => makeElem('form', { classes: [prefix] });
+
+			const createTextbox = (name, value, placeholder, maxLength, multiline, resize) => {
 				const input = makeElem(multiline ? 'textarea' : 'input', {
 					type: multiline ? null : 'text',
 					name,
@@ -106,8 +116,9 @@
 				}
 				return input;
 			};
-			const createNumber = function(name, value, placeholder, min, max, step) {
-				return makeElem('input', {
+
+			const createNumber = (name, value, placeholder, min, max, step) =>
+				makeElem('input', {
 					type: 'number',
 					value,
 					placeholder,
@@ -115,7 +126,7 @@
 					max,
 					step
 				});
-			};
+
 			const createSelect = function(name, options, value, showBlank) {
 				const select = makeElem('select', { name });
 
@@ -141,21 +152,24 @@
 				select.value = value;
 				return select;
 			};
-			const createCheckbox = function(name, checked) {
-				return makeElem('input', {
+
+			const createCheckbox = (name, checked) =>
+				makeElem('input', {
 					type: 'checkbox',
 					id: `${prefix}-${name}`,
 					name,
 					checked
 				});
-			};
-			const createKeybinding = function(name, keybinding, requireModifier, requireKey) {
+
+			const createKeybinding = (name, keybinding, requireModifier, requireKey) => {
 				const textbox = makeElem('input', {
 					type: 'text',
 					name,
 					readOnly: true,
 					placeholder: 'Press Keybinding'
 				});
+
+				const META_KEYS = ['CONTROL', 'ALT', 'SHIFT', 'META'];
 
 				const setText = () => {
 					const parts = [];
@@ -164,8 +178,7 @@
 					if (d.altKey === 'true') parts.push('ALT');
 					if (d.shiftKey === 'true') parts.push('SHIFT');
 					if (d.metaKey === 'true') parts.push('META');
-					if (d.key && !['CONTROL', 'ALT', 'SHIFT', 'META'].includes(d.key))
-						parts.push(d.key);
+					if (d.key && !META_KEYS.includes(d.key)) parts.push(d.key);
 					textbox.value = parts.join('+');
 				};
 
@@ -188,13 +201,6 @@
 
 				setDataset(keybinding);
 
-				const preventDefault = e => {
-					e.preventDefault();
-					e.stopImmediatePropagation();
-					e.stopPropagation();
-					return false;
-				};
-
 				textbox.addEventListener(
 					'keydown',
 					e => {
@@ -202,11 +208,7 @@
 						if (requireModifier && !e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey)
 							return false;
 						const key = (e.key || '').toUpperCase();
-						if (
-							requireKey &&
-							(!key || ['CONTROL', 'ALT', 'SHIFT', 'META'].includes(key))
-						)
-							return false;
+						if (requireKey && (!key || META_KEYS.includes(key))) return false;
 						setDataset(e);
 						return false;
 					},
@@ -216,18 +218,18 @@
 
 				return textbox;
 			};
-			const createButton = function(text, onclick, classname) {
-				const button = makeElem('button', {
+
+			const createButton = (text, onclick, classname) =>
+				makeElem('button', {
 					textContent: text,
-					onclick
+					onclick,
+					classes: [`${prefix}-${classname}`]
 				});
-				button.classList.add(`${prefix}-${classname}`);
-				return button;
-			};
-			const createLabel = function(label, htmlFor) {
-				return makeElem('label', { htmlFor, textContent: label });
-			};
-			const init = function(cfg) {
+
+			const createLabel = (label, htmlFor) =>
+				makeElem('label', { htmlFor, textContent: label });
+
+			const init = cfg => {
 				const controls = {};
 
 				const getValue = (type, control) => {
@@ -296,10 +298,9 @@
 						control.addEventListener(
 							setting.type === 'dropdown' ? 'change' : 'input',
 							() => {
-								if (ret.onchange) {
-									const control = controls[setting.key];
-									ret.onchange(setting.key, getValue(setting.type, control));
-								}
+								if (!ret.onchange) return;
+								const control = controls[setting.key];
+								ret.onchange(setting.key, getValue(setting.type, control));
 							}
 						);
 					});
@@ -316,9 +317,7 @@
 								});
 							save(cfg);
 
-							if (ret.onsave) {
-								ret.onsave(cfg);
-							}
+							if (ret.onsave) ret.onsave(cfg);
 
 							div.remove();
 						},
@@ -341,6 +340,7 @@
 
 				document.body.appendChild(div);
 			};
+
 			init(load());
 		};
 
