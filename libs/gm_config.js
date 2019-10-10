@@ -127,7 +127,7 @@
 					step
 				});
 
-			const createSelect = function(name, options, value, showBlank) {
+			const createSelect = (name, options, value, showBlank) => {
 				const select = makeElem('select', { name });
 
 				const createOption = val => {
