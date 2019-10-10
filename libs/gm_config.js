@@ -3,7 +3,7 @@
 
 	const fromEntries =
 		Object.fromEntries ||
-		((...iterable) =>
+		(iterable =>
 			[...iterable].reduce((obj, [key, val]) => {
 				obj[key] = val;
 				return obj;
