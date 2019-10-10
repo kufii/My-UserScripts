@@ -251,7 +251,6 @@
 				};
 
 				const div = createContainer();
-				console.log(div);
 				settings
 					.filter(({ type }) => type !== 'hidden')
 					.forEach(setting => {
