@@ -1,6 +1,14 @@
 (() => {
 	'use strict';
 
+	const fromEntries =
+		Object.fromEntries ||
+		((...iterable) =>
+			[...iterable].reduce((obj, [key, val]) => {
+				obj[key] = val;
+				return obj;
+			}, {}));
+
 	window.GM_config = function(settings, storage = 'cfg') {
 		let ret = null;
 
@@ -44,7 +52,7 @@
 					grid-column: 3 / 4;
 				}
 			`;
-			if (typeof GM_addStyle === 'undefined') {
+			if (window.GM_addStyle == null) {
 				const style = document.createElement('style');
 				style.textContent = css;
 				document.head.appendChild(style);
@@ -58,14 +66,12 @@
 			settings.forEach(({ key, default: def }) => (defaults[key] = def));
 
 			let cfg =
-				typeof GM_getValue !== 'undefined'
-					? GM_getValue(storage)
-					: localStorage.getItem(storage);
+				window.GM_getValue != null ? GM_getValue(storage) : localStorage.getItem(storage);
 			if (!cfg) return defaults;
 
 			cfg = JSON.parse(cfg);
 			Object.entries(defaults).forEach(([key, value]) => {
-				if (typeof cfg[key] === 'undefined') {
+				if (cfg[key] == null) {
 					cfg[key] = value;
 				}
 			});
@@ -75,48 +81,51 @@
 
 		const save = function(cfg) {
 			const data = JSON.stringify(cfg);
-			typeof GM_setValue !== 'undefined'
+			window.GM_setValue != null
 				? GM_setValue(storage, data)
 				: localStorage.setItem(storage, data);
 		};
 
 		const setup = function() {
+			const makeElem = (type, opts = {}) =>
+				Object.assign(
+					document.createElement(type),
+					fromEntries(Object.entries(opts).filter(([_, value]) => value != null))
+				);
 			const createContainer = function() {
-				const form = document.createElement('form');
+				const form = makeElem('form');
 				form.classList.add(prefix);
 				return form;
 			};
 			const createTextbox = function(name, value, placeholder, maxLength, multiline, resize) {
-				const input = document.createElement(multiline ? 'textarea' : 'input');
+				const input = makeElem(multiline ? 'textarea' : 'input', {
+					type: 'text',
+					name,
+					value,
+					placeholder,
+					maxLength
+				});
 				if (multiline) {
 					input.style.resize = resize ? 'vertical' : 'none';
-				} else {
-					input.type = 'text';
 				}
-				input.name = name;
-				if (typeof value !== 'undefined') input.value = value;
-				if (placeholder) input.placeholder = placeholder;
-				if (maxLength) input.maxLength = maxLength;
 				return input;
 			};
 			const createNumber = function(name, value, placeholder, min, max, step) {
-				const input = createTextbox(name, value, placeholder);
-				input.type = 'number';
-				if (typeof min !== 'undefined') input.min = min;
-				if (typeof max !== 'undefined') input.max = max;
-				if (typeof step !== 'undefined') input.step = step;
-				return input;
+				return makeElem('input', {
+					type: 'number',
+					value,
+					placeholder,
+					min,
+					max,
+					step
+				});
 			};
 			const createSelect = function(name, options, value, showBlank) {
-				const select = document.createElement('select');
-				select.name = name;
+				const select = makeElem('select', { name });
 
-				const createOption = function(val) {
+				const createOption = val => {
 					const { value = val, text = val } = val;
-					const option = document.createElement('option');
-					option.value = value;
-					option.textContent = text;
-					return option;
+					return makeElem('option', { value, textContent: text });
 				};
 
 				if (showBlank) {
@@ -124,9 +133,8 @@
 				}
 
 				options.forEach(opt => {
-					if (typeof opt.optgroup !== 'undefined') {
-						const optgroup = document.createElement('optgroup');
-						optgroup.label = opt.optgroup;
+					if (opt.optgroup != null) {
+						const optgroup = makeElem('optgroup', { label: opt.optgroup });
 						select.appendChild(optgroup);
 						opt.values.forEach(value => optgroup.appendChild(createOption(value)));
 					} else {
@@ -138,49 +146,51 @@
 				return select;
 			};
 			const createCheckbox = function(name, checked) {
-				const checkbox = document.createElement('input');
-				checkbox.id = `${prefix}-${name}`;
-				checkbox.type = 'checkbox';
-				checkbox.name = name;
-				checkbox.checked = checked;
-				return checkbox;
+				return makeElem('input', {
+					type: 'checkbox',
+					id: `${prefix}-${name}`,
+					name,
+					checked
+				});
 			};
 			const createKeybinding = function(name, keybinding, requireModifier, requireKey) {
-				const textbox = document.createElement('input');
-				textbox.type = 'text';
-				textbox.name = name;
-				textbox.readOnly = true;
-				textbox.placeholder = 'Press Keybinding';
+				const textbox = makeElem('input', {
+					type: 'text',
+					name,
+					readOnly: true,
+					placeholder: 'Press Keybinding'
+				});
 
-				const {
+				const setText = () => {
+					const parts = [];
+					const d = textbox.dataset;
+					if (d.ctrlKey === 'true') parts.push('CTRL');
+					if (d.altKey === 'true') parts.push('ALT');
+					if (d.shiftKey === 'true') parts.push('SHIFT');
+					if (d.metaKey === 'true') parts.push('META');
+					if (d.key && !['CONTROL', 'ALT', 'SHIFT', 'META'].includes(d.key))
+						parts.push(d.key);
+					textbox.value = parts.join('+');
+				};
+
+				const setDataset = ({
 					ctrlKey = false,
 					altKey = false,
 					shiftKey = false,
 					metaKey = false,
 					key = ''
-				} = keybinding || {};
-
-				const setText = () => {
-					const parts = [];
-					const { ctrlKey, altKey, shiftKey, metaKey, key } = textbox.dataset;
-					if (ctrlKey === 'true') parts.push('CTRL');
-					if (altKey === 'true') parts.push('ALT');
-					if (shiftKey === 'true') parts.push('SHIFT');
-					if (metaKey === 'true') parts.push('META');
-					if (key && !['CONTROL', 'ALT', 'SHIFT', 'META'].includes(key)) parts.push(key);
-					textbox.value = parts.join(' + ');
-				};
-
-				const setDataset = (ctrlKey, altKey, shiftKey, metaKey, key) => {
-					textbox.dataset.ctrlKey = ctrlKey;
-					textbox.dataset.altKey = altKey;
-					textbox.dataset.shiftKey = shiftKey;
-					textbox.dataset.metaKey = metaKey;
-					textbox.dataset.key = key || '';
+				} = {}) => {
+					Object.assign(textbox.dataset, {
+						ctrlKey,
+						altKey,
+						shiftKey,
+						metaKey,
+						key: key.toUpperCase()
+					});
 					setText();
 				};
 
-				setDataset(ctrlKey, altKey, shiftKey, metaKey, key);
+				setDataset(keybinding);
 
 				const preventDefault = e => {
 					e.preventDefault();
@@ -193,16 +203,15 @@
 					'keydown',
 					e => {
 						preventDefault(e);
-						let { ctrlKey, altKey, shiftKey, metaKey, key } = e;
-						if (requireModifier && !ctrlKey && !altKey && !shiftKey && !metaKey)
+						if (requireModifier && !e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey)
 							return false;
-						key = (key || '').toUpperCase();
+						const key = (e.key || '').toUpperCase();
 						if (
 							requireKey &&
 							(!key || ['CONTROL', 'ALT', 'SHIFT', 'META'].includes(key))
 						)
 							return false;
-						setDataset(ctrlKey, altKey, shiftKey, metaKey, key);
+						setDataset(e);
 						return false;
 					},
 					true
@@ -212,17 +221,15 @@
 				return textbox;
 			};
 			const createButton = function(text, onclick, classname) {
-				const button = document.createElement('button');
+				const button = makeElem('button', {
+					textContent: text,
+					onclick
+				});
 				button.classList.add(`${prefix}-${classname}`);
-				button.textContent = text;
-				button.onclick = onclick;
 				return button;
 			};
 			const createLabel = function(label, htmlFor) {
-				const lbl = document.createElement('label');
-				if (htmlFor) lbl.htmlFor = htmlFor;
-				lbl.textContent = label;
-				return lbl;
+				return makeElem('label', { htmlFor, textContent: label });
 			};
 			const init = function(cfg) {
 				const controls = {};
@@ -244,6 +251,7 @@
 				};
 
 				const div = createContainer();
+				console.log(div);
 				settings
 					.filter(({ type }) => type !== 'hidden')
 					.forEach(setting => {
