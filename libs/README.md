@@ -61,7 +61,7 @@ const Config = GM_config([
   default: 'default',
 
   // What type of setting it is.
-  type: 'text|number|dropdown|bool|hidden'
+  type: 'text|number|dropdown|bool|keybinding|hidden'
 }
 ```
 
@@ -126,6 +126,21 @@ const Config = GM_config([
 ```
 
 **`bool:`** Shows a checkbox.
+
+**`keybinding:`** Shows a textbox where the user can set a keybinding.
+
+```javascript
+{
+  // set the default keybinding. boolean properties ctrlKey, altKey, shiftKey, and metaKey to set modifiers. char property key to set the key.
+  default: { ctrlKey: true, shiftKey: true, key: 'I' },
+
+  // Optional. Require either ctrl, alt, shift, or meta to be pressed. Defaults to false.
+  requireModifier: true,
+
+  // Optional. Require a non-modifier key to be pressed.
+  requireKey: true
+}
+```
 
 **`hidden:`** Hide the setting from the UI.
 

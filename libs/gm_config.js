@@ -145,6 +145,72 @@
 				checkbox.checked = checked;
 				return checkbox;
 			};
+			const createKeybinding = function(name, keybinding, requireModifier, requireKey) {
+				const textbox = document.createElement('input');
+				textbox.type = 'text';
+				textbox.name = name;
+				textbox.readOnly = true;
+				textbox.placeholder = 'Press Keybinding';
+
+				const {
+					ctrlKey = false,
+					altKey = false,
+					shiftKey = false,
+					metaKey = false,
+					key = ''
+				} = keybinding || {};
+
+				const setText = () => {
+					const parts = [];
+					const { ctrlKey, altKey, shiftKey, metaKey, key } = textbox.dataset;
+					if (ctrlKey === 'true') parts.push('CTRL');
+					if (altKey === 'true') parts.push('ALT');
+					if (shiftKey === 'true') parts.push('SHIFT');
+					if (metaKey === 'true') parts.push('META');
+					if (key && !['CONTROL', 'ALT', 'SHIFT', 'META'].includes(key)) parts.push(key);
+					textbox.value = parts.join(' + ');
+				};
+
+				const setDataset = (ctrlKey, altKey, shiftKey, metaKey, key) => {
+					textbox.dataset.ctrlKey = ctrlKey;
+					textbox.dataset.altKey = altKey;
+					textbox.dataset.shiftKey = shiftKey;
+					textbox.dataset.metaKey = metaKey;
+					textbox.dataset.key = key || '';
+					setText();
+				};
+
+				setDataset(ctrlKey, altKey, shiftKey, metaKey, key);
+
+				const preventDefault = e => {
+					e.preventDefault();
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+					return false;
+				};
+
+				textbox.addEventListener(
+					'keydown',
+					e => {
+						preventDefault(e);
+						let { ctrlKey, altKey, shiftKey, metaKey, key } = e;
+						if (requireModifier && !ctrlKey && !altKey && !shiftKey && !metaKey)
+							return false;
+						key = (key || '').toUpperCase();
+						if (
+							requireKey &&
+							(!key || ['CONTROL', 'ALT', 'SHIFT', 'META'].includes(key))
+						)
+							return false;
+						setDataset(ctrlKey, altKey, shiftKey, metaKey, key);
+						return false;
+					},
+					true
+				);
+				textbox.addEventListener('keypress', preventDefault, true);
+
+				return textbox;
+			};
 			const createButton = function(text, onclick, classname) {
 				const button = document.createElement('button');
 				button.classList.add(`${prefix}-${classname}`);
@@ -160,6 +226,22 @@
 			};
 			const init = function(cfg) {
 				const controls = {};
+
+				const getValue = (type, control) => {
+					const getKeybindingValue = () => {
+						const ctrlKey = control.dataset.ctrlKey === 'true';
+						const altKey = control.dataset.altKey === 'true';
+						const shiftKey = control.dataset.shiftKey === 'true';
+						const metaKey = control.dataset.metaKey === 'true';
+						const key = control.dataset.key;
+						return { ctrlKey, altKey, shiftKey, metaKey, key };
+					};
+					return type === 'bool'
+						? control.checked
+						: type === 'keybinding'
+						? getKeybindingValue()
+						: control.value;
+				};
 
 				const div = createContainer();
 				settings
@@ -195,6 +277,13 @@
 							);
 						} else if (setting.type === 'bool') {
 							control = createCheckbox(setting.key, value);
+						} else if (setting.type === 'keybinding') {
+							control = createKeybinding(
+								setting.key,
+								value,
+								setting.requireModifier,
+								setting.requireKey
+							);
 						}
 
 						div.appendChild(createLabel(setting.label, control.id));
@@ -206,9 +295,7 @@
 							() => {
 								if (ret.onchange) {
 									const control = controls[setting.key];
-									const value =
-										setting.type === 'bool' ? control.checked : control.value;
-									ret.onchange(setting.key, value);
+									ret.onchange(setting.key, getValue(setting.type, control));
 								}
 							}
 						);
@@ -222,7 +309,7 @@
 								.filter(({ type }) => type !== 'hidden')
 								.forEach(({ key, type }) => {
 									const control = controls[key];
-									cfg[key] = type === 'bool' ? control.checked : control.value;
+									cfg[key] = getValue(type, control);
 								});
 							save(cfg);
 
