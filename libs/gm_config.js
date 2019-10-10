@@ -3,11 +3,7 @@
 
 	const fromEntries =
 		Object.fromEntries ||
-		(iterable =>
-			[...iterable].reduce((obj, [key, val]) => {
-				obj[key] = val;
-				return obj;
-			}, {}));
+		(iterable => [...iterable].reduce((obj, [key, val]) => ((obj[key] = val), obj), {}));
 
 	window.GM_config = function(settings, storage = 'cfg') {
 		let ret = null;
