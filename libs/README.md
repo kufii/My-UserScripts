@@ -19,7 +19,7 @@ Example:
 ```javascript
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @require      https://gitcdn.link/repo/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
+// @require      https://gitcdn.link/repo/kufii/My-UserScripts/5adbce4e9ce23b9006dd7e1fd6b8e82f083f5b23/libs/gm_config.js
 
 const Config = GM_config([
   {
@@ -137,7 +137,7 @@ const Config = GM_config([
   // Optional. Require either ctrl, alt, shift, or meta to be pressed. Defaults to false.
   requireModifier: true,
 
-  // Optional. Require a non-modifier key to be pressed.
+  // Optional. Require a non-modifier key to be pressed. Defaults to false.
   requireKey: true
 }
 ```
