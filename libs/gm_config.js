@@ -99,7 +99,7 @@
 			};
 			const createTextbox = function(name, value, placeholder, maxLength, multiline, resize) {
 				const input = makeElem(multiline ? 'textarea' : 'input', {
-					type: 'text',
+					type: multiline ? null : 'text',
 					name,
 					value,
 					placeholder,
