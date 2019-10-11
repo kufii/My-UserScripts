@@ -40,7 +40,7 @@
 	let config = Config.load();
 	Config.onsave = newConf => (config = newConf);
 
-	GM_addStyle(`
+	GM_addStyle(/* css */ `
 		.YSV_hud {
 			display: flex;
 			flex-direction: column;
