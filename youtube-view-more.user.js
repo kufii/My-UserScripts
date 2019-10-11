@@ -17,7 +17,7 @@
 
 	const CLASS_PREFIX = 'YVM_';
 
-	GM_addStyle(`
+	GM_addStyle(/* css */ `
 		.${CLASS_PREFIX}slider {
 			display: flex;
 			align-items: center;
