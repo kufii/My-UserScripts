@@ -31,12 +31,13 @@
 		return false;
 	};
 
-	window.GM_config = (settings, storage = 'cfg') => {
+	const stylesAdded = {};
+
+	window.GM_config = (settings, storage = 'cfg', prefix = 'gm-config') => {
 		let ret = null;
 
-		const prefix = 'gm-config';
-
-		const addStyle = () =>
+		const addStyle = () => {
+			if (stylesAdded[prefix]) return;
 			css`
 				.${prefix} {
 					display: grid;
@@ -74,6 +75,8 @@
 					grid-column: 3 / 4;
 				}
 			`;
+			stylesAdded[prefix] = true;
+		};
 
 		const load = () => {
 			const defaults = {};

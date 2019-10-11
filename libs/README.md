@@ -171,3 +171,17 @@ Example:
 ```javascript
 Config.onchange = (key, value) => console.log(key, value);
 ```
+
+### Other Configuration
+
+**Change storage key:** By default GM_config stores your configuration to the key `cfg`. This can be customized by passing in a second parameter.
+
+```javascript
+const Config = GM_config(items, 'conf');
+```
+
+**Change CSS class:** By default GM_config uses the CSS class `gm-config` to style the setup window. This can be customized by passing in a third parameter.
+
+```javascript
+const Config = GM_config(items, 'cfg', 'custom-class');
+```
