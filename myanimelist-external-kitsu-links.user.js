@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MyAnimeList, External Kitsu Links
 // @namespace    https://greasyfork.org/users/649
-// @version      2.2.2
+// @version      2.2.3
 // @description  Adds a link to the Kitsu page in the External Links section
 // @author       Adrien Pyke
 // @match        *://myanimelist.net/anime/*
@@ -72,7 +72,7 @@
 		}
 	};
 
-	const match = location.href.match(/^https?:\/\/myanimelist\.net\/(anime|manga)\/([0-9]+)/i);
+	const match = location.href.match(/^https?:\/\/myanimelist\.net\/(anime|manga)\/([0-9]+)/iu);
 	if (match) {
 		const type = match[1];
 		const id = match[2];

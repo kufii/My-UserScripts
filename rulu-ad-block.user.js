@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Rulu.co remove ads
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.4
+// @version      1.0.5
 // @description  Removes ad links from Rulu.co
 // @author       Adrien Pyke
 // @match        *://www.rulu.co/*
@@ -18,7 +18,7 @@
 		}
 	};
 
-	const REGEX = /^https?:\/\/rulu\.io\/j\//i;
+	const REGEX = /^https?:\/\/rulu\.io\/j\//iu;
 
 	Util.qq('a')
 		.filter(link => link.href.match(REGEX))

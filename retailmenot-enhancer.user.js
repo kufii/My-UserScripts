@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RetailMeNot Enhancer
 // @namespace    https://greasyfork.org/users/649
-// @version      3.1.7
+// @version      3.1.8
 // @description  Auto shows coupons and stops pop-unders on RetailMeNot
 // @author       Adrien Pyke
 // @match        *://www.retailmenot.com/*
@@ -31,22 +31,22 @@
 			return Array.from(context.querySelectorAll(query));
 		},
 		getQueryParam(name, url = location.href) {
-			name = name.replace(/[[\]]/g, '\\$&');
-			const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
+			name = name.replace(/[[\]]/gu, '\\$&');
+			const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`, 'u');
 			const results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
-			return decodeURIComponent(results[2].replace(/\+/g, ' '));
+			return decodeURIComponent(results[2].replace(/\+/gu, ' '));
 		},
 		setQueryParam(key, value, url = location.href) {
-			const regex = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'gi');
+			const regex = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'giu');
 			const hasValue = typeof value !== 'undefined' && value !== null && value !== '';
 			if (regex.test(url)) {
 				if (hasValue) {
 					return url.replace(regex, `$1${key}=${value}$2$3`);
 				} else {
 					const [path, hash] = url.split('#');
-					url = path.replace(regex, '$1$3').replace(/(&|\?)$/, '');
+					url = path.replace(regex, '$1$3').replace(/(&|\?)$/u, '');
 					if (hash) url += `#${hash[1]}`;
 					return url;
 				}
@@ -77,7 +77,7 @@
 
 	// remove force reload param
 	Util.changeUrl(Util.removeQueryParam('r'));
-	if (window.location.href.match(/^https?:\/\/www\.retailmenot\.com/i)) {
+	if (window.location.href.match(/^https?:\/\/www\.retailmenot\.com/iu)) {
 		// US
 		Util.log('Enhancing US site');
 		// Show Coupons
@@ -89,7 +89,7 @@
 				'.js-outclick, .js-title > a, .js-triggers-outclick, .js-coupon-square, .offer-item-in-list',
 			onmatch(button) {
 				const path =
-					button.dataset.newTab && !button.dataset.newTab.match(/^\/out/i)
+					button.dataset.newTab && !button.dataset.newTab.match(/^\/out/iu)
 						? button.dataset.newTab
 						: button.dataset.mainTab;
 				const href = `${window.location.protocol}//${window.location.host}${path}`;
@@ -128,7 +128,7 @@
 				}
 			}
 		});
-	} else if (window.location.href.match(/^https?:\/\/www\.retailmenot\.ca/i)) {
+	} else if (window.location.href.match(/^https?:\/\/www\.retailmenot\.ca/iu)) {
 		// CANADA
 		Util.log('Enhancing Canadian site');
 		// Show Coupons
@@ -221,7 +221,7 @@
 		});
 	}
 	// human checks
-	const regex = /^https?:\/\/www\.retailmenot\.[^/]+\/humanCheck\.php/i;
+	const regex = /^https?:\/\/www\.retailmenot\.[^/]+\/humanCheck\.php/iu;
 	Util.qq('a')
 		.filter(link => link.href.match(regex))
 		.forEach(link => {

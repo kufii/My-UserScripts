@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.5
+// @version      2.1.6
 // @description  Middle clicking the search on youtube opens the results in a new tab
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -26,15 +26,15 @@
 			return Array.from(context.querySelectorAll(query));
 		},
 		getQueryParameter(name, url = window.location.href) {
-			name = name.replace(/[[\]]/g, '\\$&');
-			const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
+			name = name.replace(/[[\]]/gu, '\\$&');
+			const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`, 'u'),
 				results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
-			return decodeURIComponent(results[2].replace(/\+/g, ' '));
+			return decodeURIComponent(results[2].replace(/\+/gu, ' '));
 		},
 		encodeURIWithPlus(string) {
-			return encodeURIComponent(string).replace(/%20/g, '+');
+			return encodeURIComponent(string).replace(/%20/gu, '+');
 		}
 	};
 

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu MangaDex Links
 // @namespace    https://greasyfork.org/users/649
-// @version      3.0.6
+// @version      3.0.7
 // @description  Adds MangaDex links to Kitsu manga pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -13,7 +13,7 @@
 	'use strict';
 
 	const SCRIPT_NAME = 'Kitsu MangaDex Links';
-	const REGEX = /^https?:\/\/kitsu\.io\/manga\/[^/]+\/?(?:\?.*)?$/;
+	const REGEX = /^https?:\/\/kitsu\.io\/manga\/[^/]+\/?(?:\?.*)?$/u;
 
 	const Util = {
 		log(...args) {
@@ -27,7 +27,7 @@
 			return Array.from(context.querySelectorAll(query));
 		},
 		encodeQuery(query) {
-			return encodeURIComponent(query.trim().replace(/\s+/g, ' '));
+			return encodeURIComponent(query.trim().replace(/\s+/gu, ' '));
 		}
 	};
 

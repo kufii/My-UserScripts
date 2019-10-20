@@ -19,7 +19,7 @@
   "homepage": "https://github.com/kufii/My-UserScripts#readme",
   "devDependencies": {
     "eslint": "^6.5.1",
-    "eslint-config-adpyke-es6": "^1.4.12",
+    "eslint-config-adpyke-es6": "^1.4.13",
     "eslint-config-prettier": "^6.4.0",
     "prettier": "^1.18.2"
   }

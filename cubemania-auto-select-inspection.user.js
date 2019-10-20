@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Cubemania - Auto Select Inspection
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1
+// @version      1.1.1
 // @description  auto checks the 15 second inspection checkbox on the cubemania timer
 // @author       Adrien Pyke
 // @match        *://www.cubemania.org/puzzles/*/timer
@@ -24,7 +24,7 @@
 		}
 	};
 
-	const puzzle = location.pathname.match(/^\/puzzles\/(.+)\//i)[1];
+	const puzzle = location.pathname.match(/^\/puzzles\/(.+)\//iu)[1];
 	const autoselect = Config.getAutoSelect(puzzle);
 	if (autoselect) {
 		document.querySelector('input.inspection-toggle').click();

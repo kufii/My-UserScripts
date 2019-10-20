@@ -90,7 +90,7 @@
 	};
 
 	const Character = {
-		id: parseInt(location.pathname.match(/\/([0-9]+)$/)[1]),
+		id: parseInt(location.pathname.match(/\/([0-9]+)$/u)[1]),
 		get strength() {
 			return parseInt(
 				Util.q('.character-ability-strength > .character-ability-score').textContent

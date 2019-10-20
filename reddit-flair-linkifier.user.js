@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Flair Linkifier
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.5
+// @version      2.1.6
 // @description  Turns the text in various subreddits' flair into links
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
@@ -42,7 +42,7 @@
 			const newhtml = flair.textContent
 				.split(' ')
 				.map(segment =>
-					segment.match(/^https?:\/\//)
+					segment.match(/^https?:\/\//u)
 						? `<a href="${segment}" class="flair-link" target="_blank" rel="noopener noreferrer">${segment}</a>`
 						: segment
 				)
