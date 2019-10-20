@@ -19,7 +19,7 @@ Example:
 ```javascript
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @require      https://gitcdn.link/repo/kufii/My-UserScripts/b06cf8745c97944945b646fde8a44888a939110e/libs/gm_config.js
+// @require      https://gitcdn.link/repo/kufii/My-UserScripts/0da6580322166d55090412d4c4488b2b5f7a40fb/libs/gm_config.js
 
 const Config = GM_config([
   {
@@ -170,4 +170,18 @@ Example:
 
 ```javascript
 Config.onchange = (key, value) => console.log(key, value);
+```
+
+### Other Configuration
+
+**Change storage key:** By default GM_config stores your configuration to the key `cfg`. This can be customized by passing in a second parameter.
+
+```javascript
+const Config = GM_config(items, 'conf');
+```
+
+**Change CSS class:** By default GM_config uses the CSS class `gm-config` to style the setup window. This can be customized by passing in a third parameter.
+
+```javascript
+const Config = GM_config(items, 'cfg', 'custom-class');
 ```
