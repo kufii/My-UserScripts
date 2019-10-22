@@ -41,12 +41,12 @@
 			return Array.from(context.querySelectorAll(query));
 		},
 		getQueryParameter(name, url = W.location.href) {
-			name = name.replace(/[[\]]/g, '\\$&');
-			const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
+			name = name.replace(/[[\]]/gu, '\\$&');
+			const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`, 'u');
 			const results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
-			return decodeURIComponent(results[2].replace(/\+/g, ' '));
+			return decodeURIComponent(results[2].replace(/\+/gu, ' '));
 		},
 		appendStyle(css) {
 			let out = '';
@@ -163,9 +163,9 @@
 						onload();
 					}
 				};
-				add(/\/common\\.js$/i, () => {
-					add(/\/article\\.js$/i, () => {
-						add(/\/snippet\\.js$/i);
+				add(/\/common\\.js$/iu, () => {
+					add(/\/article\\.js$/iu, () => {
+						add(/\/snippet\\.js$/iu);
 					});
 				});
 			}
@@ -205,8 +205,8 @@
 					// prevent payywall from finding the elements to remove
 					Util.qq('figure', story).forEach(figure => {
 						figure.outerHTML = figure.outerHTML
-							.replace(/<figure/, '<div')
-							.replace(/<\/figure/, '</div');
+							.replace(/<figure/u, '<div')
+							.replace(/<\/figure/u, '</div');
 					});
 					Util.qq('.story-body-text', story).forEach(paragraph => {
 						paragraph.classList.remove('story-body-text');
@@ -479,7 +479,7 @@
 		start(imps) {
 			Util.log('starting...');
 			const success = imps.some(imp => {
-				if (imp.match && new RegExp(imp.match, 'i').test(W.location.href)) {
+				if (imp.match && new RegExp(imp.match, 'iu').test(W.location.href)) {
 					App.currentImpName = imp.name;
 					if (W.BM_MODE) {
 						App.waitAndBypass(imp);

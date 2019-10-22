@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitsu Fansub Info
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.23
+// @version      2.1.24
 // @description  Show MAL fansub info on Kitsu anime pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
@@ -50,7 +50,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 	const SCRIPT_NAME = 'Kitsu Fansub Info';
 	const API = 'https://kitsu.io/api/edge';
-	const REGEX = /^https?:\/\/kitsu\.io\/anime\/([^/]+)\/?(?:\?.*)?$/;
+	const REGEX = /^https?:\/\/kitsu\.io\/anime\/([^/]+)\/?(?:\?.*)?$/u;
 	const SECTION_ID = 'kitsu-fansubs';
 
 	const Icon = {
@@ -84,22 +84,22 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			return Array.from(context.querySelectorAll(query));
 		},
 		getQueryParam(name, url = location.href) {
-			name = name.replace(/[[\]]/g, '\\$&');
-			const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
+			name = name.replace(/[[\]]/gu, '\\$&');
+			const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`, 'u');
 			const results = regex.exec(url);
 			if (!results) return null;
 			if (!results[2]) return '';
-			return decodeURIComponent(results[2].replace(/\+/g, ' '));
+			return decodeURIComponent(results[2].replace(/\+/gu, ' '));
 		},
 		setQueryParam(key, value, url = location.href) {
-			const regex = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'gi');
+			const regex = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'giu');
 			const hasValue = typeof value !== 'undefined' && value !== null && value !== '';
 			if (regex.test(url)) {
 				if (hasValue) {
 					return url.replace(regex, `$1${key}=${value}$2$3`);
 				} else {
 					const [path, hash] = url.split('#');
-					url = path.replace(regex, '$1$3').replace(/(&|\?)$/, '');
+					url = path.replace(regex, '$1$3').replace(/(&|\?)$/u, '');
 					if (hash) url += `#${hash[1]}`;
 					return url;
 				}
@@ -228,7 +228,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 								let comments = [];
 								if (approvalNode) {
 									const match = approvalNode.textContent.match(
-										/([0-9]+)[^0-9]*([0-9]+)/
+										/([0-9]+)[^0-9]*([0-9]+)/u
 									);
 									if (match) {
 										totalApproved = match[1];

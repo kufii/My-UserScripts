@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Greasy Fork - Change Default Script Sort
 // @namespace    https://greasyfork.org/users/649
-// @version      1.3.3
+// @version      1.3.4
 // @description  Change default script sort on GreasyFork
 // @author       Adrien Pyke
 // @match        *://greasyfork.org/*/users/*
@@ -50,9 +50,9 @@
 	]);
 	GM_registerMenuCommand('GreasyFork Sort Settings', Config.setup);
 
-	const onSearch = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/scripts\/?.*\?.*q=/i);
-	const onScripts = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/scripts\/?/i);
-	const onProfile = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/users\//i);
+	const onSearch = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/scripts\/?.*\?.*q=/iu);
+	const onScripts = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/scripts\/?/iu);
+	const onProfile = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/users\//iu);
 
 	waitForElems({
 		sel: '#script-list-sort > ul > li:first-of-type > a',

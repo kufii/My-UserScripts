@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GitHub Editor - Change Default Settings
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.19
+// @version      1.1.20
 // @description  change default settings for the github editor
 // @author       Adrien Pyke
 // @match        *://github.com/*/new/*
@@ -52,12 +52,12 @@
 		const indentWidth = document.querySelector('.js-code-indent-width');
 		const wrapMode = document.querySelector('.js-code-wrap-mode');
 
-		if (location.href.match(/^https?:\/\/github.com\/[^/]*\/[^/]*\/new\/.*/)) {
+		if (location.href.match(/^https?:\/\/github.com\/[^/]*\/[^/]*\/new\/.*/u)) {
 			// new file
 			updateDropdown(indentMode, cfg.indentMode);
 			updateDropdown(indentWidth, cfg.indentWidth);
 			updateDropdown(wrapMode, cfg.wrapMode);
-		} else if (location.href.match(/^https?:\/\/github.com\/[^/]*\/[^/]*\/edit\/.*/)) {
+		} else if (location.href.match(/^https?:\/\/github.com\/[^/]*\/[^/]*\/edit\/.*/u)) {
 			// edit file
 			// if the file is using space indentation we don't want to change it
 			if (indentMode.value === 'tab') {

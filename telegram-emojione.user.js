@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Telegram Web Emojione
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.10
+// @version      1.1.11
 // @description  Replaces old iOS emojis with Emojione on Telegram Web
 // @author       Adrien Pyke
 // @match        *://web.telegram.org/*
@@ -28,7 +28,7 @@
 			return Array.from(context.querySelectorAll(query));
 		},
 		regexEscape(str) {
-			return str.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
+			return str.replace(/[-[\]/{}()*+?.\\^$|]/gu, '\\$&');
 		}
 	};
 
@@ -77,7 +77,7 @@
 		},
 		makeReplacements(str) {
 			Object.entries(EmojiHelper.replacements).forEach(([key, value]) => {
-				str = str.replace(new RegExp(Util.regexEscape(key), 'g'), value);
+				str = str.replace(new RegExp(Util.regexEscape(key), 'gu'), value);
 			});
 			return str;
 		},
