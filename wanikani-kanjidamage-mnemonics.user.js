@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.1
+// @version      2.0.2
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
@@ -143,7 +143,7 @@
 			}
 			return { h2, link, section };
 		},
-		createReviewContainer(sel) {
+		createContainer(sel) {
 			const container = Util.makeElem('section');
 			const { h2, link, section } = App.createSection();
 			container.appendChild(h2);
@@ -199,7 +199,7 @@
 					const { link: readingLink, section: readingSection } = App.createSection(
 						Util.q('#supplement-kan-reading-notes')
 					);
-					const { link: reviewLink, section: reviewSection } = App.createReviewContainer(
+					const { link: reviewLink, section: reviewSection } = App.createContainer(
 						'#main-info'
 					);
 
@@ -221,7 +221,7 @@
 			waitForElems({
 				sel: '#character',
 				onmatch() {
-					const { link, section } = App.createReviewContainer('#character');
+					const { link, section } = App.createContainer('#character');
 
 					const outputKanjidamage = kanjiObj => {
 						link.href = kanjiObj.url;
@@ -234,7 +234,7 @@
 		runOnKanjiPage: async () => {
 			const kanji = Util.q('.kanji-icon').textContent;
 			const kanjiObj = await App.getKanjiDamageInfo(kanji, false);
-			const { container, link, section } = App.createReviewContainer();
+			const { container, link, section } = App.createContainer();
 
 			link.href = kanjiObj.url;
 			if (kanjiObj.reading) {
