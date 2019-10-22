@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.0
+// @version      2.0.1
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
@@ -66,8 +66,6 @@
 					const response = await Util.fetch(
 						`http://www.kanjidamage.com/kanji/search?q=${kanji}`
 					);
-
-					Util.log(response);
 
 					Util.log(`Found Kanjidamage information for ${kanji}`);
 
@@ -150,14 +148,15 @@
 			const { h2, link, section } = App.createSection();
 			container.appendChild(h2);
 			container.appendChild(section);
-			waitForElems({
-				sel: '#note-reading',
-				onmatch(elem) {
-					if (Util.q(sel).classList.contains('kanji')) {
-						Util.appendAfter(elem, container);
+			if (sel)
+				waitForElems({
+					sel: '#note-reading',
+					onmatch(elem) {
+						if (Util.q(sel).classList.contains('kanji')) {
+							Util.appendAfter(elem, container);
+						}
 					}
-				}
-			});
+				});
 			return { container, h2, link, section };
 		},
 		getKanjiObjHtml(kanjiObj) {
@@ -222,7 +221,7 @@
 			waitForElems({
 				sel: '#character',
 				onmatch() {
-					const { link, section } = Util.createReviewContainer('#character');
+					const { link, section } = App.createReviewContainer('#character');
 
 					const outputKanjidamage = kanjiObj => {
 						link.href = kanjiObj.url;
@@ -235,16 +234,9 @@
 		runOnKanjiPage: async () => {
 			const kanji = Util.q('.kanji-icon').textContent;
 			const kanjiObj = await App.getKanjiDamageInfo(kanji, false);
-			const section = Util.makeElem('section');
+			const { container, link, section } = App.createReviewContainer();
 
-			const header = Util.makeElem('h2');
-			const link = Util.makeElem('a', {
-				...App.kanjiDamageLinkProps,
-				href: kanjiObj.url
-			});
-			header.appendChild(link);
-			section.appendChild(header);
-
+			link.href = kanjiObj.url;
 			if (kanjiObj.reading) {
 				section.innerHTML += kanjiObj.reading;
 			}
@@ -252,7 +244,7 @@
 				section.innerHTML += kanjiObj.mnemonic;
 			}
 
-			Util.appendAfter(Util.q('#note-reading').parentNode, section);
+			Util.appendAfter(Util.q('#note-reading').parentNode, container);
 		}
 	};
 
