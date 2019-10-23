@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.3
+// @version      2.0.4
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
@@ -38,14 +38,14 @@
 			return node;
 		},
 		fetch: (url, method = 'GET') =>
-			new Promise((resolve, reject) => {
+			new Promise((resolve, reject) =>
 				GM_xmlhttpRequest({
 					url,
 					method,
 					onload: resolve,
 					onerror: reject
-				});
-			}),
+				})
+			),
 		newTabLink: { target: '_blank', rel: 'noopener noreferrer' }
 	};
 
