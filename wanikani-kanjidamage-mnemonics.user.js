@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.2
+// @version      2.0.3
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
@@ -51,86 +51,70 @@
 
 	const App = {
 		cachedKanji: [],
-		kanjiDamageLinkProps: {
-			textContent: 'Kanjidamage',
-			...Util.newTabLink
-		},
 		getKanjiDamageInfo: async (kanji, inLesson) => {
 			if (App.cachedKanji[kanji]) {
 				Util.log(`${kanji} cached`);
 				return App.cachedKanji[kanji];
-			} else {
-				Util.log(`Loading Kanjidamage information for ${kanji}`);
+			}
+			Util.log(`Loading Kanjidamage information for ${kanji}`);
 
-				try {
-					const response = await Util.fetch(
-						`http://www.kanjidamage.com/kanji/search?q=${kanji}`
-					);
+			try {
+				const response = await Util.fetch(
+					`http://www.kanjidamage.com/kanji/search?q=${kanji}`
+				);
 
-					Util.log(`Found Kanjidamage information for ${kanji}`);
+				Util.log(`Found Kanjidamage information for ${kanji}`);
 
-					const tempDiv = Util.makeElem('div', {
-						innerHTML: response.responseText
-					});
+				const tempDiv = Util.makeElem('div', {
+					innerHTML: response.responseText
+				});
 
-					let reading = '';
-					let mnemonic = '';
-
-					const classReplaceCallback = elem => {
-						if (elem.classList.contains('onyomi')) {
-							elem.classList.remove('onyomi');
-							elem.classList.add(
-								inLesson ? 'highlight-reading' : 'reading-highlight'
-							);
-						}
-						if (elem.classList.contains('component')) {
-							elem.classList.remove('component');
-							elem.classList.add(
-								inLesson ? 'highlight-radical' : 'radical-highlight'
-							);
-						}
-						if (elem.classList.contains('translation')) {
-							elem.classList.remove('translation');
-							elem.classList.add(inLesson ? 'highlight-kanji' : 'kanji-highlight');
-						}
-					};
-
-					let onyomiTable = Util.qq('h2', tempDiv).filter(elem =>
-						elem.textContent.includes('Onyomi')
-					);
-					if (onyomiTable.length > 0) {
-						onyomiTable = onyomiTable[0].nextElementSibling;
-						const readingElem = Util.q('td:nth-child(2)', onyomiTable);
-						Util.qq('span', readingElem).forEach(classReplaceCallback);
-						reading = readingElem.innerHTML;
+				const replaceClasses = elem => {
+					if (elem.classList.contains('onyomi')) {
+						elem.classList.remove('onyomi');
+						elem.classList.add(inLesson ? 'highlight-reading' : 'reading-highlight');
 					}
-
-					let mnemonicTable = Util.qq('h2', tempDiv).filter(elem =>
-						elem.textContent.includes('Mnemonic')
-					);
-					if (mnemonicTable.length > 0) {
-						mnemonicTable = mnemonicTable[0].nextElementSibling;
-						const mnemonicElem = Util.q('td:nth-child(2)', mnemonicTable);
-						Util.qq('span', mnemonicElem).forEach(classReplaceCallback);
-						mnemonic = mnemonicElem.innerHTML;
+					if (elem.classList.contains('component')) {
+						elem.classList.remove('component');
+						elem.classList.add(inLesson ? 'highlight-radical' : 'radical-highlight');
 					}
+					if (elem.classList.contains('translation')) {
+						elem.classList.remove('translation');
+						elem.classList.add(inLesson ? 'highlight-kanji' : 'kanji-highlight');
+					}
+				};
 
-					App.cachedKanji[kanji] = {
-						character: kanji,
-						reading,
-						mnemonic,
-						url: response.finalUrl
-					};
+				const readTableHtml = header => {
+					const section = Util.qq('h2', tempDiv).find(elem =>
+						elem.textContent.includes(header)
+					);
+					if (!section) return;
+					const content = Util.q('td:nth-child(2)', section.nextElementSibling);
+					Util.qq('span', content).forEach(replaceClasses);
+					return content.innerHTML;
+				};
 
-					return App.cachedKanji[kanji];
-				} catch (e) {
-					Util.log(`Could not find Kanjidamage information for ${kanji}`);
-				}
+				const reading = readTableHtml('Onyomi');
+				const mnemonic = readTableHtml('Mnemonic');
+
+				App.cachedKanji[kanji] = {
+					character: kanji,
+					reading,
+					mnemonic,
+					url: response.finalUrl
+				};
+
+				return App.cachedKanji[kanji];
+			} catch (e) {
+				Util.log(`Could not find Kanjidamage information for ${kanji}`);
 			}
 		},
 		createH2() {
 			const h2 = Util.makeElem('h2');
-			const link = Util.makeElem('a', App.kanjiDamageLinkProps);
+			const link = Util.makeElem('a', {
+				textContent: 'Kanjidamage',
+				...Util.newTabLink
+			});
 			h2.appendChild(link);
 			return { h2, link };
 		},
@@ -143,32 +127,22 @@
 			}
 			return { h2, link, section };
 		},
-		createContainer(sel) {
+		createContainer(sel, selNode) {
 			const container = Util.makeElem('section');
 			const { h2, link, section } = App.createSection();
 			container.appendChild(h2);
 			container.appendChild(section);
-			if (sel)
+			if (typeof sel === 'string')
 				waitForElems({
-					sel: '#note-reading',
-					onmatch(elem) {
-						if (Util.q(sel).classList.contains('kanji')) {
-							Util.appendAfter(elem, container);
-						}
-					}
+					sel,
+					onmatch: elem =>
+						Util.q(selNode).classList.contains('kanji') &&
+						Util.appendAfter(elem, container)
 				});
+			else Util.appendAfter(sel, container);
 			return { container, h2, link, section };
 		},
-		getKanjiObjHtml(kanjiObj) {
-			let html = '';
-			if (kanjiObj.reading) {
-				html += kanjiObj.reading;
-			}
-			if (kanjiObj.mnemonic) {
-				html += kanjiObj.mnemonic;
-			}
-			return html;
-		},
+		getKanjiObjHtml: ({ reading, mnemonic }) => (reading || '') + (mnemonic || ''),
 		initWatch: (sel, selKanji, cb, cbClear) =>
 			waitForElems({
 				context: Util.q(sel),
@@ -179,13 +153,10 @@
 				},
 				onchange: async () => {
 					cbClear && cbClear();
-					if (Util.q(sel).classList.contains('kanji')) {
-						const kanji = Util.q(selKanji).textContent.trim();
-						const kanjiObj = await App.getKanjiDamageInfo(kanji, true);
-						if (kanji === kanjiObj.character) {
-							cb && cb(kanjiObj);
-						}
-					}
+					if (!Util.q(sel).classList.contains('kanji')) return;
+					const kanji = Util.q(selKanji).textContent.trim();
+					const kanjiObj = await App.getKanjiDamageInfo(kanji, true);
+					kanji === kanjiObj.character && cb && cb(kanjiObj);
 				}
 			}),
 		runOnLesson: () =>
@@ -200,6 +171,7 @@
 						Util.q('#supplement-kan-reading-notes')
 					);
 					const { link: reviewLink, section: reviewSection } = App.createContainer(
+						'#note-reading',
 						'#main-info'
 					);
 
@@ -221,7 +193,7 @@
 			waitForElems({
 				sel: '#character',
 				onmatch() {
-					const { link, section } = App.createContainer('#character');
+					const { link, section } = App.createContainer('#note-reading', '#character');
 
 					const outputKanjidamage = kanjiObj => {
 						link.href = kanjiObj.url;
@@ -234,17 +206,10 @@
 		runOnKanjiPage: async () => {
 			const kanji = Util.q('.kanji-icon').textContent;
 			const kanjiObj = await App.getKanjiDamageInfo(kanji, false);
-			const { container, link, section } = App.createContainer();
+			const { link, section } = App.createContainer(Util.q('#note-reading').parentNode);
 
 			link.href = kanjiObj.url;
-			if (kanjiObj.reading) {
-				section.innerHTML += kanjiObj.reading;
-			}
-			if (kanjiObj.mnemonic) {
-				section.innerHTML += kanjiObj.mnemonic;
-			}
-
-			Util.appendAfter(Util.q('#note-reading').parentNode, container);
+			section.innerHTML = App.getKanjiObjHtml(kanjiObj);
 		}
 	};
 
