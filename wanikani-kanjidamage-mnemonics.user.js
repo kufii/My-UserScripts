@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.4
+// @version      2.0.5
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
@@ -91,6 +91,12 @@
 					if (!section) return;
 					const content = Util.q('td:nth-child(2)', section.nextElementSibling);
 					Util.qq('span', content).forEach(replaceClasses);
+					Util.qq('img', content)
+						.filter(img => img.getAttribute('src').startsWith('/'))
+						.forEach(
+							img =>
+								(img.src = 'http://www.kanjidamage.com' + img.getAttribute('src'))
+						);
 					return content.innerHTML;
 				};
 
