@@ -10,24 +10,24 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	const Util = {
-		qq(query, context = document) {
-			return Array.from(context.querySelectorAll(query));
-		}
-	};
+  const Util = {
+    qq(query, context = document) {
+      return Array.from(context.querySelectorAll(query));
+    }
+  };
 
-	const REGEX = /^https?:\/\/rulu\.io\/j\//iu;
+  const REGEX = /^https?:\/\/rulu\.io\/j\//iu;
 
-	Util.qq('a')
-		.filter(link => link.href.match(REGEX))
-		.forEach(link => (link.href = link.href.replace(REGEX, '')));
+  Util.qq('a')
+    .filter(link => link.href.match(REGEX))
+    .forEach(link => (link.href = link.href.replace(REGEX, '')));
 
-	waitForElems({
-		sel: '#d0bf',
-		onmatch(overlay) {
-			overlay.remove();
-		}
-	});
+  waitForElems({
+    sel: '#d0bf',
+    onmatch(overlay) {
+      overlay.remove();
+    }
+  });
 })();

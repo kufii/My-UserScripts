@@ -15,70 +15,70 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	const commonValues = [
-		{ value: 'daily-installs', text: 'Daily installs' },
-		{ value: 'total_installs', text: 'Total installs' },
-		{ value: 'ratings', text: 'Ratings' },
-		{ value: 'created', text: 'Created date' },
-		{ value: 'updated', text: 'Updated date' },
-		{ value: 'name', text: 'Name' }
-	];
-	const Config = GM_config([
-		{
-			key: 'all',
-			label: 'All Scripts Sort',
-			default: 'daily-installs',
-			type: 'dropdown',
-			values: commonValues
-		},
-		{
-			key: 'search',
-			label: 'Search Sort',
-			default: 'relevance',
-			type: 'dropdown',
-			values: [{ value: 'relevance', text: 'Relevance' }, ...commonValues]
-		},
-		{
-			key: 'user',
-			label: 'User Profile Sort',
-			default: 'daily-installs',
-			type: 'dropdown',
-			values: commonValues
-		}
-	]);
-	GM_registerMenuCommand('GreasyFork Sort Settings', Config.setup);
+  const commonValues = [
+    { value: 'daily-installs', text: 'Daily installs' },
+    { value: 'total_installs', text: 'Total installs' },
+    { value: 'ratings', text: 'Ratings' },
+    { value: 'created', text: 'Created date' },
+    { value: 'updated', text: 'Updated date' },
+    { value: 'name', text: 'Name' }
+  ];
+  const Config = GM_config([
+    {
+      key: 'all',
+      label: 'All Scripts Sort',
+      default: 'daily-installs',
+      type: 'dropdown',
+      values: commonValues
+    },
+    {
+      key: 'search',
+      label: 'Search Sort',
+      default: 'relevance',
+      type: 'dropdown',
+      values: [{ value: 'relevance', text: 'Relevance' }, ...commonValues]
+    },
+    {
+      key: 'user',
+      label: 'User Profile Sort',
+      default: 'daily-installs',
+      type: 'dropdown',
+      values: commonValues
+    }
+  ]);
+  GM_registerMenuCommand('GreasyFork Sort Settings', Config.setup);
 
-	const onSearch = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/scripts\/?.*\?.*q=/iu);
-	const onScripts = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/scripts\/?/iu);
-	const onProfile = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/users\//iu);
+  const onSearch = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/scripts\/?.*\?.*q=/iu);
+  const onScripts = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/scripts\/?/iu);
+  const onProfile = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/users\//iu);
 
-	waitForElems({
-		sel: '#script-list-sort > ul > li:first-of-type > a',
-		stop: true,
-		onmatch(defaultSort) {
-			const url = new URL(defaultSort.href);
-			url.searchParams.set('sort', onSearch ? 'relevance' : 'daily-installs');
-			defaultSort.href = url.href;
-		}
-	});
+  waitForElems({
+    sel: '#script-list-sort > ul > li:first-of-type > a',
+    stop: true,
+    onmatch(defaultSort) {
+      const url = new URL(defaultSort.href);
+      url.searchParams.set('sort', onSearch ? 'relevance' : 'daily-installs');
+      defaultSort.href = url.href;
+    }
+  });
 
-	const url = new URL(location.href);
-	const sort = url.searchParams.get('sort');
-	if (!sort) {
-		const cfg = Config.load();
-		let cfgSort;
-		if (onSearch) {
-			cfgSort = cfg.search;
-		} else if (onScripts) {
-			cfgSort = cfg.all;
-		} else if (onProfile) {
-			cfgSort = cfg.user;
-		}
-		if (cfgSort) {
-			url.searchParams.set('sort', cfgSort);
-			window.location.replace(url.href);
-		}
-	}
+  const url = new URL(location.href);
+  const sort = url.searchParams.get('sort');
+  if (!sort) {
+    const cfg = Config.load();
+    let cfgSort;
+    if (onSearch) {
+      cfgSort = cfg.search;
+    } else if (onScripts) {
+      cfgSort = cfg.all;
+    } else if (onProfile) {
+      cfgSort = cfg.user;
+    }
+    if (cfgSort) {
+      url.searchParams.set('sort', cfgSort);
+      window.location.replace(url.href);
+    }
+  }
 })();

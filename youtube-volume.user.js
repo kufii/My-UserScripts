@@ -15,32 +15,32 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	const { q } = window.QuickQuery;
+  const { q } = window.QuickQuery;
 
-	const Util = {
-		bound: (num, min, max) => Math.max(Math.min(num, max), min)
-	};
+  const Util = {
+    bound: (num, min, max) => Math.max(Math.min(num, max), min)
+  };
 
-	const Config = GM_config([
-		{ key: 'reverse', label: 'Reverse Scroll', default: false, type: 'bool' },
-		{ key: 'horizontal', label: 'Use Horizontal Scroll', default: false, type: 'bool' },
-		{ key: 'step', label: 'Change By', default: 5, type: 'number', min: 1, max: 100 },
-		{ key: 'hud', label: 'Display HUD', default: true, type: 'bool' },
-		{
-			key: 'requireShift',
-			label: 'Only handle scroll if holding "Shift" key',
-			default: false,
-			type: 'bool'
-		}
-	]);
-	GM_registerMenuCommand('Youtube Scroll Volume Settings', Config.setup);
+  const Config = GM_config([
+    { key: 'reverse', label: 'Reverse Scroll', default: false, type: 'bool' },
+    { key: 'horizontal', label: 'Use Horizontal Scroll', default: false, type: 'bool' },
+    { key: 'step', label: 'Change By', default: 5, type: 'number', min: 1, max: 100 },
+    { key: 'hud', label: 'Display HUD', default: true, type: 'bool' },
+    {
+      key: 'requireShift',
+      label: 'Only handle scroll if holding "Shift" key',
+      default: false,
+      type: 'bool'
+    }
+  ]);
+  GM_registerMenuCommand('Youtube Scroll Volume Settings', Config.setup);
 
-	let config = Config.load();
-	Config.onsave = newConf => (config = newConf);
+  let config = Config.load();
+  Config.onsave = newConf => (config = newConf);
 
-	GM_addStyle(/* css */ `
+  GM_addStyle(/* css */ `
 		.YSV_hud {
 			display: flex;
 			flex-direction: column;
@@ -70,44 +70,43 @@
 		}
 	`);
 
-	const createHud = () => {
-		const hud = document.createElement('div');
-		hud.classList.add('YSV_hud');
-		hud.innerHTML = '<div class="YSV_bar"><div class="YSV_progress"></div></div>';
-		return hud;
-	};
+  const createHud = () => {
+    const hud = document.createElement('div');
+    hud.classList.add('YSV_hud');
+    hud.innerHTML = '<div class="YSV_bar"><div class="YSV_progress"></div></div>';
+    return hud;
+  };
 
-	waitForElems({
-		sel: 'ytd-player',
-		onmatch(node) {
-			let id;
+  waitForElems({
+    sel: 'ytd-player',
+    onmatch(node) {
+      let id;
 
-			const hud = createHud();
-			const progress = q(hud).q('.YSV_progress');
-			node.appendChild(hud);
+      const hud = createHud();
+      const progress = q(hud).q('.YSV_progress');
+      node.appendChild(hud);
 
-			const showHud = volume => {
-				clearTimeout(id);
-				progress.style.width = `${volume}%`;
-				hud.style.opacity = 1;
-				id = setTimeout(() => (hud.style.opacity = 0), 800);
-			};
+      const showHud = volume => {
+        clearTimeout(id);
+        progress.style.width = `${volume}%`;
+        hud.style.opacity = 1;
+        id = setTimeout(() => (hud.style.opacity = 0), 800);
+      };
 
-			node.onwheel = e => {
-				if (config.requireShift && !e.shiftKey) return;
-				const player = node.getPlayer();
-				const dir =
-					((config.horizontal ? -e.deltaX : e.deltaY) > 0 ? -1 : 1) *
-					(config.reverse ? -1 : 1);
+      node.onwheel = e => {
+        if (config.requireShift && !e.shiftKey) return;
+        const player = node.getPlayer();
+        const dir =
+          ((config.horizontal ? -e.deltaX : e.deltaY) > 0 ? -1 : 1) * (config.reverse ? -1 : 1);
 
-				const vol = Util.bound(player.getVolume() + config.step * dir, 0, 100);
-				if (vol > 0 && player.isMuted()) player.unMute();
-				player.setVolume(vol);
-				if (config.hud) showHud(vol);
+        const vol = Util.bound(player.getVolume() + config.step * dir, 0, 100);
+        if (vol > 0 && player.isMuted()) player.unMute();
+        player.setVolume(vol);
+        if (config.hud) showHud(vol);
 
-				e.preventDefault();
-				e.stopImmediatePropagation();
-			};
-		}
-	});
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      };
+    }
+  });
 })();

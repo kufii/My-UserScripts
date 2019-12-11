@@ -9,7 +9,7 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	document.querySelector('#enable-source-editor-code').click();
+  document.querySelector('#enable-source-editor-code').click();
 })();

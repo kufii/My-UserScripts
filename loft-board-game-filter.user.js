@@ -10,57 +10,54 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	const SCRIPT_NAME = 'Loft Lounge Board Game Filters';
+  const SCRIPT_NAME = 'Loft Lounge Board Game Filters';
 
-	const Util = {
-		log(...args) {
-			args.unshift(`%c${SCRIPT_NAME}:`, 'font-weight: bold;color: #233c7b;');
-			console.log(...args);
-		},
-		q(query, context = document) {
-			return context.querySelector(query);
-		},
-		qq(query, context = document) {
-			return Array.from(context.querySelectorAll(query));
-		},
-		prepend(parent, child) {
-			parent.insertBefore(child, parent.firstChild);
-		},
-		createTextbox() {
-			const input = document.createElement('input');
-			input.type = 'text';
-			return input;
-		},
-		createCheckbox(lbl) {
-			const label = document.createElement('label');
-			const checkbox = document.createElement('input');
-			checkbox.type = 'checkbox';
-			label.appendChild(checkbox);
-			label.appendChild(document.createTextNode(lbl));
-			return label;
-		},
-		createButton(text, onclick) {
-			const button = document.createElement('button');
-			button.textContent = text;
-			button.onclick = onclick;
-			return button;
-		},
-		toTitleCase(str) {
-			return str.replace(
-				/[a-z0-9]+/giu,
-				word => word.slice(0, 1).toUpperCase() + word.slice(1)
-			);
-		},
-		appendStyle(str) {
-			const style = document.createElement('style');
-			style.textContent = str;
-			document.head.appendChild(style);
-		}
-	};
+  const Util = {
+    log(...args) {
+      args.unshift(`%c${SCRIPT_NAME}:`, 'font-weight: bold;color: #233c7b;');
+      console.log(...args);
+    },
+    q(query, context = document) {
+      return context.querySelector(query);
+    },
+    qq(query, context = document) {
+      return Array.from(context.querySelectorAll(query));
+    },
+    prepend(parent, child) {
+      parent.insertBefore(child, parent.firstChild);
+    },
+    createTextbox() {
+      const input = document.createElement('input');
+      input.type = 'text';
+      return input;
+    },
+    createCheckbox(lbl) {
+      const label = document.createElement('label');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(lbl));
+      return label;
+    },
+    createButton(text, onclick) {
+      const button = document.createElement('button');
+      button.textContent = text;
+      button.onclick = onclick;
+      return button;
+    },
+    toTitleCase(str) {
+      return str.replace(/[a-z0-9]+/giu, word => word.slice(0, 1).toUpperCase() + word.slice(1));
+    },
+    appendStyle(str) {
+      const style = document.createElement('style');
+      style.textContent = str;
+      document.head.appendChild(style);
+    }
+  };
 
-	Util.appendStyle(/* css */ `
+  Util.appendStyle(/* css */ `
 		/* Fix Ctrl+F */
 		#sidebar-holder, #content-holder {
 			position: static!important;
@@ -101,109 +98,109 @@
 		}
 	`);
 
-	const table = Util.q('#page-content > div > table > tbody');
-	const rows = Util.qq('tr:not(:first-of-type)', table);
-	const categories = new Set(
-		rows
-			.map(row => {
-				const typos = {
-					Triva: 'Trivia'
-				};
-				const td = Util.q('td:last-of-type', row);
-				let category = Util.toTitleCase(td.textContent.trim());
-				if (typos[category]) {
-					td.textContent = category = typos[category];
-				}
-				return category;
-			})
-			.sort()
-	);
+  const table = Util.q('#page-content > div > table > tbody');
+  const rows = Util.qq('tr:not(:first-of-type)', table);
+  const categories = new Set(
+    rows
+      .map(row => {
+        const typos = {
+          Triva: 'Trivia'
+        };
+        const td = Util.q('td:last-of-type', row);
+        let category = Util.toTitleCase(td.textContent.trim());
+        if (typos[category]) {
+          td.textContent = category = typos[category];
+        }
+        return category;
+      })
+      .sort()
+  );
 
-	const tr = document.createElement('tr');
-	const td1 = document.createElement('td');
-	const td2 = document.createElement('td');
-	tr.appendChild(td1);
-	tr.appendChild(td2);
+  const tr = document.createElement('tr');
+  const td1 = document.createElement('td');
+  const td2 = document.createElement('td');
+  tr.appendChild(td1);
+  tr.appendChild(td2);
 
-	const nameFilter = Util.createTextbox();
-	td1.appendChild(nameFilter);
+  const nameFilter = Util.createTextbox();
+  td1.appendChild(nameFilter);
 
-	const selectedCategories = [];
+  const selectedCategories = [];
 
-	const filter = function() {
-		rows.forEach(row => (row.hidden = true));
-		let rowsFilter = rows;
+  const filter = function() {
+    rows.forEach(row => (row.hidden = true));
+    let rowsFilter = rows;
 
-		if (selectedCategories.length > 0) {
-			rowsFilter = rowsFilter.filter(row => {
-				const category = Util.q('td:last-of-type', row)
-					.textContent.trim()
-					.toLowerCase();
-				return selectedCategories.includes(category);
-			});
-		}
+    if (selectedCategories.length > 0) {
+      rowsFilter = rowsFilter.filter(row => {
+        const category = Util.q('td:last-of-type', row)
+          .textContent.trim()
+          .toLowerCase();
+        return selectedCategories.includes(category);
+      });
+    }
 
-		const value = nameFilter.value.trim().toLowerCase();
-		if (value) {
-			rowsFilter = rowsFilter.filter(row => {
-				const name = Util.q('td:first-of-type', row)
-					.textContent.trim()
-					.toLowerCase();
-				return name.includes(value);
-			});
-		}
+    const value = nameFilter.value.trim().toLowerCase();
+    if (value) {
+      rowsFilter = rowsFilter.filter(row => {
+        const name = Util.q('td:first-of-type', row)
+          .textContent.trim()
+          .toLowerCase();
+        return name.includes(value);
+      });
+    }
 
-		rowsFilter.forEach(row => (row.hidden = false));
-	};
+    rowsFilter.forEach(row => (row.hidden = false));
+  };
 
-	nameFilter.oninput = filter;
+  nameFilter.oninput = filter;
 
-	const categoryDiv = document.createElement('div');
-	categoryDiv.classList.add('category-list');
-	categoryDiv.hidden = true;
+  const categoryDiv = document.createElement('div');
+  categoryDiv.classList.add('category-list');
+  categoryDiv.hidden = true;
 
-	const categorySpan = document.createElement('span');
+  const categorySpan = document.createElement('span');
 
-	categories.forEach(category => {
-		const label = Util.createCheckbox(category);
-		categoryDiv.appendChild(label);
-		categoryDiv.appendChild(document.createElement('br'));
-		const check = Util.q('input', label);
-		check.oninput = () => {
-			const cat = category.trim().toLowerCase();
-			const index = selectedCategories.indexOf(cat);
-			if (check.checked) {
-				if (index === -1) {
-					selectedCategories.push(cat);
-				}
-			} else if (index !== -1) {
-				selectedCategories.splice(index, 1);
-			}
-			categorySpan.textContent = selectedCategories
-				.map(category => Util.toTitleCase(category))
-				.join(', ');
-			filter();
-		};
-	});
+  categories.forEach(category => {
+    const label = Util.createCheckbox(category);
+    categoryDiv.appendChild(label);
+    categoryDiv.appendChild(document.createElement('br'));
+    const check = Util.q('input', label);
+    check.oninput = () => {
+      const cat = category.trim().toLowerCase();
+      const index = selectedCategories.indexOf(cat);
+      if (check.checked) {
+        if (index === -1) {
+          selectedCategories.push(cat);
+        }
+      } else if (index !== -1) {
+        selectedCategories.splice(index, 1);
+      }
+      categorySpan.textContent = selectedCategories
+        .map(category => Util.toTitleCase(category))
+        .join(', ');
+      filter();
+    };
+  });
 
-	const categoryButton = Util.createButton('Categories...', () => {
-		if (categoryDiv.hidden) {
-			categoryDiv.hidden = false;
-		} else {
-			categoryDiv.hidden = true;
-		}
-	});
+  const categoryButton = Util.createButton('Categories...', () => {
+    if (categoryDiv.hidden) {
+      categoryDiv.hidden = false;
+    } else {
+      categoryDiv.hidden = true;
+    }
+  });
 
-	document.body.addEventListener('click', e => {
-		if (e.target !== categoryButton && !categoryDiv.contains(e.target)) {
-			categoryDiv.hidden = true;
-		}
-	});
+  document.body.addEventListener('click', e => {
+    if (e.target !== categoryButton && !categoryDiv.contains(e.target)) {
+      categoryDiv.hidden = true;
+    }
+  });
 
-	td2.appendChild(categoryButton);
-	td2.appendChild(document.createElement('br'));
-	td2.appendChild(categoryDiv);
-	td2.appendChild(categorySpan);
+  td2.appendChild(categoryButton);
+  td2.appendChild(document.createElement('br'));
+  td2.appendChild(categoryDiv);
+  td2.appendChild(categorySpan);
 
-	Util.prepend(table, tr);
+  Util.prepend(table, tr);
 })();

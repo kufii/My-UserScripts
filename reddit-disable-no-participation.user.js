@@ -11,26 +11,26 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	const MATCH = /^https?:\/\/np\.reddit\.com/iu;
-	const REPLACE = {
-		regex: /^(https?:\/\/)np(.+)/iu,
-		replaceWith: '$1www$2'
-	};
+  const MATCH = /^https?:\/\/np\.reddit\.com/iu;
+  const REPLACE = {
+    regex: /^(https?:\/\/)np(.+)/iu,
+    replaceWith: '$1www$2'
+  };
 
-	if (location.href.match(MATCH)) {
-		location.replace(location.href.replace(REPLACE.regex, REPLACE.replaceWith));
-	}
+  if (location.href.match(MATCH)) {
+    location.replace(location.href.replace(REPLACE.regex, REPLACE.replaceWith));
+  }
 
-	document.addEventListener('DOMContentLoaded', () => {
-		waitForElems({
-			sel: 'a',
-			onmatch(link) {
-				if (link.href.match(MATCH)) {
-					link.href = link.href.replace(REPLACE.regex, REPLACE.replaceWith);
-				}
-			}
-		});
-	});
+  document.addEventListener('DOMContentLoaded', () => {
+    waitForElems({
+      sel: 'a',
+      onmatch(link) {
+        if (link.href.match(MATCH)) {
+          link.href = link.href.replace(REPLACE.regex, REPLACE.replaceWith);
+        }
+      }
+    });
+  });
 })();

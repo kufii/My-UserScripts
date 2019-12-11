@@ -10,22 +10,22 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	waitForElems({
-		sel: 'a.exitstitial',
-		onmatch(link) {
-			link.onclick = e => {
-				e.preventDefault();
-				e.stopImmediatePropagation();
-				if (e.button === 0) {
-					location.href = link.href;
-				} else if (e.button === 1) {
-					GM_openInTab(link.href, true);
-				}
-				return false;
-			};
-			link.onauxclick = link.onclick;
-		}
-	});
+  waitForElems({
+    sel: 'a.exitstitial',
+    onmatch(link) {
+      link.onclick = e => {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        if (e.button === 0) {
+          location.href = link.href;
+        } else if (e.button === 1) {
+          GM_openInTab(link.href, true);
+        }
+        return false;
+      };
+      link.onauxclick = link.onclick;
+    }
+  });
 })();

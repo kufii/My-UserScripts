@@ -9,8 +9,8 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	document.querySelector('#remember-openid').checked = true;
-	document.querySelector('#remember-normal').checked = true;
+  document.querySelector('#remember-openid').checked = true;
+  document.querySelector('#remember-normal').checked = true;
 })();
