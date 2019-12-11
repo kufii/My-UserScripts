@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Google - Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.7
+// @version      1.2.0
 // @description  Opens search results in new tab when you middle click
 // @author       Adrien Pyke
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/?(?:\?.*)?$/
@@ -43,9 +43,9 @@
   };
 
   waitForElems({
-    sel: '#_fZl',
+    sel: 'form[role=search] button[type=submit]',
     onmatch(btn) {
-      const input = document.querySelector('#lst-ib');
+      const input = document.querySelector('input[name=q]');
 
       btn.onmousedown = e => {
         if (e.button === 1) {
@@ -68,15 +68,18 @@
   });
 
   waitForElems({
-    sel: '.sbsb_b li .sbqs_c, .sbsb_b li .sbpqs_d',
+    sel: 'form[role=search] ul[role=listbox] li > div',
     onmatch(elem) {
+      elem.onmousedown = e => {
+        if (e.button === 1) {
+          e.preventDefault();
+        }
+      };
       elem.onclick = e => {
         if (e.button === 1) {
           e.preventDefault();
           e.stopImmediatePropagation();
-          const text = elem.classList.contains('sbpqs_d')
-            ? elem.querySelector('span').textContent
-            : elem.textContent;
+          const text = elem.querySelector('span').textContent;
           const url = getUrl(text);
           GM_openInTab(url, true);
           return false;
