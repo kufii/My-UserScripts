@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "lint": "eslint .",
-    "format": "prettier --write \"**/*.{js,jsx,md,json,css,prettierrc,eslintrc}\""
+    "format": "prettier --write \"**/*.{js,jsx,md,json,css,prettierrc,eslintrc,html}\"",
+    "check:format": "prettier --check \"**/*.{js,jsx,md,json,css,prettierrc,eslintrc,html}\"",
+    "check": "npm run lint && npm run check:format"
   },
   "repository": {
     "type": "git",
@@ -18,9 +20,9 @@
   },
   "homepage": "https://github.com/kufii/My-UserScripts#readme",
   "devDependencies": {
-    "eslint": "^6.7.2",
+    "eslint": "^6.8.0",
     "eslint-config-adpyke-es6": "^1.4.13",
-    "eslint-config-prettier": "^6.7.0",
+    "eslint-config-prettier": "^6.10.0",
     "prettier": "^1.19.1"
   }
 }
