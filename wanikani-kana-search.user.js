@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kana Search
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Search on WaniKani using hiragana
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/*
@@ -29,6 +29,7 @@
       kanaActive = !kanaActive;
       btn.style.color = kanaActive ? '#333' : '#999';
       wanakana[kanaActive ? 'bind' : 'unbind'](input);
+      input.focus();
     });
 
   const addKanaButton = () => {
