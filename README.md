@@ -33,7 +33,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 - [The Works Burger Chooser](https://greasyfork.org/en/scripts/22582-the-works-burger-chooser)
 - [userstyles.org - Auto Enable Source Editor](https://greasyfork.org/en/scripts/22361-userstyles-org-auto-enable-source-editor)
 - [userstyles.org - auto select keep me logged in](https://greasyfork.org/en/scripts/22419-userstyles-org-auto-select-keep-me-logged-in)
-- [View More Videos by Same YouTube Channel](https://greasyfork.org/en/scripts/370637-view-more-videos-by-same-youtube-channel?sort=daily-installs)
+- [View More Videos by Same YouTube Channel](https://greasyfork.org/en/scripts/370637-view-more-videos-by-same-youtube-channel)
 - [WaniKani Kana Search](https://greasyfork.org/en/scripts/396166-wanikani-kana-search?sort=daily-installs)
 - [WaniKani Kanjidamage Mnemonics](https://greasyfork.org/en/scripts/20106-wanikani-kanjidamage-mnemonics)
 - [Youtube Middle Click Search](https://greasyfork.org/en/scripts/6031-youtube-middle-click-search)
