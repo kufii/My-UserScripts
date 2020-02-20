@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         LingoDeer Auto Write Myself
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Auto switch to "Write Myself", and adds press enter to continue.
 // @author       Adrien Pyke
 // @match        *://www.lingodeer.com/learn-languages/*
@@ -23,13 +23,15 @@
   });
   waitForElems({
     sel: '.textAreaInput textarea',
-    onmatch: input =>
+    onmatch: input => (
       input.addEventListener('keydown', e => {
         if (e.key !== 'Enter') return;
         const btn = document.querySelector('.checkBtn.active, .continueBtn:not(.wrong)');
         btn && btn.click();
         e.preventDefault();
         return false;
-      })
+      }),
+      input.focus()
+    )
   });
 })();
