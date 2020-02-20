@@ -17,6 +17,7 @@ A collection of user scripts that I made to make my experience on the web a litt
 - [Imgur Mirror](https://greasyfork.org/en/scripts/18806-imgur-mirror)
 - [Kitsu MangaDex Links](https://greasyfork.org/en/scripts/22888-kitsu-mangadex-links)
 - [Kitsu Fansub Info](https://greasyfork.org/en/scripts/22500-hummingbird-fansub-info)
+- [LingoDeer Auto Write Myself](https://greasyfork.org/en/scripts/396684-lingodeer-auto-write-myself)
 - [Loft Lounge Board Game Filters](https://greasyfork.org/en/scripts/22579-loft-lounge-board-game-filters)
 - [MyAnimeList, External Kitsu Links](https://greasyfork.org/en/scripts/23163-myanimelist-external-hummingbird-links)
 - [Newspaper Paywall Bypasser](https://greasyfork.org/en/scripts/18585-newspaper-paywall-bypasser)
