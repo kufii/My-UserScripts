@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         LingoDeer Auto Write Myself
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.1
+// @version      1.0.2
 // @description  Auto switch to "Write Myself", and adds press enter to continue.
 // @author       Adrien Pyke
 // @match        *://www.lingodeer.com/learn-languages/*
@@ -33,5 +33,10 @@
       }),
       input.focus()
     )
+  });
+  waitForElems({
+    sel: '.signBtn',
+    stop: true,
+    onmatch: btn => btn.click()
   });
 })();
