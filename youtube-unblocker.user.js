@@ -14,61 +14,59 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	const Util = {
-		q(query, context = document) {
-			return context.querySelector(query);
-		},
-		qq(query, context = document) {
-			return Array.from(context.querySelectorAll(query));
-		}
-	};
+  const Util = {
+    q(query, context = document) {
+      return context.querySelector(query);
+    },
+    qq(query, context = document) {
+      return Array.from(context.querySelectorAll(query));
+    }
+  };
 
-	const Config = GM_config([
-		{
-			key: 'autoplay',
-			label: 'Autoplay',
-			default: true,
-			type: 'bool'
-		}
-	]);
-	GM_registerMenuCommand('Youtube Unblocker Settings', Config.setup);
+  const Config = GM_config([
+    {
+      key: 'autoplay',
+      label: 'Autoplay',
+      default: true,
+      type: 'bool'
+    }
+  ]);
+  GM_registerMenuCommand('Youtube Unblocker Settings', Config.setup);
 
-	if (location.hostname === 'www.youtube.com') {
-		waitForElems({
-			sel: '#page-manager',
-			stop: true,
-			onmatch(page) {
-				setTimeout(() => {
-					const redirect = function() {
-						location.replace(
-							`${location.protocol}//hooktube.com/watch${location.search}`
-						);
-					};
-					if (page.querySelector('[player-unavailable]')) {
-						redirect();
-					} else {
-						setTimeout(() => {
-							if (!Util.q('#page-manager').innerHTML.trim()) {
-								redirect();
-							}
-						}, 5);
-					}
-				}, 0);
-			}
-		});
-	} else {
-		const cfg = Config.load();
-		if (!cfg.autoplay) {
-			waitForElems({
-				sel: '#player-obj',
-				stop: true,
-				onmatch(video) {
-					video.pause();
-				}
-			});
-			document.querySelector('#player-obj').pause();
-		}
-	}
+  if (location.hostname === 'www.youtube.com') {
+    waitForElems({
+      sel: '#page-manager',
+      stop: true,
+      onmatch(page) {
+        setTimeout(() => {
+          const redirect = function() {
+            location.replace(`${location.protocol}//hooktube.com/watch${location.search}`);
+          };
+          if (page.querySelector('[player-unavailable]')) {
+            redirect();
+          } else {
+            setTimeout(() => {
+              if (!Util.q('#page-manager').innerHTML.trim()) {
+                redirect();
+              }
+            }, 5);
+          }
+        }, 0);
+      }
+    });
+  } else {
+    const cfg = Config.load();
+    if (!cfg.autoplay) {
+      waitForElems({
+        sel: '#player-obj',
+        stop: true,
+        onmatch(video) {
+          video.pause();
+        }
+      });
+      document.querySelector('#player-obj').pause();
+    }
+  }
 })();

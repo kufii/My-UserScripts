@@ -11,30 +11,30 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	const Config = {
-		getAutoSelect(key) {
-			const value = GM_getValue(key);
-			if (typeof value === 'undefined') return true;
-			return value;
-		},
-		setAutoSelect(key, value) {
-			GM_setValue(key, value);
-		}
-	};
+  const Config = {
+    getAutoSelect(key) {
+      const value = GM_getValue(key);
+      if (typeof value === 'undefined') return true;
+      return value;
+    },
+    setAutoSelect(key, value) {
+      GM_setValue(key, value);
+    }
+  };
 
-	const puzzle = location.pathname.match(/^\/puzzles\/(.+)\//iu)[1];
-	const autoselect = Config.getAutoSelect(puzzle);
-	if (autoselect) {
-		document.querySelector('input.inspection-toggle').click();
-	}
+  const puzzle = location.pathname.match(/^\/puzzles\/(.+)\//iu)[1];
+  const autoselect = Config.getAutoSelect(puzzle);
+  if (autoselect) {
+    document.querySelector('input.inspection-toggle').click();
+  }
 
-	GM_registerMenuCommand(
-		`${autoselect ? 'Disable' : 'Enable'} "Auto Select Inspection" for ${puzzle}`,
-		() => {
-			Config.setAutoSelect(puzzle, !autoselect);
-			location.reload();
-		}
-	);
+  GM_registerMenuCommand(
+    `${autoselect ? 'Disable' : 'Enable'} "Auto Select Inspection" for ${puzzle}`,
+    () => {
+      Config.setAutoSelect(puzzle, !autoselect);
+      location.reload();
+    }
+  );
 })();

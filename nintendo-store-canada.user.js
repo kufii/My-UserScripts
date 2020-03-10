@@ -10,13 +10,13 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	if (!location.href.match(/\/ca\//iu)) {
-		if (location.href.match(/\/us\//iu)) {
-			location.replace(location.href.replace(/\/us\//iu, '/ca/'));
-		} else {
-			location.replace(location.href.replace(/\/ng3/iu, '/ng3/ca/po'));
-		}
-	}
+  if (!location.href.match(/\/ca\//iu)) {
+    if (location.href.match(/\/us\//iu)) {
+      location.replace(location.href.replace(/\/us\//iu, '/ca/'));
+    } else {
+      location.replace(location.href.replace(/\/ng3/iu, '/ng3/ca/po'));
+    }
+  }
 })();

@@ -10,31 +10,31 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	const Util = {
-		q(query, context = document) {
-			return context.querySelector(query);
-		},
-		qq(query, context = document) {
-			return Array.from(context.querySelectorAll(query));
-		}
-	};
+  const Util = {
+    q(query, context = document) {
+      return context.querySelector(query);
+    },
+    qq(query, context = document) {
+      return Array.from(context.querySelectorAll(query));
+    }
+  };
 
-	waitForElems({
-		sel: 'body.has-skyscraper',
-		stop: true,
-		context: document,
-		onmatch() {
-			Util.q('.dmp_PlaybackButton').click();
-		}
-	});
+  waitForElems({
+    sel: 'body.has-skyscraper',
+    stop: true,
+    context: document,
+    onmatch() {
+      Util.q('.dmp_PlaybackButton').click();
+    }
+  });
 
-	waitForElems({
-		sel: '.dmp_ComingUpEndScreen:not(.dmp_is-hidden) .dmp_ComingUpEndScreen-cancel',
-		stop: true,
-		onmatch(cancel) {
-			cancel.click();
-		}
-	});
+  waitForElems({
+    sel: '.dmp_ComingUpEndScreen:not(.dmp_is-hidden) .dmp_ComingUpEndScreen-cancel',
+    stop: true,
+    onmatch(cancel) {
+      cancel.click();
+    }
+  });
 })();

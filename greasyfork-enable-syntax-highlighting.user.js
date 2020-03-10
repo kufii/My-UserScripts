@@ -11,13 +11,13 @@
 // ==/UserScript==
 
 (() => {
-	'use strict';
+  'use strict';
 
-	waitForElems({
-		sel: '#enable-source-editor-code',
-		stop: true,
-		onmatch(checkbox) {
-			checkbox.click();
-		}
-	});
+  waitForElems({
+    sel: '#enable-source-editor-code',
+    stop: true,
+    onmatch(checkbox) {
+      checkbox.click();
+    }
+  });
 })();
