@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Google - Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.7
+// @version      1.2.0
 // @description  Opens search results in new tab when you middle click
 // @author       Adrien Pyke
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/?(?:\?.*)?$/

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.0
+// @version      1.2.1
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -39,6 +39,11 @@
 			margin-right: 8px;
 			min-width: 168px;
 		}
+    .${CLASS_PREFIX}thumbnail ytd-thumbnail {
+      margin-right: 8px;
+      height: 94px;
+      width: 168px;
+    }
 		.${CLASS_PREFIX}thumbnail.${CLASS_PREFIX}active {
 			background-color: var(--yt-thumbnail-placeholder-color);
 		}
