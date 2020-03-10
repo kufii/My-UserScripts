@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.5
+// @version      2.0.6
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
@@ -147,7 +147,8 @@
         config: {
           attributes: true,
           childList: true,
-          characterData: true
+          characterData: true,
+          subtree: true
         },
         onchange: async () => {
           cbClear && cbClear();
