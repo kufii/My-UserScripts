@@ -8,8 +8,8 @@
 // @match        *://www.wanikani.com/level/*/vocabulary/*
 // @match        *://www.wanikani.com/review/session
 // @match        *://www.wanikani.com/lesson/session
+// @require      https://gitcdn.link/repo/IllDepence/SVG_pitch/295af214b1e3c8add03a31cf022e28033495da08/accdb.js
 // @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
-// @require      https://gitcdn.xyz/repo/IllDepence/SVG_pitch/295af214b1e3c8add03a31cf022e28033495da08/accdb.js
 // @grant        none
 // ==/UserScript==
 /* global acc_dict */
@@ -18,6 +18,8 @@
   'use strict';
 
   const Util = {
+    q: (query, context = document) => context.querySelector(query),
+    qq: (query, context = document) => Array.from(context.querySelectorAll(query)),
     toMoraArray: kana => kana.match(/.[ゃゅょぁぃぅぇぉャュョァィゥェォ]?/gu),
     getAccentData: (kanji, reading) => {
       const [kana, pitch] = (acc_dict[kanji] && acc_dict[kanji].find(([r]) => r === reading)) || [];
@@ -27,28 +29,31 @@
   };
 
   const Draw = {
-    textGeneric: (x, text) =>
-      `<text x="${x}" y="67.5" style="font-size:20px;fill:#000;">${text}</text>`,
+    textGeneric: (x, text, color = '#666') =>
+      `<text x="${x}" y="67.5" style="font-size: 20px; fill: ${color};">${text}</text>`,
     text: (x, mora) =>
       mora.length === 1
         ? Draw.textGeneric(x, mora)
         : Draw.textGeneric(x - 5, mora[0]) + Draw.textGeneric(x + 12, mora[1]),
-    circle: (x, y, empty) =>
+    circle: (x, y, empty, color = '#000', emptyColor = '#eee') =>
       `
-        <circle r="5" cx="${x}" cy="${y}" style="opacity:1;fill:#000;" />
-      ` + (empty ? `<circle r="3.25" cx="${x}" cy="${y}" style="opacity:1;fill:#fff;" />` : ''),
-    path: (x, y, type, stepWidth) =>
+        <circle r="5" cx="${x}" cy="${y}" style="opacity: 1; fill: ${color};" />
+      ` +
+      (empty
+        ? `<circle r="3.25" cx="${x}" cy="${y}" style="opacity: 1; fill: ${emptyColor};" />`
+        : ''),
+    path: (x, y, type, stepWidth, color = '#000') =>
       `
       <path d="m ${x},${y} ${stepWidth},${
         { s: 0, u: -25, d: 25 }[type]
-      }" style="fill:none;stroke:#000;stroke-width:1.5;" />
+      }" style="fill: none; stroke: ${color}; stroke-width: 1.5;" />
     `,
     svg: (kanji, reading) => {
       const [mora, pitch] = Util.getAccentData(kanji, reading);
       if (!mora) return;
 
-      const stepWidth = 35,
-        marginLr = 16;
+      const stepWidth = 35;
+      const marginLr = 16;
       const positions = Math.max(mora.length, pitch.length);
       const svgWidth = Math.max(0, (positions - 1) * stepWidth + marginLr * 2);
       const getXCenter = step => marginLr + step * stepWidth;
@@ -82,4 +87,28 @@
       `.trim();
     }
   };
+
+  const addSvgToGroup = (group, kanji, marginTop) => {
+    const svg = Draw.svg(kanji, Util.q('.pronunciation-variant', group).textContent);
+    if (!svg) return;
+    const div = document.createElement('div');
+    div.style.marginTop = marginTop;
+    div.innerHTML = svg;
+    group.appendChild(div);
+  };
+
+  const isLesson = window.location.pathname.includes('/lesson/');
+  const isReview = window.location.pathname.includes('/review/');
+  const isVocab = !isLesson && !isReview;
+
+  waitForElems({
+    sel: '.pronunciation-group',
+    onmatch: group =>
+      addSvgToGroup(
+        group,
+        Util.q(isVocab ? '.vocabulary-icon' : isLesson ? '#character' : '#character > span')
+          .textContent,
+        isVocab ? 0 : '10px'
+      )
+  });
 })();
