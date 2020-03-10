@@ -77,7 +77,7 @@
 
       return `
         <svg width="${svgWidth}px" height="75px" viewBox="0 0 ${svgWidth} 74">
-            ${chars + paths + circles}
+          ${chars + paths + circles}
         </svg>
       `.trim();
     }
