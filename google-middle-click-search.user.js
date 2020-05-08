@@ -13,7 +13,7 @@
 (() => {
   'use strict';
 
-  const setQueryParam = function(key, value, url = location.href) {
+  const setQueryParam = function (key, value, url = location.href) {
     const regex = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'giu');
     const hasValue = typeof value !== 'undefined' && value !== null && value !== '';
     if (regex.test(url)) {
@@ -34,7 +34,7 @@
     } else return url;
   };
 
-  const getUrl = function(value) {
+  const getUrl = function (value) {
     if (window.location.href.match(/^https?:\/\/www\.google\.[a-zA-Z]+\/search\/?\?.*$/u)) {
       return setQueryParam('q', encodeURIComponent(value));
     } else {
@@ -47,13 +47,13 @@
     onmatch(btn) {
       const input = document.querySelector('#lst-ib');
 
-      btn.onmousedown = e => {
+      btn.onmousedown = (e) => {
         if (e.button === 1) {
           e.preventDefault();
         }
       };
 
-      btn.onclick = e => {
+      btn.onclick = (e) => {
         if (e.button === 1 && input.value.trim()) {
           e.preventDefault();
           e.stopImmediatePropagation();
@@ -70,7 +70,7 @@
   waitForElems({
     sel: '.sbsb_b li .sbqs_c, .sbsb_b li .sbpqs_d',
     onmatch(elem) {
-      elem.onclick = e => {
+      elem.onclick = (e) => {
         if (e.button === 1) {
           e.preventDefault();
           e.stopImmediatePropagation();

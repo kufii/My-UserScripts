@@ -20,7 +20,7 @@
   const Util = {
     q: (query, context = document) => context.querySelector(query),
     qq: (query, context = document) => Array.from(context.querySelectorAll(query)),
-    toMoraArray: kana => kana.match(/.[ゃゅょぁぃぅぇぉャュョァィゥェォ]?/gu),
+    toMoraArray: (kana) => kana.match(/.[ゃゅょぁぃぅぇぉャュョァィゥェォ]?/gu),
     getAccentData: (kanji, reading) => {
       const [kana, pitch] = (acc_dict[kanji] && acc_dict[kanji].find(([r]) => r === reading)) || [];
       if (!kana) return [];
@@ -56,8 +56,8 @@
       const marginLr = 16;
       const positions = Math.max(mora.length, pitch.length);
       const svgWidth = Math.max(0, (positions - 1) * stepWidth + marginLr * 2);
-      const getXCenter = step => marginLr + step * stepWidth;
-      const getYCenter = type => (type === 'H' ? 5 : 30);
+      const getXCenter = (step) => marginLr + step * stepWidth;
+      const getYCenter = (type) => (type === 'H' ? 5 : 30);
 
       const chars = mora.map((kana, i) => Draw.text(getXCenter(i) - 11, kana)).join('');
       const paths = pitch
@@ -103,7 +103,7 @@
 
   waitForElems({
     sel: '.pronunciation-group',
-    onmatch: group =>
+    onmatch: (group) =>
       addSvgToGroup(
         group,
         Util.q(isVocab ? '.vocabulary-icon' : isLesson ? '#character' : '#character > span')

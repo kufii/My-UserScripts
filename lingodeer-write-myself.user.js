@@ -15,7 +15,7 @@
   let helpClicked = false;
   waitForElems({
     sel: '.switchBtn',
-    onmatch: btn => {
+    onmatch: (btn) => {
       if (btn.textContent.trim() === 'I want to write it myself' && !helpClicked) btn.click();
       else btn.addEventListener('click', () => (helpClicked = true));
       helpClicked = false;
@@ -23,8 +23,8 @@
   });
   waitForElems({
     sel: '.textAreaInput textarea',
-    onmatch: input => (
-      input.addEventListener('keydown', e => {
+    onmatch: (input) => (
+      input.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter') return;
         const btn = document.querySelector('.checkBtn.active, .continueBtn:not(.wrong)');
         btn && btn.click();
@@ -37,6 +37,6 @@
   waitForElems({
     sel: '.signBtn',
     stop: true,
-    onmatch: btn => btn.click()
+    onmatch: (btn) => btn.click()
   });
 })();

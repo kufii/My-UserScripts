@@ -41,7 +41,7 @@
       stop: true,
       onmatch(page) {
         setTimeout(() => {
-          const redirect = function() {
+          const redirect = function () {
             location.replace(`${location.protocol}//hooktube.com/watch${location.search}`);
           };
           if (page.querySelector('[player-unavailable]')) {

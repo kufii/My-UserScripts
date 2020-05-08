@@ -3,14 +3,14 @@
 
   const fromEntries =
     Object.fromEntries ||
-    (iterable => [...iterable].reduce((obj, [key, val]) => ((obj[key] = val), obj), {}));
+    ((iterable) => [...iterable].reduce((obj, [key, val]) => ((obj[key] = val), obj), {}));
 
   const makeElem = (type, { classes, ...opts } = {}) => {
     const node = Object.assign(
       document.createElement(type),
       fromEntries(Object.entries(opts).filter(([_, value]) => value != null))
     );
-    classes && classes.forEach(c => node.classList.add(c));
+    classes && classes.forEach((c) => node.classList.add(c));
     return node;
   };
 
@@ -24,7 +24,7 @@
       : GM_addStyle(style);
   };
 
-  const preventDefault = e => {
+  const preventDefault = (e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
     e.stopPropagation();
@@ -95,7 +95,7 @@
       return cfg;
     };
 
-    const save = cfg => {
+    const save = (cfg) => {
       const data = JSON.stringify(cfg);
       window.GM_setValue != null ? GM_setValue(storage, data) : localStorage.setItem(storage, data);
     };
@@ -130,7 +130,7 @@
       const createSelect = (name, options, value, showBlank) => {
         const select = makeElem('select', { name });
 
-        const createOption = val => {
+        const createOption = (val) => {
           const { value = val, text = val } = val;
           return makeElem('option', { value, textContent: text });
         };
@@ -139,11 +139,11 @@
           select.appendChild(createOption(''));
         }
 
-        options.forEach(opt => {
+        options.forEach((opt) => {
           if (opt.optgroup != null) {
             const optgroup = makeElem('optgroup', { label: opt.optgroup });
             select.appendChild(optgroup);
-            opt.values.forEach(value => optgroup.appendChild(createOption(value)));
+            opt.values.forEach((value) => optgroup.appendChild(createOption(value)));
           } else {
             select.appendChild(createOption(opt));
           }
@@ -203,7 +203,7 @@
 
         textbox.addEventListener(
           'keydown',
-          e => {
+          (e) => {
             preventDefault(e);
             if (requireModifier && !e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey)
               return false;
@@ -228,7 +228,7 @@
 
       const createLabel = (label, htmlFor) => makeElem('label', { htmlFor, textContent: label });
 
-      const init = cfg => {
+      const init = (cfg) => {
         const controls = {};
 
         const getValue = (type, control) => {
@@ -250,7 +250,7 @@
         const div = createContainer();
         settings
           .filter(({ type }) => type !== 'hidden')
-          .forEach(setting => {
+          .forEach((setting) => {
             const value = cfg[setting.key];
 
             let control;

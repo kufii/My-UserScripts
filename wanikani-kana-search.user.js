@@ -24,7 +24,7 @@
 
   let kanaActive = false;
 
-  const hookupEvents = btn =>
+  const hookupEvents = (btn) =>
     (btn.onclick = () => {
       kanaActive = !kanaActive;
       btn.style.color = kanaActive ? '#333' : '#999';

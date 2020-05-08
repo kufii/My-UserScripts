@@ -70,7 +70,7 @@
       }
     },
     hijackScrollEvent(cb) {
-      document.onscroll = e => {
+      document.onscroll = (e) => {
         if (cb) {
           cb(e);
         }
@@ -93,7 +93,7 @@
   // GM_xmlhttpRequest polyfill
   if (typeof GM_xmlhttpRequest === 'undefined') {
     Util.log('Adding GM_xmlhttpRequest polyfill');
-    W.GM_xmlhttpRequest = function(config) {
+    W.GM_xmlhttpRequest = function (config) {
       const xhr = new XMLHttpRequest();
       xhr.open(config.method || 'GET', config.url);
       if (config.headers) {
@@ -105,12 +105,12 @@
         xhr.setRequestHeader('Authorization', '');
       }
       if (config.onload) {
-        xhr.onload = function() {
+        xhr.onload = function () {
           config.onload(xhr);
         };
       }
       if (config.onerror) {
-        xhr.onerror = function() {
+        xhr.onerror = function () {
           config.onerror(xhr.status);
         };
       }
@@ -155,8 +155,8 @@
       afterReplace() {
         W.loadCSS('//asset.wsj.net/public/extra.production-2a7a40d6.css');
         const scripts = Util.qq('script');
-        const add = function(regex, onload) {
-          const matching = scripts.filter(script => script.src.match(regex));
+        const add = function (regex, onload) {
+          const matching = scripts.filter((script) => script.src.match(regex));
           if (matching.length > 0) {
             Util.addScript(matching[0].src, onload);
           } else {
@@ -203,12 +203,12 @@
       cleanupStory(story) {
         if (story) {
           // prevent payywall from finding the elements to remove
-          Util.qq('figure', story).forEach(figure => {
+          Util.qq('figure', story).forEach((figure) => {
             figure.outerHTML = figure.outerHTML
               .replace(/<figure/u, '<div')
               .replace(/<\/figure/u, '</div');
           });
-          Util.qq('.story-body-text', story).forEach(paragraph => {
+          Util.qq('.story-body-text', story).forEach((paragraph) => {
             paragraph.classList.remove('story-body-text');
             paragraph.classList.add('new-story-body-text');
           });
@@ -241,9 +241,9 @@
 
         this.cleanupStory(Util.q('#story'));
         setTimeout(() => {
-          W.require(['jquery/nyt'], $ => {
-            W.require(['vhs'], vhs => {
-              Util.qq('.video').forEach(video => {
+          W.require(['jquery/nyt'], ($) => {
+            W.require(['vhs'], (vhs) => {
+              Util.qq('.video').forEach((video) => {
                 video.setAttribute('style', 'position: relative');
                 const bind = document.createElement('div');
                 bind.classList.add('video-bind');
@@ -339,7 +339,7 @@
         }
       },
       fn() {
-        const handler = e => {
+        const handler = (e) => {
           e.stopImmediatePropagation();
         };
         document.addEventListener('keydown', handler, true);
@@ -403,7 +403,7 @@
       if (imp.remove) {
         Util.log('Removing elements');
         const elemsToRemove = typeof imp.remove === 'function' ? imp.remove() : Util.qq(imp.remove);
-        elemsToRemove.forEach(elem => {
+        elemsToRemove.forEach((elem) => {
           elem.remove();
         });
       }
@@ -472,7 +472,7 @@
 
     start(imps) {
       Util.log('starting...');
-      const success = imps.some(imp => {
+      const success = imps.some((imp) => {
         if (imp.match && new RegExp(imp.match, 'iu').test(W.location.href)) {
           App.currentImpName = imp.name;
           if (W.BM_MODE) {

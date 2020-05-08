@@ -24,7 +24,7 @@
   waitForElems({
     sel: '.tdu-datetime-picker > div.tdu-t > div:nth-child(1) > div > ul',
     onmatch(hourSelector) {
-      Util.qq('li', hourSelector).forEach(hour => {
+      Util.qq('li', hourSelector).forEach((hour) => {
         const value = parseInt(hour.dataset.value);
         if (value === 0) {
           hour.textContent = 'AM 12';

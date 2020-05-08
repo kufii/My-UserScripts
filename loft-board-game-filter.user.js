@@ -48,7 +48,7 @@
       return button;
     },
     toTitleCase(str) {
-      return str.replace(/[a-z0-9]+/giu, word => word.slice(0, 1).toUpperCase() + word.slice(1));
+      return str.replace(/[a-z0-9]+/giu, (word) => word.slice(0, 1).toUpperCase() + word.slice(1));
     },
     appendStyle(str) {
       const style = document.createElement('style');
@@ -102,7 +102,7 @@
   const rows = Util.qq('tr:not(:first-of-type)', table);
   const categories = new Set(
     rows
-      .map(row => {
+      .map((row) => {
         const typos = {
           Triva: 'Trivia'
         };
@@ -127,30 +127,26 @@
 
   const selectedCategories = [];
 
-  const filter = function() {
-    rows.forEach(row => (row.hidden = true));
+  const filter = function () {
+    rows.forEach((row) => (row.hidden = true));
     let rowsFilter = rows;
 
     if (selectedCategories.length > 0) {
-      rowsFilter = rowsFilter.filter(row => {
-        const category = Util.q('td:last-of-type', row)
-          .textContent.trim()
-          .toLowerCase();
+      rowsFilter = rowsFilter.filter((row) => {
+        const category = Util.q('td:last-of-type', row).textContent.trim().toLowerCase();
         return selectedCategories.includes(category);
       });
     }
 
     const value = nameFilter.value.trim().toLowerCase();
     if (value) {
-      rowsFilter = rowsFilter.filter(row => {
-        const name = Util.q('td:first-of-type', row)
-          .textContent.trim()
-          .toLowerCase();
+      rowsFilter = rowsFilter.filter((row) => {
+        const name = Util.q('td:first-of-type', row).textContent.trim().toLowerCase();
         return name.includes(value);
       });
     }
 
-    rowsFilter.forEach(row => (row.hidden = false));
+    rowsFilter.forEach((row) => (row.hidden = false));
   };
 
   nameFilter.oninput = filter;
@@ -161,7 +157,7 @@
 
   const categorySpan = document.createElement('span');
 
-  categories.forEach(category => {
+  categories.forEach((category) => {
     const label = Util.createCheckbox(category);
     categoryDiv.appendChild(label);
     categoryDiv.appendChild(document.createElement('br'));
@@ -177,7 +173,7 @@
         selectedCategories.splice(index, 1);
       }
       categorySpan.textContent = selectedCategories
-        .map(category => Util.toTitleCase(category))
+        .map((category) => Util.toTitleCase(category))
         .join(', ');
       filter();
     };
@@ -191,7 +187,7 @@
     }
   });
 
-  document.body.addEventListener('click', e => {
+  document.body.addEventListener('click', (e) => {
     if (e.target !== categoryButton && !categoryDiv.contains(e.target)) {
       categoryDiv.hidden = true;
     }

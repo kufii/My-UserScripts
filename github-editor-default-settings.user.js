@@ -22,7 +22,10 @@
       label: 'Indent mode',
       default: 'tab',
       type: 'dropdown',
-      values: [{ value: 'space', text: 'Spaces' }, { value: 'tab', text: 'Tabs' }]
+      values: [
+        { value: 'space', text: 'Spaces' },
+        { value: 'tab', text: 'Tabs' }
+      ]
     },
     {
       key: 'indentWidth',
@@ -36,18 +39,21 @@
       label: 'Line wrap mode',
       default: 'off',
       type: 'dropdown',
-      values: [{ value: 'off', text: 'No wrap' }, { value: 'on', text: 'Soft wrap' }]
+      values: [
+        { value: 'off', text: 'No wrap' },
+        { value: 'on', text: 'Soft wrap' }
+      ]
     }
   ]);
 
-  const updateDropdown = function(dropdown, value) {
+  const updateDropdown = function (dropdown, value) {
     dropdown.value = value;
     const evt = document.createEvent('HTMLEvents');
     evt.initEvent('change', false, true);
     dropdown.dispatchEvent(evt);
   };
 
-  const applySettings = function(cfg) {
+  const applySettings = function (cfg) {
     const indentMode = document.querySelector('.js-code-indent-mode');
     const indentWidth = document.querySelector('.js-code-indent-width');
     const wrapMode = document.querySelector('.js-code-wrap-mode');

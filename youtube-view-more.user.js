@@ -95,7 +95,7 @@
       });
     },
     delayedRedraw(func, delay = 50) {
-      return new Promise(resolve =>
+      return new Promise((resolve) =>
         setTimeout(() => {
           func();
           m.redraw();
@@ -105,8 +105,8 @@
     },
     fillIcons(vnode) {
       Array.from(vnode.dom.querySelectorAll('ytd-button-renderer[icon]')).forEach(
-        btn =>
-          (btn.querySelector('iron-icon').innerHTML = `
+        (btn) =>
+          (btn.querySelector('iron-icon').innerHTML = /* html */ `
 						<svg viewBox="0 0 24 24"
 							preserveAspectRatio="xMidYMid meet"
 							focusable="false"
@@ -190,7 +190,7 @@
         hidden: true
       }),
       actions: {
-        toggle: model => (model.hidden = !model.hidden)
+        toggle: (model) => (model.hidden = !model.hidden)
       },
       view(vnode) {
         const { model, actions } = vnode.state;
@@ -229,7 +229,7 @@
           model.playlistId = await Api.getPlaylistId(model.currentVideo.channelId);
           await this.loadVideos(model);
           model.position = Math.max(
-            (model.videos.findIndex(v => v.id === model.currentVideo.id) || 0) - 1,
+            (model.videos.findIndex((v) => v.id === model.currentVideo.id) || 0) - 1,
             0
           );
         },
@@ -273,7 +273,7 @@
               {
                 style: `left: ${model.leftPx}px;transition-property:${model.loading ? 'none' : ''};`
               },
-              model.videos.map(video =>
+              model.videos.map((video) =>
                 m(Components.Thumbnail, {
                   key: video.id,
                   active: video.id === model.currentVideo.id,

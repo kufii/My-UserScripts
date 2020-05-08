@@ -76,7 +76,7 @@
   if (match) {
     const type = match[1];
     const id = match[2];
-    App.getKitsuLink(type, id, href => {
+    App.getKitsuLink(type, id, (href) => {
       Util.log('Link:', href);
       const container = Util.q('#content > table > tbody > tr > td.borderClass .pb16');
       if (container) {

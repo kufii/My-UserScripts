@@ -75,7 +75,7 @@
       onmatch(node) {
         const title = Util.q('.media--title h3');
         const url = location.href;
-        App.getMangaDexPage(title.textContent, manga => {
+        App.getMangaDexPage(title.textContent, (manga) => {
           const check = Util.q('.where-to-watch-widget');
           if (!manga && check) check.remove();
 

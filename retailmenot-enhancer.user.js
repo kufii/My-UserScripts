@@ -94,7 +94,7 @@
             : button.dataset.mainTab;
         const href = `${window.location.protocol}//${window.location.host}${path}`;
         if (path) {
-          const handler = e => {
+          const handler = (e) => {
             e.preventDefault();
             e.stopImmediatePropagation();
             if (e.button === 1) {
@@ -121,7 +121,7 @@
               button.href = href;
             }
             button.onclick = handler;
-            Util.qq('*', button).forEach(elem => {
+            Util.qq('*', button).forEach((elem) => {
               elem.onclick = handler;
             });
           }
@@ -132,7 +132,7 @@
     // CANADA
     Util.log('Enhancing Canadian site');
     // Show Coupons
-    Util.qq('.crux > .cover').forEach(cover => {
+    Util.qq('.crux > .cover').forEach((cover) => {
       cover.remove();
     });
 
@@ -142,7 +142,7 @@
       onmatch(offer) {
         const href = `${window.location.protocol}//${window.location.host}${window.location.pathname}?c=${offer.dataset.offerid}`;
 
-        const clickHandler = e => {
+        const clickHandler = (e) => {
           e.preventDefault();
           e.stopImmediatePropagation();
           if (e.button === 1) {
@@ -166,7 +166,7 @@
         }
 
         Util.qq('.action-button, .crux, .caterpillar-title, .caterpillar-code', offer).forEach(
-          elem => {
+          (elem) => {
             elem.onclick = clickHandler;
           }
         );
@@ -174,8 +174,8 @@
     });
 
     // disable pop unders on the exclusive tags
-    Util.qq('.exclusive_icon').forEach(tag => {
-      tag.onclick = e => {
+    Util.qq('.exclusive_icon').forEach((tag) => {
+      tag.onclick = (e) => {
         e.preventDefault();
         e.stopImmediatePropagation();
       };
@@ -199,7 +199,7 @@
       onmatch(coupon) {
         const id = coupon.dataset.suffix;
         const href = `${window.location.protocol}//${window.location.host}${window.location.pathname}?r=1#${id}`;
-        const clickHandler = e => {
+        const clickHandler = (e) => {
           e.preventDefault();
           e.stopImmediatePropagation();
           Util.createCookie(`click_${id}`, true);
@@ -210,7 +210,7 @@
           }
           return false;
         };
-        Util.qq('.outclickable', coupon).forEach(elem => {
+        Util.qq('.outclickable', coupon).forEach((elem) => {
           if (elem.tagName === 'A') {
             elem.href = href;
           }
@@ -222,8 +222,8 @@
   // human checks
   const regex = /^https?:\/\/www\.retailmenot\.[^/]+\/humanCheck\.php/iu;
   Util.qq('a')
-    .filter(link => link.href.match(regex))
-    .forEach(link => {
+    .filter((link) => link.href.match(regex))
+    .forEach((link) => {
       const url = Util.getQueryParam('url', link.href);
       if (url) {
         link.href = `${window.location.protocol}//${window.location.host}${url}`;

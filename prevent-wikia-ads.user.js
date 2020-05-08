@@ -15,7 +15,7 @@
   waitForElems({
     sel: 'a.exitstitial',
     onmatch(link) {
-      link.onclick = e => {
+      link.onclick = (e) => {
         e.preventDefault();
         e.stopImmediatePropagation();
         if (e.button === 0) {

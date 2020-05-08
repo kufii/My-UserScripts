@@ -9,7 +9,7 @@
 // @grant        GM_openInTab
 // ==/UserScript==
 
-(function() {
+(function () {
   'use strict';
 
   const SCRIPT_NAME = 'YMCS';
@@ -42,12 +42,12 @@
     sel: '#search-icon-legacy',
     stop: true,
     onmatch(btn) {
-      btn.onmousedown = function(e) {
+      btn.onmousedown = function (e) {
         if (e.button === 1) {
           e.preventDefault();
         }
       };
-      btn.onclick = function(e) {
+      btn.onclick = function (e) {
         e.preventDefault();
         e.stopImmediatePropagation();
 
@@ -70,7 +70,7 @@
   waitForElems({
     sel: '.sbsb_c',
     onmatch(result) {
-      result.onclick = function(e) {
+      result.onclick = function (e) {
         if (!e.target.classList.contains('sbsb_i')) {
           const search = Util.q('.sbpqs_a, .sbqs_c', result).textContent;
 

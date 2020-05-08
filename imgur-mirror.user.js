@@ -15,7 +15,7 @@
   const regex = /imgur\.com\/(?!a\/|gallery\/)(?:r\/[a-z0-9_]+\/)?([a-z0-9]+)(\.+[a-z0-9]+)?/iu;
   const extensions = ['.jpg', '.jpeg', '.png', '.gif', '.gifv', '.webm', '.mp4'];
 
-  const getNewLink = function(imgurLink, useGif) {
+  const getNewLink = function (imgurLink, useGif) {
     const match = imgurLink.match(regex);
     if (match) {
       const file = match[1];
