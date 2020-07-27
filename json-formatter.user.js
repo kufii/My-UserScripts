@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         JSON Formatter
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  auto format JSON files
 // @author       Adrien Pyke
 // @include      /^.*\.json(\?.*)?$/
@@ -15,14 +15,18 @@
   'use strict';
 
   const Config = GM_config([
-    { key: 'tabSize', label: 'Tab Size', type: 'number', min: 0, default: 2 }
+    { key: 'tabSize', label: 'Tab Size', type: 'number', min: 0, default: 2 },
+    { key: 'wordWrap', label: 'Word Wrap', type: 'bool', default: true }
   ]);
-  GM_registerMenuCommand('JSON Formatter: Tab Size', Config.setup);
+  GM_registerMenuCommand('JSON Formatter: Config', Config.setup);
 
-  const format = tabSize => {
-    const pre = document.querySelector('pre');
-    pre.textContent = JSON.stringify(JSON.parse(pre.textContent), null, tabSize);
+  const format = ({ tabSize, wordWrap }) => {
+    const formatted = JSON.stringify(JSON.parse(document.body.textContent), null, Number(tabSize));
+    document.body.innerHTML = `<code><pre style="${
+      wordWrap ? 'white-space:pre-wrap;word-break:break-word' : ''
+    }" id="jsonArea"></pre></code>`;
+    document.getElementById('jsonArea').textContent = formatted;
   };
-  format(Config.load().tabSize);
-  Config.onsave = ({ tabSize }) => format(tabSize);
+  format(Config.load());
+  Config.onsave = cfg => format(cfg);
 })();
