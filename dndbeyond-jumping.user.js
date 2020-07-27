@@ -119,7 +119,7 @@
       items.appendChild(App.createSpeedManagerItem('High Jump', Character.highJump));
 
       Util.q('.fullscreen-modal-accept > button').addEventListener('click', () => {
-        Util.qq('.speed-manager-override-item[data-key]').forEach((item) =>
+        Util.qq('.speed-manager-override-item[data-key]').forEach(item =>
           App.saveOverrideItem(item)
         );
       });

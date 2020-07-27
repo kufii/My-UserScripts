@@ -127,7 +127,7 @@
 
         GM_registerMenuCommand('GCPedia Ace Editor Settings', () => Config.setup(editor));
         Config.onchange = (key, value) => editor.setTheme(`ace/theme/${value}`);
-        Config.oncancel = (cfg) => editor.setTheme(`ace/theme/${cfg.theme}`);
+        Config.oncancel = cfg => editor.setTheme(`ace/theme/${cfg.theme}`);
       });
     }
   });

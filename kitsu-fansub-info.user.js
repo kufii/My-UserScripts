@@ -159,7 +159,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
       wrapper.appendChild(bodyDiv);
 
-      div.onclick = (e) => {
+      div.onclick = e => {
         if (e.target === modal || e.target === backdrop) {
           div.remove();
         }
@@ -204,8 +204,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           if (fansubDiv) {
             fansubDiv = fansubDiv.parentNode;
             const fansubs = Util.qq('.spaceit_pad', fansubDiv)
-              .filter((node) => !node.id)
-              .map((node) => {
+              .filter(node => !node.id)
+              .map(node => {
                 const id = Util.q('a:nth-of-type(1)', node).dataset.groupId;
                 const link = Util.q('a:nth-of-type(4)', node);
                 const tagNode = Util.q('small:nth-of-type(1)', node);
@@ -225,7 +225,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                   if (match) {
                     totalApproved = match[1];
                     totalVotes = match[2];
-                    comments = Util.qq(`#fsgComments${id} > .spaceit`, node).map((comment) => ({
+                    comments = Util.qq(`#fsgComments${id} > .spaceit`, node).map(comment => ({
                       text: comment.textContent,
                       approves: !comment.hasAttribute('style')
                     }));
@@ -271,7 +271,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         cb(self.fansubCache[id]);
         return;
       }
-      self.getKitsuInfo(id, (anime) => {
+      self.getKitsuInfo(id, anime => {
         let mal_id;
         if (anime.included) {
           for (let i = 0; i < anime.included.length; i++) {
@@ -281,7 +281,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           }
         }
         if (mal_id) {
-          self.getMALFansubInfo(mal_id, (fansubs) => {
+          self.getMALFansubInfo(mal_id, fansubs => {
             self.fansubCache[id] = fansubs;
             cb(fansubs);
           });
@@ -344,7 +344,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         );
       };
 
-      const voteHandler = (e) => {
+      const voteHandler = e => {
         e.preventDefault();
         let clickedNode = e.target;
         if (clickedNode.nodeName === 'svg') {
@@ -428,10 +428,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         commentsLink.href = '#';
         commentsLink.textContent = 'Comments...';
         commentsWrap.appendChild(commentsLink);
-        commentsLink.onclick = (e) => {
+        commentsLink.onclick = e => {
           e.preventDefault();
           const commentsDiv = document.createElement('div');
-          fansub.comments.forEach((comment) => {
+          fansub.comments.forEach(comment => {
             const div = document.createElement('div');
             div.classList.add('author-header');
 
@@ -462,7 +462,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       return fansubDiv;
     },
     filterFansubs(fansubs, langs) {
-      langs = langs.split(',').map((lang) => lang.trim().toLowerCase());
+      langs = langs.split(',').map(lang => lang.trim().toLowerCase());
       return fansubs.filter(({ lang }) => {
         lang = lang || 'english';
         return langs.includes(lang.trim().toLowerCase());
@@ -497,7 +497,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
           const slug = location.href.match(REGEX)[1];
           const url = location.href;
-          App.getFansubs(slug, (response) => {
+          App.getFansubs(slug, response => {
             if (location.href === url) {
               if (cfg.lang) {
                 response.fansubs = App.filterFansubs(response.fansubs, cfg.lang);
@@ -537,7 +537,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                   viewMore.textContent = 'View More Fansubs';
                   viewMoreDiv.appendChild(viewMore);
 
-                  viewMore.onclick = (e) => {
+                  viewMore.onclick = e => {
                     e.preventDefault();
                     if (hiddenSpan.hidden) {
                       hiddenSpan.hidden = false;

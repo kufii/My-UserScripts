@@ -21,8 +21,8 @@
   const REGEX = /^https?:\/\/rulu\.io\/j\//iu;
 
   Util.qq('a')
-    .filter((link) => link.href.match(REGEX))
-    .forEach((link) => (link.href = link.href.replace(REGEX, '')));
+    .filter(link => link.href.match(REGEX))
+    .forEach(link => (link.href = link.href.replace(REGEX, '')));
 
   waitForElems({
     sel: '#d0bf',

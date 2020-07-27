@@ -24,7 +24,7 @@
     },
     fromEntries:
       Object.fromEntries ||
-      ((iterable) => [...iterable].reduce((obj, [key, val]) => ((obj[key] = val), obj), {})),
+      (iterable => [...iterable].reduce((obj, [key, val]) => ((obj[key] = val), obj), {})),
     q: (query, context = document) => context.querySelector(query),
     qq: (query, context = document) => Array.from(context.querySelectorAll(query)),
     appendAfter: (elem, elemToAppend) =>
@@ -34,7 +34,7 @@
         document.createElement(type),
         Util.fromEntries(Object.entries(opts).filter(([_, value]) => value != null))
       );
-      classes && classes.forEach((c) => node.classList.add(c));
+      classes && classes.forEach(c => node.classList.add(c));
       return node;
     },
     fetch: (url, method = 'GET') =>
@@ -67,7 +67,7 @@
           innerHTML: response.responseText
         });
 
-        const replaceClasses = (elem) => {
+        const replaceClasses = elem => {
           if (elem.classList.contains('onyomi')) {
             elem.classList.remove('onyomi');
             elem.classList.add(inLesson ? 'highlight-reading' : 'reading-highlight');
@@ -82,14 +82,14 @@
           }
         };
 
-        const readTableHtml = (header) => {
-          const section = Util.qq('h2', tempDiv).find((elem) => elem.textContent.includes(header));
+        const readTableHtml = header => {
+          const section = Util.qq('h2', tempDiv).find(elem => elem.textContent.includes(header));
           if (!section) return;
           const content = Util.q('td:nth-child(2)', section.nextElementSibling);
           Util.qq('span', content).forEach(replaceClasses);
           Util.qq('img', content)
-            .filter((img) => img.getAttribute('src').startsWith('/'))
-            .forEach((img) => (img.src = 'http://www.kanjidamage.com' + img.getAttribute('src')));
+            .filter(img => img.getAttribute('src').startsWith('/'))
+            .forEach(img => (img.src = 'http://www.kanjidamage.com' + img.getAttribute('src')));
           return content.innerHTML;
         };
 
@@ -134,7 +134,7 @@
       if (typeof sel === 'string')
         waitForElems({
           sel,
-          onmatch: (elem) =>
+          onmatch: elem =>
             Util.q(selNode).classList.contains('kanji') && Util.appendAfter(elem, container)
         });
       else Util.appendAfter(sel, container);
@@ -178,7 +178,7 @@
             (meaningLink.href = readingLink.href = reviewLink.href = meaningSection.innerHTML = readingSection.innerHTML = reviewSection.innerHTML =
               '');
 
-          const outputKanjidamage = (kanjiObj) => {
+          const outputKanjidamage = kanjiObj => {
             meaningLink.href = readingLink.href = reviewLink.href = kanjiObj.url;
             meaningSection.innerHTML = readingSection.innerHTML = reviewSection.innerHTML = App.getKanjiObjHtml(
               kanjiObj
@@ -194,7 +194,7 @@
         onmatch() {
           const { link, section } = App.createContainer('#note-reading', '#character');
 
-          const outputKanjidamage = (kanjiObj) => {
+          const outputKanjidamage = kanjiObj => {
             link.href = kanjiObj.url;
             section.innerHTML = App.getKanjiObjHtml(kanjiObj);
           };

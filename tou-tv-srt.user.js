@@ -35,17 +35,17 @@
         }
     `);
 
-  const parseSubtitles = (srt) =>
+  const parseSubtitles = srt =>
     srt
       .trim()
       .split('\n\n')
-      .map((sub) =>
+      .map(sub =>
         sub.match(/\d+\n(\d+:\d+:\d+),\d+ --> (\d+:\d+:\d+),\d+\n((.*\n?)*)$/imu).slice(1)
       )
       .map(([start, end, text]) => ({ start, end, text: text.replace(/\n/gu, '<br>') }));
 
   const timeComparer = (time1, time2) => {
-    const parseTime = (time) => {
+    const parseTime = time => {
       const [hours, minutes, seconds] = time.match(/(\d+:)?(\d+:)?(\d+)/u).slice(1);
       return {
         hours: parseInt(hours || 0),
@@ -67,7 +67,7 @@
 
   waitForElems({
     sel: '.videocontainer',
-    onmatch: (video) => {
+    onmatch: video => {
       const subs = parseSubtitles(window.srt);
       const subContainer = document.createElement('div');
       subContainer.classList.add('subtitle');

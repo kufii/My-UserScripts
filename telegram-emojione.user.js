@@ -65,10 +65,10 @@
     addStyles() {
       GM_addStyle(
         EmojiHelper.sizes
-          .map((size) => {
+          .map(size => {
             let output = '.emoji';
             if (size.class) {
-              output = size.class.map((c) => `.${c} .emoji`).join(', ');
+              output = size.class.map(c => `.${c} .emoji`).join(', ');
             }
             return `${output} {width: ${size.size}px; height: ${size.size}px; vertical-align: middle;}`;
           })
@@ -93,10 +93,10 @@
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = emojione.toImage(EmojiHelper.makeReplacements(text));
 
-      Util.qq('img', tempDiv).forEach((emoji) => (emoji.outerHTML = emoji.alt));
+      Util.qq('img', tempDiv).forEach(emoji => (emoji.outerHTML = emoji.alt));
       tempDiv.innerHTML = emojione.toImage(EmojiHelper.makeReplacements(tempDiv.textContent));
 
-      Util.qq('img', tempDiv).forEach((emoji) => EmojiHelper.buildEmoji(emoji, emoji.src));
+      Util.qq('img', tempDiv).forEach(emoji => EmojiHelper.buildEmoji(emoji, emoji.src));
 
       return tempDiv.innerHTML;
     },
@@ -107,14 +107,14 @@
     },
     convert(node) {
       if (node.childNodes && node.childNodes.length > 0) {
-        Util.qq('span.emoji', node).forEach((emoji) => (emoji.outerHTML = emoji.textContent));
+        Util.qq('span.emoji', node).forEach(emoji => (emoji.outerHTML = emoji.textContent));
       }
       if (node.nodeType === Node.TEXT_NODE) {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = EmojiHelper.toEmoji(node.textContent);
 
         if (Util.q('img', tempDiv)) {
-          Array.from(tempDiv.childNodes).forEach((tempChild) =>
+          Array.from(tempDiv.childNodes).forEach(tempChild =>
             node.parentNode.insertBefore(tempChild, node)
           );
           node.remove();

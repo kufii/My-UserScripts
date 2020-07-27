@@ -41,7 +41,7 @@
         return;
       const newhtml = flair.textContent
         .split(' ')
-        .map((segment) =>
+        .map(segment =>
           segment.match(/^https?:\/\//u)
             ? `<a href="${segment}" class="flair-link" target="_blank" rel="noopener noreferrer">${segment}</a>`
             : segment

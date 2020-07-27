@@ -38,7 +38,7 @@
   GM_registerMenuCommand('Youtube Scroll Volume Settings', Config.setup);
 
   let config = Config.load();
-  Config.onsave = (newConf) => (config = newConf);
+  Config.onsave = newConf => (config = newConf);
 
   GM_addStyle(/* css */ `
 		.YSV_hud {
@@ -86,14 +86,14 @@
       const progress = q(hud).q('.YSV_progress');
       node.appendChild(hud);
 
-      const showHud = (volume) => {
+      const showHud = volume => {
         clearTimeout(id);
         progress.style.width = `${volume}%`;
         hud.style.opacity = 1;
         id = setTimeout(() => (hud.style.opacity = 0), 800);
       };
 
-      node.onwheel = (e) => {
+      node.onwheel = e => {
         if (config.requireShift && !e.shiftKey) return;
         const player = node.getPlayer();
         const dir =

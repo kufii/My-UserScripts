@@ -73,18 +73,18 @@
   const tabs = Array.from(document.querySelectorAll('.tabs-tab-list > a.tabs-tab'));
 
   if (defaultVersion) {
-    const [tab] = tabs.filter((tab) => tab.textContent === defaultVersion);
+    const [tab] = tabs.filter(tab => tab.textContent === defaultVersion);
     if (tab) {
       tab.click();
     }
   }
 
   let changing = false;
-  tabs.forEach((tab) =>
+  tabs.forEach(tab =>
     tab.addEventListener('click', () => {
       if (changing) return;
       changing = true;
-      tabs.filter((tabB) => tabB.textContent === tab.textContent).forEach((tabB) => tabB.click());
+      tabs.filter(tabB => tabB.textContent === tab.textContent).forEach(tabB => tabB.click());
       changing = false;
     })
   );

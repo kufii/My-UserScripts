@@ -81,9 +81,9 @@
     Util.log('Choosing Random Burger...');
 
     let burgers = Util.qq('.vc_grid-item-mini');
-    burgers.forEach((burger) => burger.removeAttribute('style'));
+    burgers.forEach(burger => burger.removeAttribute('style'));
     if (cbVegetarian.checked) {
-      burgers = burgers.filter((b) => Util.q('img[src="/wp-content/uploads/2017/11/veg.png"]', b));
+      burgers = burgers.filter(b => Util.q('img[src="/wp-content/uploads/2017/11/veg.png"]', b));
     }
 
     const burger = burgers[Math.floor(Math.random() * burgers.length)];

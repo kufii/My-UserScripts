@@ -47,13 +47,13 @@
     onmatch(btn) {
       const input = document.querySelector('#lst-ib');
 
-      btn.onmousedown = (e) => {
+      btn.onmousedown = e => {
         if (e.button === 1) {
           e.preventDefault();
         }
       };
 
-      btn.onclick = (e) => {
+      btn.onclick = e => {
         if (e.button === 1 && input.value.trim()) {
           e.preventDefault();
           e.stopImmediatePropagation();
@@ -70,7 +70,7 @@
   waitForElems({
     sel: '.sbsb_b li .sbqs_c, .sbsb_b li .sbpqs_d',
     onmatch(elem) {
-      elem.onclick = (e) => {
+      elem.onclick = e => {
         if (e.button === 1) {
           e.preventDefault();
           e.stopImmediatePropagation();
