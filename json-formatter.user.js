@@ -28,5 +28,5 @@
     document.getElementById('jsonArea').textContent = formatted;
   };
   format(Config.load());
-  Config.onsave = cfg => format(cfg);
+  Config.onsave = format;
 })();
