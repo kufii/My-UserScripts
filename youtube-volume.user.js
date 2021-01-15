@@ -68,12 +68,20 @@
 			background-color: #888;
 			height: 20px;
 		}
+		.YSV_text {
+			position: absolute;
+			text-align: center;
+			line-height: 20px;
+			width: 80%;
+			max-width: 600px;
+			color: white;
+		}
 	`);
 
   const createHud = () => {
     const hud = document.createElement('div');
     hud.classList.add('YSV_hud');
-    hud.innerHTML = '<div class="YSV_bar"><div class="YSV_progress"></div></div>';
+    hud.innerHTML = '<div class="YSV_bar"><div class="YSV_text"></div><div class="YSV_progress"></div></div>';
     return hud;
   };
 
@@ -84,11 +92,13 @@
 
       const hud = createHud();
       const progress = q(hud).q('.YSV_progress');
+      const text = q(hud).q('.YSV_text');
       node.appendChild(hud);
 
       const showHud = volume => {
         clearTimeout(id);
         progress.style.width = `${volume}%`;
+        text.innerHTML = `${volume}%`;
         hud.style.opacity = 1;
         id = setTimeout(() => (hud.style.opacity = 0), 800);
       };
