@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Scroll Volume
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.9
+// @version      1.1.10
 // @description  Use the scroll wheel to adjust volume of youtube videos
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -81,7 +81,8 @@
   const createHud = () => {
     const hud = document.createElement('div');
     hud.classList.add('YSV_hud');
-    hud.innerHTML = '<div class="YSV_bar"><div class="YSV_text"></div><div class="YSV_progress"></div></div>';
+    hud.innerHTML =
+      '<div class="YSV_bar"><div class="YSV_text"></div><div class="YSV_progress"></div></div>';
     return hud;
   };
 
