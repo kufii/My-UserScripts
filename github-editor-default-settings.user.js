@@ -63,7 +63,9 @@
       updateDropdown(indentMode, cfg.indentMode);
       updateDropdown(indentWidth, cfg.indentWidth);
       updateDropdown(wrapMode, cfg.wrapMode);
-    } else if (location.href.match(/^https?:\/\/github.com\/[^/]*\/[^/]*\/edit\/.*/u)) {
+    } else if (
+      location.href.match(/^https?:\/\/github.com\/[^/]*\/[^/]*\/edit\/.*/u)
+    ) {
       // edit file
       // if the file is using space indentation we don't want to change it
       if (indentMode.value === 'tab') {

@@ -81,8 +81,14 @@
     saveOverrideItem(item) {
       if (item) {
         const key = item.dataset.key;
-        const value = Util.q('.speed-manager-override-item-input > input', item).value;
-        const source = Util.q('.speed-manager-override-item-source > input', item).value;
+        const value = Util.q(
+          '.speed-manager-override-item-input > input',
+          item
+        ).value;
+        const source = Util.q(
+          '.speed-manager-override-item-source > input',
+          item
+        ).value;
         GM_setValue(`${Character.id}-${key}`, value);
         GM_setValue(`${Character.id}-${key}-source`, source);
       }
@@ -92,7 +98,10 @@
   const Character = {
     id: parseInt(location.pathname.match(/\/([0-9]+)$/u)[1]),
     get strength() {
-      return parseInt(Util.q('.character-ability-strength > .character-ability-score').textContent);
+      return parseInt(
+        Util.q('.character-ability-strength > .character-ability-score')
+          .textContent
+      );
     },
     get strengthModifier() {
       return parseInt(
@@ -102,11 +111,14 @@
       );
     },
     get longJump() {
-      return parseInt(GM_getValue(`${Character.id}-long-jump`) || Character.strength);
+      return parseInt(
+        GM_getValue(`${Character.id}-long-jump`) || Character.strength
+      );
     },
     get highJump() {
       return parseInt(
-        GM_getValue(`${Character.id}-high-jump`) || Math.max(Character.strengthModifier + 3, 0)
+        GM_getValue(`${Character.id}-high-jump`) ||
+          Math.max(Character.strengthModifier + 3, 0)
       );
     }
   };
@@ -115,14 +127,21 @@
     sel: '.speed-manager-view',
     onmatch(view) {
       const items = Util.q('.speed-manager-items', view);
-      items.appendChild(App.createSpeedManagerItem('Long Jump', Character.longJump));
-      items.appendChild(App.createSpeedManagerItem('High Jump', Character.highJump));
+      items.appendChild(
+        App.createSpeedManagerItem('Long Jump', Character.longJump)
+      );
+      items.appendChild(
+        App.createSpeedManagerItem('High Jump', Character.highJump)
+      );
 
-      Util.q('.fullscreen-modal-accept > button').addEventListener('click', () => {
-        Util.qq('.speed-manager-override-item[data-key]').forEach(item =>
-          App.saveOverrideItem(item)
-        );
-      });
+      Util.q('.fullscreen-modal-accept > button').addEventListener(
+        'click',
+        () => {
+          Util.qq('.speed-manager-override-item[data-key]').forEach(item =>
+            App.saveOverrideItem(item)
+          );
+        }
+      );
     }
   });
 

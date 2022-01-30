@@ -40,7 +40,8 @@
     },
     setQueryParam(key, value, url = location.href) {
       const regex = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'giu');
-      const hasValue = typeof value !== 'undefined' && value !== null && value !== '';
+      const hasValue =
+        typeof value !== 'undefined' && value !== null && value !== '';
       if (regex.test(url)) {
         if (hasValue) {
           return url.replace(regex, `$1${key}=${value}$2$3`);
@@ -85,8 +86,7 @@
 
     // Disable pop unders
     waitForElems({
-      sel:
-        '.js-outclick, .js-title > a, .js-triggers-outclick, .js-coupon-square, .offer-item-in-list',
+      sel: '.js-outclick, .js-title > a, .js-triggers-outclick, .js-coupon-square, .offer-item-in-list',
       onmatch(button) {
         const path =
           button.dataset.newTab && !button.dataset.newTab.match(/^\/out/iu)
@@ -165,11 +165,12 @@
           });
         }
 
-        Util.qq('.action-button, .crux, .caterpillar-title, .caterpillar-code', offer).forEach(
-          elem => {
-            elem.onclick = clickHandler;
-          }
-        );
+        Util.qq(
+          '.action-button, .crux, .caterpillar-title, .caterpillar-code',
+          offer
+        ).forEach(elem => {
+          elem.onclick = clickHandler;
+        });
       }
     });
 

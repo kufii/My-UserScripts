@@ -15,7 +15,8 @@
 
   const setQueryParam = function (key, value, url = location.href) {
     const regex = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'giu');
-    const hasValue = typeof value !== 'undefined' && value !== null && value !== '';
+    const hasValue =
+      typeof value !== 'undefined' && value !== null && value !== '';
     if (regex.test(url)) {
       if (hasValue) {
         return url.replace(regex, `$1${key}=${value}$2$3`);
@@ -35,10 +36,16 @@
   };
 
   const getUrl = function (value) {
-    if (window.location.href.match(/^https?:\/\/www\.google\.[a-zA-Z]+\/search\/?\?.*$/u)) {
+    if (
+      window.location.href.match(
+        /^https?:\/\/www\.google\.[a-zA-Z]+\/search\/?\?.*$/u
+      )
+    ) {
       return setQueryParam('q', encodeURIComponent(value));
     } else {
-      return `${location.protocol}//${location.host}/search?q=${encodeURIComponent(value)}`;
+      return `${location.protocol}//${
+        location.host
+      }/search?q=${encodeURIComponent(value)}`;
     }
   };
 

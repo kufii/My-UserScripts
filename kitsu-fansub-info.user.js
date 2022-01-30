@@ -56,12 +56,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   const Icon = {
     extLink:
       '<path d="M38.288 10.297l1.414 1.415-14.99 14.99-1.414-1.414z"/><path d="M40 20h-2v-8h-8v-2h10z"/><path d="M35 38H15c-1.7 0-3-1.3-3-3V15c0-1.7 1.3-3 3-3h11v2H15c-.6 0-1 .4-1 1v20c0 .6.4 1 1 1h20c.6 0 1-.4 1-1V24h2v11c0 1.7-1.3 3-3 3z"/>',
-    link:
-      '<path d="M24 30.2c0 .2.1.5.1.8 0 1.4-.5 2.6-1.5 3.6l-2 2c-1 1-2.2 1.5-3.6 1.5-2.8 0-5.1-2.3-5.1-5.1 0-1.4.5-2.6 1.5-3.6l2-2c1-1 2.2-1.5 3.6-1.5.3 0 .5 0 .8.1l1.5-1.5c-.7-.3-1.5-.4-2.3-.4-1.9 0-3.6.7-4.9 2l-2 2c-1.3 1.3-2 3-2 4.9 0 3.8 3.1 6.9 6.9 6.9 1.9 0 3.6-.7 4.9-2l2-2c1.3-1.3 2-3 2-4.9 0-.8-.1-1.6-.4-2.3L24 30.2z"/><path d="M33 10.1c-1.9 0-3.6.7-4.9 2l-2 2c-1.3 1.3-2 3-2 4.9 0 .8.1 1.6.4 2.3l1.5-1.5c0-.2-.1-.5-.1-.8 0-1.4.5-2.6 1.5-3.6l2-2c1-1 2.2-1.5 3.6-1.5 2.8 0 5.1 2.3 5.1 5.1 0 1.4-.5 2.6-1.5 3.6l-2 2c-1 1-2.2 1.5-3.6 1.5-.3 0-.5 0-.8-.1l-1.5 1.5c.7.3 1.5.4 2.3.4 1.9 0 3.6-.7 4.9-2l2-2c1.3-1.3 2-3 2-4.9 0-3.8-3.1-6.9-6.9-6.9z"/><path d="M20 31c-.3 0-.5-.1-.7-.3-.4-.4-.4-1 0-1.4l10-10c.4-.4 1-.4 1.4 0s.4 1 0 1.4l-10 10c-.2.2-.4.3-.7.3z"/>',
+    link: '<path d="M24 30.2c0 .2.1.5.1.8 0 1.4-.5 2.6-1.5 3.6l-2 2c-1 1-2.2 1.5-3.6 1.5-2.8 0-5.1-2.3-5.1-5.1 0-1.4.5-2.6 1.5-3.6l2-2c1-1 2.2-1.5 3.6-1.5.3 0 .5 0 .8.1l1.5-1.5c-.7-.3-1.5-.4-2.3-.4-1.9 0-3.6.7-4.9 2l-2 2c-1.3 1.3-2 3-2 4.9 0 3.8 3.1 6.9 6.9 6.9 1.9 0 3.6-.7 4.9-2l2-2c1.3-1.3 2-3 2-4.9 0-.8-.1-1.6-.4-2.3L24 30.2z"/><path d="M33 10.1c-1.9 0-3.6.7-4.9 2l-2 2c-1.3 1.3-2 3-2 4.9 0 .8.1 1.6.4 2.3l1.5-1.5c0-.2-.1-.5-.1-.8 0-1.4.5-2.6 1.5-3.6l2-2c1-1 2.2-1.5 3.6-1.5 2.8 0 5.1 2.3 5.1 5.1 0 1.4-.5 2.6-1.5 3.6l-2 2c-1 1-2.2 1.5-3.6 1.5-.3 0-.5 0-.8-.1l-1.5 1.5c.7.3 1.5.4 2.3.4 1.9 0 3.6-.7 4.9-2l2-2c1.3-1.3 2-3 2-4.9 0-3.8-3.1-6.9-6.9-6.9z"/><path d="M20 31c-.3 0-.5-.1-.7-.3-.4-.4-.4-1 0-1.4l10-10c.4-.4 1-.4 1.4 0s.4 1 0 1.4l-10 10c-.2.2-.4.3-.7.3z"/>',
     minus:
       '<path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"/><path d="M16 24h18v2H16z"/>',
-    plus:
-      '<path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"/><path d="M16 24h18v2H16z"/><path d="M24 16h2v18h-2z"/>',
+    plus: '<path d="M25 42c-9.4 0-17-7.6-17-17S15.6 8 25 8s17 7.6 17 17-7.6 17-17 17zm0-32c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15z"/><path d="M16 24h18v2H16z"/><path d="M24 16h2v18h-2z"/>',
     thumbsUp:
       '<path d="M40 23.2c0-2.1-1.7-3.2-4-3.2h-6.7c.5-1.8.7-3.5.7-5 0-5.8-1.6-7-3-7-.9 0-1.6.1-2.5.6-.3.2-.4.4-.5.7l-1 5.4c-1.1 2.8-3.8 5.3-6 7V36c.8 0 1.6.4 2.6.9 1.1.5 2.2 1.1 3.4 1.1h9.5c2 0 3.5-1.6 3.5-3 0-.3 0-.5-.1-.7 1.2-.5 2.1-1.5 2.1-2.8 0-.6-.1-1.1-.3-1.6.8-.5 1.5-1.4 1.5-2.4 0-.6-.3-1.2-.6-1.7.8-.6 1.4-1.6 1.4-2.6zm-2.1 0c0 1.3-1.3 1.4-1.5 2-.2.7.8.9.8 2.1 0 1.2-1.5 1.2-1.7 1.9-.2.8.5 1 .5 2.2v.2c-.2 1-1.7 1.1-2 1.5-.3.5 0 .7 0 1.8 0 .6-.7 1-1.5 1H23c-.8 0-1.6-.4-2.6-.9-.8-.4-1.6-.8-2.4-1V23.5c2.5-1.9 5.7-4.7 6.9-8.2v-.2l.9-5c.4-.1.7-.1 1.2-.1.2 0 1 1.2 1 5 0 1.5-.3 3.1-.8 5H27c-.6 0-1 .4-1 1s.4 1 1 1h9c1 0 1.9.5 1.9 1.2z"/><path d="M16 38h-6c-1.1 0-2-.9-2-2V22c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2zm-6-16v14h6V22h-6z"/>'
   };
@@ -93,7 +91,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     },
     setQueryParam(key, value, url = location.href) {
       const regex = new RegExp(`([?&])${key}=.*?(&|#|$)(.*)`, 'giu');
-      const hasValue = typeof value !== 'undefined' && value !== null && value !== '';
+      const hasValue =
+        typeof value !== 'undefined' && value !== null && value !== '';
       if (regex.test(url)) {
         if (hasValue) {
           return url.replace(regex, `$1${key}=${value}$2$3`);
@@ -116,7 +115,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       node.rel = 'noopener noreferrer';
     },
     icon(name, color, size = 20, flip = false) {
-      const newIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      const newIcon = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'svg'
+      );
       newIcon.innerHTML = Icon[name];
       newIcon.setAttribute('viewBox', '0 0 50 50');
       newIcon.setAttribute('width', size);
@@ -209,10 +211,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 const id = Util.q('a:nth-of-type(1)', node).dataset.groupId;
                 const link = Util.q('a:nth-of-type(4)', node);
                 const tagNode = Util.q('small:nth-of-type(1)', node);
-                const tag = tagNode && tagNode.textContent !== '[]' ? tagNode.textContent : null;
+                const tag =
+                  tagNode && tagNode.textContent !== '[]'
+                    ? tagNode.textContent
+                    : null;
                 const langNode = Util.q('small:nth-of-type(2)', node);
                 const lang = langNode
-                  ? langNode.textContent.substring(1, langNode.textContent.length - 1)
+                  ? langNode.textContent.substring(
+                      1,
+                      langNode.textContent.length - 1
+                    )
                   : null;
                 const voteUpButton = Util.q(`#good${id}`, node);
                 const voteDownButton = Util.q(`#bad${id}`, node);
@@ -221,11 +229,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 let totalVotes = 0;
                 let comments = [];
                 if (approvalNode) {
-                  const match = approvalNode.textContent.match(/([0-9]+)[^0-9]*([0-9]+)/u);
+                  const match = approvalNode.textContent.match(
+                    /([0-9]+)[^0-9]*([0-9]+)/u
+                  );
                   if (match) {
                     totalApproved = match[1];
                     totalVotes = match[2];
-                    comments = Util.qq(`#fsgComments${id} > .spaceit`, node).map(comment => ({
+                    comments = Util.qq(
+                      `#fsgComments${id} > .spaceit`,
+                      node
+                    ).map(comment => ({
                       text: comment.textContent,
                       approves: !comment.hasAttribute('style')
                     }));
@@ -275,7 +288,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let mal_id;
         if (anime.included) {
           for (let i = 0; i < anime.included.length; i++) {
-            if (anime.included[i].attributes.externalSite === 'myanimelist/anime') {
+            if (
+              anime.included[i].attributes.externalSite === 'myanimelist/anime'
+            ) {
               mal_id = anime.included[i].attributes.externalId;
             }
           }
@@ -337,10 +352,19 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       const setVoteIcons = () => {
         voteUp.innerHTML = voteDown.innerHTML = '';
         voteUp.appendChild(
-          Util.icon('thumbsUp', fansub.value === 1 ? Colors.like : Colors.neutral, 23)
+          Util.icon(
+            'thumbsUp',
+            fansub.value === 1 ? Colors.like : Colors.neutral,
+            23
+          )
         );
         voteDown.appendChild(
-          Util.icon('thumbsUp', fansub.value === 2 ? Colors.dislike : Colors.neutral, 23, true)
+          Util.icon(
+            'thumbsUp',
+            fansub.value === 2 ? Colors.dislike : Colors.neutral,
+            23,
+            true
+          )
         );
       };
 
@@ -500,7 +524,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           App.getFansubs(slug, response => {
             if (location.href === url) {
               if (cfg.lang) {
-                response.fansubs = App.filterFansubs(response.fansubs, cfg.lang);
+                response.fansubs = App.filterFansubs(
+                  response.fansubs,
+                  cfg.lang
+                );
               }
 
               const extLink = Util.q('h5#fansubs-title', section);

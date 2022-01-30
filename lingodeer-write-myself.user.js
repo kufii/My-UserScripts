@@ -16,7 +16,11 @@
   waitForElems({
     sel: '.switchBtn',
     onmatch: btn => {
-      if (btn.textContent.trim() === 'I want to write it myself' && !helpClicked) btn.click();
+      if (
+        btn.textContent.trim() === 'I want to write it myself' &&
+        !helpClicked
+      )
+        btn.click();
       else btn.addEventListener('click', () => (helpClicked = true));
       helpClicked = false;
     }
@@ -26,7 +30,9 @@
     onmatch: input => (
       input.addEventListener('keydown', e => {
         if (e.key !== 'Enter') return;
-        const btn = document.querySelector('.checkBtn.active, .continueBtn:not(.wrong)');
+        const btn = document.querySelector(
+          '.checkBtn.active, .continueBtn:not(.wrong)'
+        );
         btn && btn.click();
         e.preventDefault();
         return false;

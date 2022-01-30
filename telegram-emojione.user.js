@@ -94,20 +94,28 @@
       tempDiv.innerHTML = emojione.toImage(EmojiHelper.makeReplacements(text));
 
       Util.qq('img', tempDiv).forEach(emoji => (emoji.outerHTML = emoji.alt));
-      tempDiv.innerHTML = emojione.toImage(EmojiHelper.makeReplacements(tempDiv.textContent));
+      tempDiv.innerHTML = emojione.toImage(
+        EmojiHelper.makeReplacements(tempDiv.textContent)
+      );
 
-      Util.qq('img', tempDiv).forEach(emoji => EmojiHelper.buildEmoji(emoji, emoji.src));
+      Util.qq('img', tempDiv).forEach(emoji =>
+        EmojiHelper.buildEmoji(emoji, emoji.src)
+      );
 
       return tempDiv.innerHTML;
     },
     shortnameToSrc(shortname) {
       const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = emojione.toImage(EmojiHelper.replacements[shortname] || shortname);
+      tempDiv.innerHTML = emojione.toImage(
+        EmojiHelper.replacements[shortname] || shortname
+      );
       return Util.q('img', tempDiv).src;
     },
     convert(node) {
       if (node.childNodes && node.childNodes.length > 0) {
-        Util.qq('span.emoji', node).forEach(emoji => (emoji.outerHTML = emoji.textContent));
+        Util.qq('span.emoji', node).forEach(
+          emoji => (emoji.outerHTML = emoji.textContent)
+        );
       }
       if (node.nodeType === Node.TEXT_NODE) {
         const tempDiv = document.createElement('div');
@@ -184,7 +192,9 @@
   waitForElems({
     sel: '.composer_emoji_option',
     onmatch(option) {
-      Util.q('.emoji', option).outerHTML = EmojiHelper.toEmoji(Util.q('span', option).textContent);
+      Util.q('.emoji', option).outerHTML = EmojiHelper.toEmoji(
+        Util.q('span', option).textContent
+      );
     }
   });
 })();

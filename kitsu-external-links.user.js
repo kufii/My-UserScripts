@@ -19,14 +19,19 @@
         .querySelector('.cover-photo')
         .getAttribute('style')
         .match(/cover_images\/(?<id>\d+)/iu).groups.id,
-    getType: () => location.href.match(/kitsu\.io\/(?<type>anime|manga)/iu).groups.type,
+    getType: () =>
+      location.href.match(/kitsu\.io\/(?<type>anime|manga)/iu).groups.type,
     getLinks: async (id, type) => {
       const endpoint = `https://kitsu.io/api/edge/${type}/${id}?include=mappings`;
       if (Api.cache[endpoint]) return Api.cache[endpoint];
       const response = await fetch(endpoint);
       const json = await response.json();
       const mappings = json.included
-        .filter(i => i.attributes.externalSite.match(/^(myanimelist|anilist)\/(anime|manga)$/iu))
+        .filter(i =>
+          i.attributes.externalSite.match(
+            /^(myanimelist|anilist)\/(anime|manga)$/iu
+          )
+        )
         .map(i => i.attributes);
       Api.cache[endpoint] = mappings;
       return mappings;
@@ -47,7 +52,8 @@
     const { site, type } = mapping.externalSite.match(
       /^(?<site>myanimelist|anilist)\/(?<type>anime|manga)$/iu
     ).groups;
-    const webSite = site === 'anilist' ? 'https://anilist.co' : 'https://myanimelist.net';
+    const webSite =
+      site === 'anilist' ? 'https://anilist.co' : 'https://myanimelist.net';
     const href = `${webSite}/${type}/${mapping.externalId}`;
 
     const node = document.createElement('li');
@@ -75,7 +81,9 @@
       const links = getLinksContainer(container);
       const id = Api.getId();
       const type = Api.getType();
-      Api.getLinks(id, type).then(list => list.forEach(m => links.appendChild(getLinkNode(m))));
+      Api.getLinks(id, type).then(list =>
+        list.forEach(m => links.appendChild(getLinkNode(m)))
+      );
     }
   });
 })();

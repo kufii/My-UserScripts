@@ -42,7 +42,9 @@
       onmatch(page) {
         setTimeout(() => {
           const redirect = function () {
-            location.replace(`${location.protocol}//hooktube.com/watch${location.search}`);
+            location.replace(
+              `${location.protocol}//hooktube.com/watch${location.search}`
+            );
           };
           if (page.querySelector('[player-unavailable]')) {
             redirect();

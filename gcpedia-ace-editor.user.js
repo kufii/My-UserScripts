@@ -112,23 +112,29 @@
 				}
 			`);
 
-      Util.addScript('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js', () => {
-        const editor = unsafeWindow.ace.edit('ace');
-        editor.setTheme(`ace/theme/${Config.load().theme}`);
-        editor.getSession().setMode('ace/mode/html');
-        editor.resize();
+      Util.addScript(
+        'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js',
+        () => {
+          const editor = unsafeWindow.ace.edit('ace');
+          editor.setTheme(`ace/theme/${Config.load().theme}`);
+          editor.getSession().setMode('ace/mode/html');
+          editor.resize();
 
-        unsafeWindow.aceEditor = editor;
-        unsafeWindow.originalTextArea = textArea;
+          unsafeWindow.aceEditor = editor;
+          unsafeWindow.originalTextArea = textArea;
 
-        Util.addScriptText(
-          'aceEditor.getSession().on("change", () => originalTextArea.value = aceEditor.getValue())'
-        );
+          Util.addScriptText(
+            'aceEditor.getSession().on("change", () => originalTextArea.value = aceEditor.getValue())'
+          );
 
-        GM_registerMenuCommand('GCPedia Ace Editor Settings', () => Config.setup(editor));
-        Config.onchange = (key, value) => editor.setTheme(`ace/theme/${value}`);
-        Config.oncancel = cfg => editor.setTheme(`ace/theme/${cfg.theme}`);
-      });
+          GM_registerMenuCommand('GCPedia Ace Editor Settings', () =>
+            Config.setup(editor)
+          );
+          Config.onchange = (key, value) =>
+            editor.setTheme(`ace/theme/${value}`);
+          Config.oncancel = cfg => editor.setTheme(`ace/theme/${cfg.theme}`);
+        }
+      );
     }
   });
 })();

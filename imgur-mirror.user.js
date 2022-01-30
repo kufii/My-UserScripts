@@ -12,8 +12,17 @@
 (() => {
   'use strict';
 
-  const regex = /imgur\.com\/(?!a\/|gallery\/)(?:r\/[a-z0-9_]+\/)?([a-z0-9]+)(\.+[a-z0-9]+)?/iu;
-  const extensions = ['.jpg', '.jpeg', '.png', '.gif', '.gifv', '.webm', '.mp4'];
+  const regex =
+    /imgur\.com\/(?!a\/|gallery\/)(?:r\/[a-z0-9_]+\/)?([a-z0-9]+)(\.+[a-z0-9]+)?/iu;
+  const extensions = [
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.gif',
+    '.gifv',
+    '.webm',
+    '.mp4'
+  ];
 
   const getNewLink = function (imgurLink, useGif) {
     const match = imgurLink.match(regex);
@@ -22,7 +31,11 @@
       let extension = match[2].toLowerCase();
       if (!extension || !extensions.includes(extension)) {
         extension = '.png';
-      } else if (extension === '.gifv' || extension === '.gif' || extension === '.webm') {
+      } else if (
+        extension === '.gifv' ||
+        extension === '.gif' ||
+        extension === '.webm'
+      ) {
         extension = '.mp4';
       }
       if (useGif && extension === '.mp4') {

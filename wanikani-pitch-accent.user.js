@@ -19,10 +19,12 @@
 
   const Util = {
     q: (query, context = document) => context.querySelector(query),
-    qq: (query, context = document) => Array.from(context.querySelectorAll(query)),
+    qq: (query, context = document) =>
+      Array.from(context.querySelectorAll(query)),
     toMoraArray: kana => kana.match(/.[ゃゅょぁぃぅぇぉャュョァィゥェォ]?/gu),
     getAccentData: (kanji, reading) => {
-      const [kana, pitch] = (acc_dict[kanji] && acc_dict[kanji].find(([r]) => r === reading)) || [];
+      const [kana, pitch] =
+        (acc_dict[kanji] && acc_dict[kanji].find(([r]) => r === reading)) || [];
       if (!kana) return [];
       return [Util.toMoraArray(kana), [...pitch.replace(/[lh]/gu, '')]];
     }
@@ -59,7 +61,9 @@
       const getXCenter = step => marginLr + step * stepWidth;
       const getYCenter = type => (type === 'H' ? 5 : 30);
 
-      const chars = mora.map((kana, i) => Draw.text(getXCenter(i) - 11, kana)).join('');
+      const chars = mora
+        .map((kana, i) => Draw.text(getXCenter(i) - 11, kana))
+        .join('');
       const paths = pitch
         .slice(1)
         .map((type, i) => ({
@@ -77,7 +81,9 @@
         )
         .join('');
       const circles = pitch
-        .map((type, i) => Draw.circle(getXCenter(i), getYCenter(type), i >= mora.length))
+        .map((type, i) =>
+          Draw.circle(getXCenter(i), getYCenter(type), i >= mora.length)
+        )
         .join('');
 
       return `
@@ -89,7 +95,10 @@
   };
 
   const addSvgToGroup = (group, kanji, marginTop) => {
-    const svg = Draw.svg(kanji, Util.q('.pronunciation-variant', group).textContent);
+    const svg = Draw.svg(
+      kanji,
+      Util.q('.pronunciation-variant', group).textContent
+    );
     if (!svg) return;
     const div = document.createElement('div');
     div.style.marginTop = marginTop;
@@ -106,8 +115,13 @@
     onmatch: group =>
       addSvgToGroup(
         group,
-        Util.q(isVocab ? '.vocabulary-icon' : isLesson ? '#character' : '#character > span')
-          .textContent,
+        Util.q(
+          isVocab
+            ? '.vocabulary-icon'
+            : isLesson
+            ? '#character'
+            : '#character > span'
+        ).textContent,
         isVocab ? 0 : '10px'
       )
   });

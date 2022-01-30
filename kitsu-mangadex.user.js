@@ -39,7 +39,9 @@
         Util.log('Loading cached info');
         cb(self.cache[title]);
       } else {
-        const url = `https://mangadex.org/quick_search/${Util.encodeQuery(title)}`;
+        const url = `https://mangadex.org/quick_search/${Util.encodeQuery(
+          title
+        )}`;
         Util.log('Searching MangaDex:', url);
         GM_xmlhttpRequest({
           method: 'GET',

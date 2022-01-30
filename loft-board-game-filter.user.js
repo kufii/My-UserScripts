@@ -48,7 +48,10 @@
       return button;
     },
     toTitleCase(str) {
-      return str.replace(/[a-z0-9]+/giu, word => word.slice(0, 1).toUpperCase() + word.slice(1));
+      return str.replace(
+        /[a-z0-9]+/giu,
+        word => word.slice(0, 1).toUpperCase() + word.slice(1)
+      );
     },
     appendStyle(str) {
       const style = document.createElement('style');
@@ -133,7 +136,9 @@
 
     if (selectedCategories.length > 0) {
       rowsFilter = rowsFilter.filter(row => {
-        const category = Util.q('td:last-of-type', row).textContent.trim().toLowerCase();
+        const category = Util.q('td:last-of-type', row)
+          .textContent.trim()
+          .toLowerCase();
         return selectedCategories.includes(category);
       });
     }
@@ -141,7 +146,9 @@
     const value = nameFilter.value.trim().toLowerCase();
     if (value) {
       rowsFilter = rowsFilter.filter(row => {
-        const name = Util.q('td:first-of-type', row).textContent.trim().toLowerCase();
+        const name = Util.q('td:first-of-type', row)
+          .textContent.trim()
+          .toLowerCase();
         return name.includes(value);
       });
     }

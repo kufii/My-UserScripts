@@ -24,15 +24,19 @@
     },
     fromEntries:
       Object.fromEntries ||
-      (iterable => [...iterable].reduce((obj, [key, val]) => ((obj[key] = val), obj), {})),
+      (iterable =>
+        [...iterable].reduce((obj, [key, val]) => ((obj[key] = val), obj), {})),
     q: (query, context = document) => context.querySelector(query),
-    qq: (query, context = document) => Array.from(context.querySelectorAll(query)),
+    qq: (query, context = document) =>
+      Array.from(context.querySelectorAll(query)),
     appendAfter: (elem, elemToAppend) =>
       elem.parentNode.insertBefore(elemToAppend, elem.nextElementSibling),
     makeElem: (type, { classes, ...opts } = {}) => {
       const node = Object.assign(
         document.createElement(type),
-        Util.fromEntries(Object.entries(opts).filter(([_, value]) => value != null))
+        Util.fromEntries(
+          Object.entries(opts).filter(([_, value]) => value != null)
+        )
       );
       classes && classes.forEach(c => node.classList.add(c));
       return node;
@@ -59,7 +63,9 @@
       Util.log(`Loading Kanjidamage information for ${kanji}`);
 
       try {
-        const response = await Util.fetch(`http://www.kanjidamage.com/kanji/search?q=${kanji}`);
+        const response = await Util.fetch(
+          `http://www.kanjidamage.com/kanji/search?q=${kanji}`
+        );
 
         Util.log(`Found Kanjidamage information for ${kanji}`);
 
@@ -70,26 +76,38 @@
         const replaceClasses = elem => {
           if (elem.classList.contains('onyomi')) {
             elem.classList.remove('onyomi');
-            elem.classList.add(inLesson ? 'highlight-reading' : 'reading-highlight');
+            elem.classList.add(
+              inLesson ? 'highlight-reading' : 'reading-highlight'
+            );
           }
           if (elem.classList.contains('component')) {
             elem.classList.remove('component');
-            elem.classList.add(inLesson ? 'highlight-radical' : 'radical-highlight');
+            elem.classList.add(
+              inLesson ? 'highlight-radical' : 'radical-highlight'
+            );
           }
           if (elem.classList.contains('translation')) {
             elem.classList.remove('translation');
-            elem.classList.add(inLesson ? 'highlight-kanji' : 'kanji-highlight');
+            elem.classList.add(
+              inLesson ? 'highlight-kanji' : 'kanji-highlight'
+            );
           }
         };
 
         const readTableHtml = header => {
-          const section = Util.qq('h2', tempDiv).find(elem => elem.textContent.includes(header));
+          const section = Util.qq('h2', tempDiv).find(elem =>
+            elem.textContent.includes(header)
+          );
           if (!section) return;
           const content = Util.q('td:nth-child(2)', section.nextElementSibling);
           Util.qq('span', content).forEach(replaceClasses);
           Util.qq('img', content)
             .filter(img => img.getAttribute('src').startsWith('/'))
-            .forEach(img => (img.src = 'http://www.kanjidamage.com' + img.getAttribute('src')));
+            .forEach(
+              img =>
+                (img.src =
+                  'http://www.kanjidamage.com' + img.getAttribute('src'))
+            );
           return content.innerHTML;
         };
 
@@ -135,12 +153,14 @@
         waitForElems({
           sel,
           onmatch: elem =>
-            Util.q(selNode).classList.contains('kanji') && Util.appendAfter(elem, container)
+            Util.q(selNode).classList.contains('kanji') &&
+            Util.appendAfter(elem, container)
         });
       else Util.appendAfter(sel, container);
       return { container, h2, link, section };
     },
-    getKanjiObjHtml: ({ reading, mnemonic }) => (reading || '') + (mnemonic || ''),
+    getKanjiObjHtml: ({ reading, mnemonic }) =>
+      (reading || '') + (mnemonic || ''),
     initWatch: (sel, selKanji, cb, cbClear) =>
       waitForElems({
         context: Util.q(sel),
@@ -163,36 +183,49 @@
         sel: '#main-info',
         stop: true,
         onmatch() {
-          const { link: meaningLink, section: meaningSection } = App.createSection(
-            Util.q('#supplement-kan-meaning-notes')
-          );
-          const { link: readingLink, section: readingSection } = App.createSection(
-            Util.q('#supplement-kan-reading-notes')
-          );
-          const { link: reviewLink, section: reviewSection } = App.createContainer(
-            '#note-reading',
-            '#main-info'
-          );
+          const { link: meaningLink, section: meaningSection } =
+            App.createSection(Util.q('#supplement-kan-meaning-notes'));
+          const { link: readingLink, section: readingSection } =
+            App.createSection(Util.q('#supplement-kan-reading-notes'));
+          const { link: reviewLink, section: reviewSection } =
+            App.createContainer('#note-reading', '#main-info');
 
           const clearOutput = () =>
-            (meaningLink.href = readingLink.href = reviewLink.href = meaningSection.innerHTML = readingSection.innerHTML = reviewSection.innerHTML =
-              '');
+            (meaningLink.href =
+              readingLink.href =
+              reviewLink.href =
+              meaningSection.innerHTML =
+              readingSection.innerHTML =
+              reviewSection.innerHTML =
+                '');
 
           const outputKanjidamage = kanjiObj => {
-            meaningLink.href = readingLink.href = reviewLink.href = kanjiObj.url;
-            meaningSection.innerHTML = readingSection.innerHTML = reviewSection.innerHTML = App.getKanjiObjHtml(
-              kanjiObj
-            );
+            meaningLink.href =
+              readingLink.href =
+              reviewLink.href =
+                kanjiObj.url;
+            meaningSection.innerHTML =
+              readingSection.innerHTML =
+              reviewSection.innerHTML =
+                App.getKanjiObjHtml(kanjiObj);
           };
 
-          App.initWatch('#main-info', '#character', outputKanjidamage, clearOutput);
+          App.initWatch(
+            '#main-info',
+            '#character',
+            outputKanjidamage,
+            clearOutput
+          );
         }
       }),
     runOnReview: () =>
       waitForElems({
         sel: '#character',
         onmatch() {
-          const { link, section } = App.createContainer('#note-reading', '#character');
+          const { link, section } = App.createContainer(
+            '#note-reading',
+            '#character'
+          );
 
           const outputKanjidamage = kanjiObj => {
             link.href = kanjiObj.url;
@@ -205,7 +238,9 @@
     runOnKanjiPage: async () => {
       const kanji = Util.q('.kanji-icon').textContent;
       const kanjiObj = await App.getKanjiDamageInfo(kanji, false);
-      const { link, section } = App.createContainer(Util.q('#note-reading').parentNode);
+      const { link, section } = App.createContainer(
+        Util.q('#note-reading').parentNode
+      );
 
       link.href = kanjiObj.url;
       section.innerHTML = App.getKanjiObjHtml(kanjiObj);
@@ -215,5 +250,9 @@
   const isLesson = window.location.pathname.includes('/lesson/');
   const isReview = window.location.pathname.includes('/review/');
 
-  isLesson ? App.runOnLesson() : isReview ? App.runOnReview() : App.runOnKanjiPage();
+  isLesson
+    ? App.runOnLesson()
+    : isReview
+    ? App.runOnReview()
+    : App.runOnKanjiPage();
 })();

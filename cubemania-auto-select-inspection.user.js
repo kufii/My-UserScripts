@@ -31,7 +31,9 @@
   }
 
   GM_registerMenuCommand(
-    `${autoselect ? 'Disable' : 'Enable'} "Auto Select Inspection" for ${puzzle}`,
+    `${
+      autoselect ? 'Disable' : 'Enable'
+    } "Auto Select Inspection" for ${puzzle}`,
     () => {
       Config.setAutoSelect(puzzle, !autoselect);
       location.reload();

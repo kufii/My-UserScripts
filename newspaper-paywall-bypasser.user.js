@@ -281,7 +281,9 @@
         const article = Util.getQueryParameter('EXIT_URI');
         if (article) {
           W.location.replace(
-            `http://mobile.nytimes.com?LOAD_ARTICLE=${encodeURIComponent(article)}`
+            `http://mobile.nytimes.com?LOAD_ARTICLE=${encodeURIComponent(
+              article
+            )}`
           );
         }
       }
@@ -402,20 +404,27 @@
       }
       if (imp.remove) {
         Util.log('Removing elements');
-        const elemsToRemove = typeof imp.remove === 'function' ? imp.remove() : Util.qq(imp.remove);
+        const elemsToRemove =
+          typeof imp.remove === 'function' ? imp.remove() : Util.qq(imp.remove);
         elemsToRemove.forEach(elem => {
           elem.remove();
         });
       }
 
-      const replaceSelector = typeof imp.replace === 'function' ? imp.replace() : imp.replace;
+      const replaceSelector =
+        typeof imp.replace === 'function' ? imp.replace() : imp.replace;
       let replaceUsing =
-        typeof imp.replaceUsing === 'function' ? imp.replaceUsing() : imp.replaceUsing;
-      const theReferer = typeof imp.referer === 'function' ? imp.referer() : imp.referer;
+        typeof imp.replaceUsing === 'function'
+          ? imp.replaceUsing()
+          : imp.replaceUsing;
+      const theReferer =
+        typeof imp.referer === 'function' ? imp.referer() : imp.referer;
       if (replaceSelector || replaceUsing || theReferer) {
         replaceUsing = replaceUsing || W.location.href;
 
-        Util.log(`Loading xhr for "${replaceUsing}" with referer: ${theReferer}`);
+        Util.log(
+          `Loading xhr for "${replaceUsing}" with referer: ${theReferer}`
+        );
         GM_xmlhttpRequest({
           method: 'GET',
           url: replaceUsing,
@@ -426,13 +435,18 @@
           onload(response) {
             if (replaceSelector) {
               let replaceWithSelector =
-                typeof imp.replaceWith === 'function' ? imp.replaceWith() : imp.replaceWith;
+                typeof imp.replaceWith === 'function'
+                  ? imp.replaceWith()
+                  : imp.replaceWith;
               replaceWithSelector = replaceWithSelector || replaceSelector;
 
               const tempDiv = document.createElement('div');
               tempDiv.innerHTML = response.responseText;
 
-              Util.q(replaceSelector).innerHTML = Util.q(replaceWithSelector, tempDiv).innerHTML;
+              Util.q(replaceSelector).innerHTML = Util.q(
+                replaceWithSelector,
+                tempDiv
+              ).innerHTML;
             } else {
               document.body.innerHTML = response.responseText;
             }

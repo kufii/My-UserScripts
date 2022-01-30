@@ -21,7 +21,11 @@
   GM_registerMenuCommand('JSON Formatter: Config', Config.setup);
 
   const format = ({ tabSize, wordWrap }) => {
-    const formatted = JSON.stringify(JSON.parse(document.body.textContent), null, Number(tabSize));
+    const formatted = JSON.stringify(
+      JSON.parse(document.body.textContent),
+      null,
+      Number(tabSize)
+    );
     document.body.innerHTML = `<code><pre style="${
       wordWrap ? 'white-space:pre-wrap;word-break:break-word' : ''
     }" id="jsonArea"></pre></code>`;

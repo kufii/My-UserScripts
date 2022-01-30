@@ -25,8 +25,20 @@
 
   const Config = GM_config([
     { key: 'reverse', label: 'Reverse Scroll', default: false, type: 'bool' },
-    { key: 'horizontal', label: 'Use Horizontal Scroll', default: false, type: 'bool' },
-    { key: 'step', label: 'Change By', default: 5, type: 'number', min: 1, max: 100 },
+    {
+      key: 'horizontal',
+      label: 'Use Horizontal Scroll',
+      default: false,
+      type: 'bool'
+    },
+    {
+      key: 'step',
+      label: 'Change By',
+      default: 5,
+      type: 'number',
+      min: 1,
+      max: 100
+    },
     { key: 'hud', label: 'Display HUD', default: true, type: 'bool' },
     {
       key: 'requireShift',
@@ -108,7 +120,8 @@
         if (config.requireShift && !e.shiftKey) return;
         const player = node.getPlayer();
         const dir =
-          ((config.horizontal ? -e.deltaX : e.deltaY) > 0 ? -1 : 1) * (config.reverse ? -1 : 1);
+          ((config.horizontal ? -e.deltaX : e.deltaY) > 0 ? -1 : 1) *
+          (config.reverse ? -1 : 1);
 
         const vol = Util.bound(player.getVolume() + config.step * dir, 0, 100);
         if (vol > 0 && player.isMuted()) player.unMute();

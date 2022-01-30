@@ -40,13 +40,21 @@
       .trim()
       .split('\n\n')
       .map(sub =>
-        sub.match(/\d+\n(\d+:\d+:\d+),\d+ --> (\d+:\d+:\d+),\d+\n((.*\n?)*)$/imu).slice(1)
+        sub
+          .match(/\d+\n(\d+:\d+:\d+),\d+ --> (\d+:\d+:\d+),\d+\n((.*\n?)*)$/imu)
+          .slice(1)
       )
-      .map(([start, end, text]) => ({ start, end, text: text.replace(/\n/gu, '<br>') }));
+      .map(([start, end, text]) => ({
+        start,
+        end,
+        text: text.replace(/\n/gu, '<br>')
+      }));
 
   const timeComparer = (time1, time2) => {
     const parseTime = time => {
-      const [hours, minutes, seconds] = time.match(/(\d+:)?(\d+:)?(\d+)/u).slice(1);
+      const [hours, minutes, seconds] = time
+        .match(/(\d+:)?(\d+:)?(\d+)/u)
+        .slice(1);
       return {
         hours: parseInt(hours || 0),
         minutes: parseInt(minutes || 0),
@@ -81,7 +89,10 @@
         }
         const time = timeNode.textContent;
         subContainer.innerHTML = subs
-          .filter(({ start, end }) => timeComparer(time, start) >= 0 && timeComparer(time, end) < 0)
+          .filter(
+            ({ start, end }) =>
+              timeComparer(time, start) >= 0 && timeComparer(time, end) < 0
+          )
           .map(({ text }) => text)
           .join('');
       }, 500);

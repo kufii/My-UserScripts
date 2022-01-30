@@ -3,7 +3,8 @@
 
   const fromEntries =
     Object.fromEntries ||
-    (iterable => [...iterable].reduce((obj, [key, val]) => ((obj[key] = val), obj), {}));
+    (iterable =>
+      [...iterable].reduce((obj, [key, val]) => ((obj[key] = val), obj), {}));
 
   const makeElem = (type, { classes, ...opts } = {}) => {
     const node = Object.assign(
@@ -82,7 +83,10 @@
       const defaults = {};
       settings.forEach(({ key, default: def }) => (defaults[key] = def));
 
-      let cfg = window.GM_getValue != null ? GM_getValue(storage) : localStorage.getItem(storage);
+      let cfg =
+        window.GM_getValue != null
+          ? GM_getValue(storage)
+          : localStorage.getItem(storage);
       if (!cfg) return defaults;
 
       cfg = JSON.parse(cfg);
@@ -97,13 +101,22 @@
 
     const save = cfg => {
       const data = JSON.stringify(cfg);
-      window.GM_setValue != null ? GM_setValue(storage, data) : localStorage.setItem(storage, data);
+      window.GM_setValue != null
+        ? GM_setValue(storage, data)
+        : localStorage.setItem(storage, data);
     };
 
     const setup = () => {
       const createContainer = () => makeElem('form', { classes: [prefix] });
 
-      const createTextbox = (name, value, placeholder, maxLength, multiline, resize) => {
+      const createTextbox = (
+        name,
+        value,
+        placeholder,
+        maxLength,
+        multiline,
+        resize
+      ) => {
         const input = makeElem(multiline ? 'textarea' : 'input', {
           type: multiline ? null : 'text',
           name,
@@ -143,7 +156,9 @@
           if (opt.optgroup != null) {
             const optgroup = makeElem('optgroup', { label: opt.optgroup });
             select.appendChild(optgroup);
-            opt.values.forEach(value => optgroup.appendChild(createOption(value)));
+            opt.values.forEach(value =>
+              optgroup.appendChild(createOption(value))
+            );
           } else {
             select.appendChild(createOption(opt));
           }
@@ -161,7 +176,12 @@
           checked
         });
 
-      const createKeybinding = (name, keybinding, requireModifier, requireKey) => {
+      const createKeybinding = (
+        name,
+        keybinding,
+        requireModifier,
+        requireKey
+      ) => {
         const textbox = makeElem('input', {
           type: 'text',
           name,
@@ -205,7 +225,13 @@
           'keydown',
           e => {
             preventDefault(e);
-            if (requireModifier && !e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey)
+            if (
+              requireModifier &&
+              !e.ctrlKey &&
+              !e.altKey &&
+              !e.shiftKey &&
+              !e.metaKey
+            )
               return false;
             const key = (e.key || '').toUpperCase();
             if (requireKey && (!key || META_KEYS.includes(key))) return false;
@@ -226,7 +252,8 @@
           classes: [`${prefix}-${classname}`]
         });
 
-      const createLabel = (label, htmlFor) => makeElem('label', { htmlFor, textContent: label });
+      const createLabel = (label, htmlFor) =>
+        makeElem('label', { htmlFor, textContent: label });
 
       const init = cfg => {
         const controls = {};
@@ -273,7 +300,12 @@
                 setting.step
               );
             } else if (setting.type === 'dropdown') {
-              control = createSelect(setting.key, setting.values, value, setting.showBlank);
+              control = createSelect(
+                setting.key,
+                setting.values,
+                value,
+                setting.showBlank
+              );
             } else if (setting.type === 'bool') {
               control = createCheckbox(setting.key, value);
             } else if (setting.type === 'keybinding') {
@@ -289,11 +321,14 @@
             div.appendChild(control);
             controls[setting.key] = control;
 
-            control.addEventListener(setting.type === 'dropdown' ? 'change' : 'input', () => {
-              if (!ret.onchange) return;
-              const control = controls[setting.key];
-              ret.onchange(setting.key, getValue(setting.type, control));
-            });
+            control.addEventListener(
+              setting.type === 'dropdown' ? 'change' : 'input',
+              () => {
+                if (!ret.onchange) return;
+                const control = controls[setting.key];
+                ret.onchange(setting.key, getValue(setting.type, control));
+              }
+            );
           });
 
         div.appendChild(

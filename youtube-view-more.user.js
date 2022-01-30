@@ -104,7 +104,9 @@
       );
     },
     fillIcons(vnode) {
-      Array.from(vnode.dom.querySelectorAll('ytd-button-renderer[icon]')).forEach(
+      Array.from(
+        vnode.dom.querySelectorAll('ytd-button-renderer[icon]')
+      ).forEach(
         btn =>
           (btn.querySelector('iron-icon').innerHTML = /* html */ `
 						<svg viewBox="0 0 24 24"
@@ -201,7 +203,10 @@
             },
             'View More Videos'
           ),
-          m(Components.Slider, { hidden: model.hidden, videoId: Api.currentVideoId })
+          m(Components.Slider, {
+            hidden: model.hidden,
+            videoId: Api.currentVideoId
+          })
         ]);
       }
     }),
@@ -226,16 +231,22 @@
       actions: {
         async fetchInitialVideos(model, currentVideoId) {
           model.currentVideo = await Api.getVideo(currentVideoId);
-          model.playlistId = await Api.getPlaylistId(model.currentVideo.channelId);
+          model.playlistId = await Api.getPlaylistId(
+            model.currentVideo.channelId
+          );
           await this.loadVideos(model);
           model.position = Math.max(
-            (model.videos.findIndex(v => v.id === model.currentVideo.id) || 0) - 1,
+            (model.videos.findIndex(v => v.id === model.currentVideo.id) || 0) -
+              1,
             0
           );
         },
         async loadVideos(model) {
           model.loading = true;
-          const { pageToken, videos } = await Api.getVideos(model.playlistId, model.pageToken);
+          const { pageToken, videos } = await Api.getVideos(
+            model.playlistId,
+            model.pageToken
+          );
           model.videos.push(...videos);
           model.pageToken = pageToken;
           model.loading = false;
@@ -247,7 +258,10 @@
         },
         async moveRight(model) {
           if (model.loading) return;
-          if (model.position + LAZY_LOAD_BUFFER > model.videos.length && model.pageToken) {
+          if (
+            model.position + LAZY_LOAD_BUFFER > model.videos.length &&
+            model.pageToken
+          ) {
             await this.loadVideos(model, true);
             Util.delayedRedraw(() => {
               model.shiftRight();
@@ -266,12 +280,16 @@
       view(vnode) {
         const { model, actions } = vnode.state;
         return m(`div.${CLASS_PREFIX}slider`, { hidden: vnode.attrs.hidden }, [
-          Util.iconBtn('chevron-left', { onclick: () => actions.moveLeft(model) }),
+          Util.iconBtn('chevron-left', {
+            onclick: () => actions.moveLeft(model)
+          }),
           m(`div.${CLASS_PREFIX}thumbnails-wrap`, [
             m(
               `div.${CLASS_PREFIX}thumbnails`,
               {
-                style: `left: ${model.leftPx}px;transition-property:${model.loading ? 'none' : ''};`
+                style: `left: ${model.leftPx}px;transition-property:${
+                  model.loading ? 'none' : ''
+                };`
               },
               model.videos.map(video =>
                 m(Components.Thumbnail, {
@@ -282,7 +300,9 @@
               )
             )
           ]),
-          Util.iconBtn('chevron-right', { onclick: () => actions.moveRight(model) })
+          Util.iconBtn('chevron-right', {
+            onclick: () => actions.moveRight(model)
+          })
         ]);
       }
     }),
@@ -297,28 +317,41 @@
         const { model } = vnode.state;
         const title = Util.decode(model.video.title);
         return m(
-          `div.${CLASS_PREFIX}thumbnail${vnode.attrs.active ? `.${CLASS_PREFIX}active` : ''}`,
+          `div.${CLASS_PREFIX}thumbnail${
+            vnode.attrs.active ? `.${CLASS_PREFIX}active` : ''
+          }`,
           [
-            m('ytd-thumbnail.style-scope.ytd-compact-video-renderer', { width: 168 }, [
-              m(
-                'a#thumbnail.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail',
-                { rel: 'nofollow', href: `/watch?v=${model.video.id}` },
-                [
-                  m('yt-img-shadow.style-scope.ytd-thumbnail.no-transition[loaded]', [
-                    m('img.style-scope.yt-img-shadow', {
-                      width: 168,
-                      src: model.video.thumbnail
-                    })
-                  ])
-                ]
-              )
-            ]),
+            m(
+              'ytd-thumbnail.style-scope.ytd-compact-video-renderer',
+              { width: 168 },
+              [
+                m(
+                  'a#thumbnail.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail',
+                  { rel: 'nofollow', href: `/watch?v=${model.video.id}` },
+                  [
+                    m(
+                      'yt-img-shadow.style-scope.ytd-thumbnail.no-transition[loaded]',
+                      [
+                        m('img.style-scope.yt-img-shadow', {
+                          width: 168,
+                          src: model.video.thumbnail
+                        })
+                      ]
+                    )
+                  ]
+                )
+              ]
+            ),
             m(
               'a.yt-simple-endpoint.style-scope.ytd-compact-video-renderer',
               { rel: 'nofollow', href: `/watch?v=${model.video.id}` },
               [
                 m('h3.style-scope.ytd-compact-video-renderer', [
-                  m('span#video-title.style-scope.ytd-compact-video-renderer', { title }, title)
+                  m(
+                    'span#video-title.style-scope.ytd-compact-video-renderer',
+                    { title },
+                    title
+                  )
                 ])
               ]
             )

@@ -79,7 +79,10 @@
     addAutoplayControl() {
       const container = Util.q('.playControls__inner');
       const label = Util.createCheckbox('Autoplay');
-      label.setAttribute('style', 'position: absolute; bottom: 0; right: 0; z-index: 1;');
+      label.setAttribute(
+        'style',
+        'position: absolute; bottom: 0; right: 0; z-index: 1;'
+      );
       container.appendChild(label);
       const check = Util.q('input', label);
       check.checked = Config.load().continuousPlay;

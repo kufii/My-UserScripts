@@ -62,15 +62,23 @@
       label: 'Gen 7',
       type: 'dropdown',
       showBlank: true,
-      values: ['Sun/Moon', 'Ultra Sun/Ultra Moon', "Let's Go Pikachu/Let's Go Eevee"]
+      values: [
+        'Sun/Moon',
+        'Ultra Sun/Ultra Moon',
+        "Let's Go Pikachu/Let's Go Eevee"
+      ]
     }
   ]);
   GM_registerMenuCommand('Select default PokemonDB versions', Config.setup);
 
-  const match = location.href.match(/^https?:\/\/pokemondb\.net\/pokedex\/.*?\/moves\/(\d+)/iu);
+  const match = location.href.match(
+    /^https?:\/\/pokemondb\.net\/pokedex\/.*?\/moves\/(\d+)/iu
+  );
   const currentGen = match ? match[1] : 7;
   const defaultVersion = Config.load()[currentGen];
-  const tabs = Array.from(document.querySelectorAll('.tabs-tab-list > a.tabs-tab'));
+  const tabs = Array.from(
+    document.querySelectorAll('.tabs-tab-list > a.tabs-tab')
+  );
 
   if (defaultVersion) {
     const [tab] = tabs.filter(tab => tab.textContent === defaultVersion);
@@ -84,7 +92,9 @@
     tab.addEventListener('click', () => {
       if (changing) return;
       changing = true;
-      tabs.filter(tabB => tabB.textContent === tab.textContent).forEach(tabB => tabB.click());
+      tabs
+        .filter(tabB => tabB.textContent === tab.textContent)
+        .forEach(tabB => tabB.click());
       changing = false;
     })
   );

@@ -50,9 +50,15 @@
   ]);
   GM_registerMenuCommand('GreasyFork Sort Settings', Config.setup);
 
-  const onSearch = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/scripts\/?.*\?.*q=/iu);
-  const onScripts = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/scripts\/?/iu);
-  const onProfile = location.href.match(/^https?:\/\/greasyfork\.org\/.+?\/users\//iu);
+  const onSearch = location.href.match(
+    /^https?:\/\/greasyfork\.org\/.+?\/scripts\/?.*\?.*q=/iu
+  );
+  const onScripts = location.href.match(
+    /^https?:\/\/greasyfork\.org\/.+?\/scripts\/?/iu
+  );
+  const onProfile = location.href.match(
+    /^https?:\/\/greasyfork\.org\/.+?\/users\//iu
+  );
 
   waitForElems({
     sel: '#script-list-sort > ul > li:first-of-type > a',
