@@ -113,13 +113,13 @@
       Util.appendAfter(textArea, wrapper);
 
       GM_addStyle(`
-				.ace_editor {
-					height: 515px;
-				}
-				#htmlSource {
-					display: none;
-				}
-			`);
+        .ace_editor {
+          height: 515px;
+        }
+        #htmlSource {
+          display: none;
+        }
+      `);
 
       Util.addScript(
         'https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.min.js',
