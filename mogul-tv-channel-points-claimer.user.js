@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Truffle TV Channel Points Claimer
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1
-// @description  Auto claim point on Truffle TV enabled streams. Currently works for Ludwig and Fuslie.
+// @version      2.2
+// @description  Auto claim point on Truffle TV enabled streams.
 // @author       Adrien Pyke
 // @match        *://new.ludwig.social/channel-points
-// @match        *://fuslie.spore.build/component-instance/*
+// @match        *://*.spore.build/component-instance/*
 // @grant        none
 // ==/UserScript==
 
