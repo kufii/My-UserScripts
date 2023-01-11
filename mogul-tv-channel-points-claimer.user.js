@@ -1,7 +1,8 @@
+
 // ==UserScript==
 // @name         Truffle TV Channel Points Claimer
 // @namespace    https://greasyfork.org/users/649
-// @version      2.2
+// @version      3.0
 // @description  Auto claim point on Truffle TV enabled streams.
 // @author       Adrien Pyke
 // @match        *://new.ludwig.social/channel-points
@@ -14,7 +15,7 @@
 
   setInterval(() => {
     const root = document.getElementById('root');
-    const shadowRoot = root && root.firstChild.shadowRoot.firstChild.shadowRoot;
+    const shadowRoot = root && root.firstChild.shadowRoot;
     const node = shadowRoot
       ? shadowRoot.querySelector('.claim')
       : document.querySelector('.claim.is-visible');
