@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Scroll Volume
 // @namespace    https://greasyfork.org/users/649
-// @version      1.1.11
+// @version      1.1.12
 // @description  Use the scroll wheel to adjust volume of youtube videos
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
@@ -9,8 +9,8 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @require      https://gitcdn.link/repo/kufii/My-UserScripts/fa4555701cf5a22eae44f06d9848df6966788fa8/libs/gm_config.js
-// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://cdn.jsdelivr.net/gh/kufii/My-UserScripts@22210afba13acf7303fc91590b8265faf3c7eda7/libs/gm_config.js
+// @require      https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
 // @require      https://cdn.jsdelivr.net/gh/kufii/quick-query.js@2993f91ae90f3b2aff4af7e9ce0b08504f5c8060/dist/window/qq.js
 // ==/UserScript==
 

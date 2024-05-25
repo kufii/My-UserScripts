@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         WaniKani Kanjidamage Mnemonics
 // @namespace    https://greasyfork.org/users/649
-// @version      2.0.6
+// @version      2.0.7
 // @description  Includes Kanjidamage Mnemonics in WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/kanji/*
 // @match        *://www.wanikani.com/level/*/kanji/*
 // @match        *://www.wanikani.com/review/session
 // @match        *://www.wanikani.com/lesson/session
-// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 

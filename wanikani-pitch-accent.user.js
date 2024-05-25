@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         WaniKani Pitch Accent
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Show pitch accent data on WaniKani
 // @author       Adrien Pyke
 // @match        *://www.wanikani.com/vocabulary/*
 // @match        *://www.wanikani.com/level/*/vocabulary/*
 // @match        *://www.wanikani.com/review/session
 // @match        *://www.wanikani.com/lesson/session
-// @require      https://gitcdn.link/repo/IllDepence/SVG_pitch/295af214b1e3c8add03a31cf022e28033495da08/accdb.js
-// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://cdn.jsdelivr.net/gh/IllDepence/SVG_pitch@295af214b1e3c8add03a31cf022e28033495da08/accdb.js
+// @require      https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
 // @grant        none
 // ==/UserScript==
 /* global acc_dict */

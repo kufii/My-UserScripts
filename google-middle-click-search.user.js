@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Google - Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.0
+// @version      1.2.1
 // @description  Opens search results in new tab when you middle click
 // @author       Adrien Pyke
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/?(?:\?.*)?$/
 // @include      /^https?:\/\/www\.google\.[a-zA-Z]+\/search\/?\?.*$/
-// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
 // @grant        GM_openInTab
 // ==/UserScript==
 

@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Prevent Wikia Ads
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.8
+// @version      1.0.9
 // @description  Prevent the ads that pop up when clicking a link to an external page on Wikias
 // @author       Adrien Pyke
 // @match        *://*.wikia.com/*
-// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
 // @grant        GM_openInTab
 // ==/UserScript==
 

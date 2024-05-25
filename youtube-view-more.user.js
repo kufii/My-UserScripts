@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         View More Videos by Same YouTube Channel
 // @namespace    https://greasyfork.org/users/649
-// @version      1.2.2
+// @version      1.2.3
 // @description  Displays a list of more videos by the same channel inline
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
-// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
 // @require      https://unpkg.com/mithril
 // @resource     pageTokens https://cdn.rawgit.com/Quihico/handy.stuff/7e47f4f2/yt.pagetokens.00000-00999
 // @grant        GM_addStyle

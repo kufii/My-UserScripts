@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Youtube Middle Click Search
 // @namespace    https://greasyfork.org/users/649
-// @version      2.1.6
+// @version      2.1.7
 // @description  Middle clicking the search on youtube opens the results in a new tab
 // @author       Adrien Pyke
 // @match        *://www.youtube.com/*
-// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
 // @grant        GM_openInTab
 // ==/UserScript==
 

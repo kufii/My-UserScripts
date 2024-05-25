@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Kitsu MangaDex Links
 // @namespace    https://greasyfork.org/users/649
-// @version      3.0.7
+// @version      3.0.8
 // @description  Adds MangaDex links to Kitsu manga pages
 // @author       Adrien Pyke
 // @match        *://kitsu.io/*
-// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 

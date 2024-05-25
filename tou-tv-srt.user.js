@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Tou.tv SRT Loader
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0
+// @version      1.0.1
 // @description  Load SRT subtitle files on Tou.tv
 // @author       Adrien Pyke
 // @match        *://ici.tou.tv/*
 // @grant        GM_addStyle
-// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
 (() => {

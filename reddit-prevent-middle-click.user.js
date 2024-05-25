@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         New reddit: Prevent middle click scroll
 // @namespace    https://greasyfork.org/users/649
-// @version      1.0.7
+// @version      1.0.8
 // @description  Prevents the middle click scroll when middle clicking posts on the new reddit layout
 // @author       Adrien Pyke
 // @match        *://*.reddit.com/*
 // @grant        GM_openInTab
-// @require      https://gitcdn.link/repo/fuzetsu/userscripts/b38eabf72c20fa3cf7da84ecd2cefe0d4a2116be/wait-for-elements/wait-for-elements.js
+// @require      https://cdn.jsdelivr.net/gh/fuzetsu/userscripts@ec863aa92cea78a20431f92e80ac0e93262136df/wait-for-elements/wait-for-elements.js
 // ==/UserScript==
 
 (() => {
